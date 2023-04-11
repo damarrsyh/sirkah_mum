@@ -86,6 +86,7 @@
             <td class="title" colspan="2">Tanggal</td>
             <td class="title" rowspan="2">Jumlah</td>
             <td class="title" rowspan="2">Status</td>
+            <td class="title" rowspan="2">Petugas</td>
       </tr>
       <tr>
             <td class="title">Nama</td>
@@ -106,6 +107,7 @@
 		  $registration_no = $data['registration_no'];
 		  $nama = $data['nama'];
 		  $cm_name = $data['cm_name'];
+      $petugas = $data['fa_name'];
 
 		  $tanggal_pengajuan = $data['tanggal_pengajuan'];
 		  $tanggal_pengajuan = $CI->format_date_detail($tanggal_pengajuan,'id',false,'/');
@@ -140,6 +142,7 @@
             <td class="konten"><?php echo $rencana_droping; ?></td>
             <td class="nominal"><?php echo number_format($amount,0,',','.');?></td>
             <td class="konten"><?php echo $status;?></td>
+            <td class="konten"><?php echo $petugas;?></td>
       </tr>
       <?php } ?>
       <tr>
@@ -151,6 +154,7 @@
             <td>&nbsp;</td>
             <td class="zero">&nbsp;</td>
             <td class="total_saldo"><?php echo number_format($total_amount,0,',','.');?></td>
+            <td>&nbsp;</td>
             <td>&nbsp;</td>
       </tr>
     </tbody>

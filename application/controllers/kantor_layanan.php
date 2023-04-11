@@ -50,6 +50,7 @@ class Kantor_layanan extends GMN_Controller {
 	// END REMBUG SETUP
 	/****************************************************************************************/
 	
+
 	// ------------------------------------------------------------------------------------------
 	// BEGIN TARGET CABANG SETUP
 	// ------------------------------------------------------------------------------------------
@@ -65,6 +66,36 @@ class Kantor_layanan extends GMN_Controller {
 		$data['current_date'] = $this->format_date_detail($this->current_date(),'id',false,'/');
 		$this->load->view('core',$data);
 	}
+	/****************************************************************************************/	
+	// END TARGET CABANG SETUP
+	/****************************************************************************************/
+	
+	// ------------------------------------------------------------------------------------------
+	// BEGIN TARGET CABANG SETUP
+	// ------------------------------------------------------------------------------------------
+	// public function target_cabang_setup()
+	// {
+	// 	$data['container'] = 'kantor_layanan/target_cabang_setup';
+	// 	$data['branch_id'] = $this->session->userdata('branch_id');
+	// 	$data['branch_code'] = $this->session->userdata('branch_code');
+	// 	//$data['cabang'] = $this->model_cif->get_all_branch_();
+	// 	$data['tahun'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['target_item'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t1'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t2'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t3'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t4'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t5'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t6'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t7'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t8'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t9'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t10'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t11'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['t12'] = $this->model_kantor_layanan->get_all_target_cabang();
+	// 	$data['branch'] = $this->model_kantor_layanan->get_all_branch();
+	// 	$this->load->view('core',$data);
+	// }
 	/****************************************************************************************/	
 	// END TARGET CABANG SETUP
 	/****************************************************************************************/

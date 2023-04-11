@@ -250,45 +250,22 @@
                   return $("#cm_code").val()
                }
             },
-            rowNum: 30,
+            rowNum: 50,
             rowList: [50, 100, 150, 200, 250, 300, 350, 400],
-            colNames: ['No. Registrasi', 'No Anggota', 'Nama', 'Majelis', 'Pembiayaan', 'Pembiayaan Ke', 'Peruntukan', 'Tgl Pengajuan', 'Tgl Rencana Cair', 'Jumlah', 'Status'],
-            colModel: [{
-                  name: 'registration_no', index: 'registration_no'
-               },
-               {
-                  name: 'cif_no', index: 'cif_no'
-               },
-               {
-                  name: 'nama', index: 'nama'
-               },
-               {
-                  name: 'cm_code', index: 'cm_name'
-               },
-               {
-                  name: 'rencana_droping', index: 'rencana_droping'
-               },
-               {
-                  name: 'financing_type', index: 'financing_type'
-               },
-               {
-                  name: 'pembiayaan_ke', index: 'pembiayaan_ke'
-               },
-               {
-                  name: 'peruntukan', index: 'peruntukan'
-               },
-               {
-                  name: 'tanggal_pengajuan', index: 'tanggal_pengajuan'
-               },
-               {
-                  name: 'amount',
-                  index: 'amount',
-                  align: 'right'
-               },
-               {
-                  name: 'status',
-                  index: 'status'
-               },
+            colNames: ['No. Registrasi', 'No Anggota', 'Nama', 'Majelis', 'Pembiayaan', 'Pembiayaan Ke', 'Peruntukan', 'Tgl Pengajuan', 'Tgl Rencana Cair', 'Jumlah', 'Status','Petugas'],
+            colModel: [
+               {name: 'registration_no',     index: 'registration_no'},
+               {name: 'cif_no',              index: 'cif_no'},
+               {name: 'nama',                index: 'nama'},
+               {name: 'cm_code',             index: 'cm_name'},
+               {name: 'rencana_droping',     index: 'rencana_droping'},
+               {name: 'financing_type',      index: 'financing_type'},
+               {name: 'pembiayaan_ke',       index: 'pembiayaan_ke'},
+               {name: 'peruntukan',          index: 'peruntukan'},
+               {name: 'tanggal_pengajuan',   index: 'tanggal_pengajuan'},
+               {name: 'amount',              index: 'amount',align: 'right'},
+               {name: 'status',              index: 'status'},
+               {name: 'petugas',             index: 'petugas'}
             ],
             shrinkToFit: true,
             pager: "#plist485",

@@ -80,7 +80,7 @@
   	<tr>
       <td class="title" rowspan="2">No.</td>
       <td class="title" colspan="3">Anggota</td>
-      <!-- <th class="title" rowspan="2">Majelis</th> -->
+      /* <!-- <th class="title" rowspan="2">Majelis</th> --> */
       <th class="title" rowspan="2">Produk</th>
       <th class="title" rowspan="2">Sektor</th>
       <th class="title" rowspan="2">Peruntukan</th>
@@ -93,12 +93,13 @@
       <th class="title" rowspan="2">Bayar</th>
       <th class="title" colspan="4">Saldo</th>
       <th class="title" colspan="4">Reschedulle</th>
+      <th class="title" colspan="4">Petugas</th>
     </tr>
     <tr>
       <th class="title">Rekening</th>
       <th class="title">Nama</th>
       <th class="title">No. KTP</th>
-      <!-- <th class="title">Jenis</th> -->
+      <th class="title">Jenis</th>
       <th class="title">Freq</th>
       <th class="title">Pokok</th>
       <th class="title">Margin</th>
@@ -118,7 +119,7 @@
 		$rekening = $data['account_financing_no'];
 		$nama = $data['nama'];
 		$ktp = $data['no_ktp'];
-		// $jenis = "";
+		$jenis = $data['financing_type'];
 		// $majelis = $data['cm_name'];
 		$produk = $data['nick_name'];
 		$sektor = $data['sektor'];
@@ -127,6 +128,8 @@
 		$pokok = $data['pokok'];
 		$margin = $data['margin'];
 		$bayar = $data['freq_bayar_pokok'];
+    $seharusnya = $data['seharusnya']-$data['hari_libur'];
+    if($seharusnya>$jangka_waktu) {$seharusnya=$jangka_waktu;};
 		$saldo = $data['freq_bayar_saldo'];
 		$saldo_pokok = $data['saldo_pokok'];
 		$saldo_margin = $data['saldo_margin'];
@@ -135,6 +138,7 @@
     $kreditur = $data['krd'];
     $tgl_jtempo = $data['tanggal_jtempo'];
     $fl_reschedulle = $data['fl_reschedulle'];
+    $petugas = $data['fa_name'];
 
 		$total_pokok += $pokok;
         $total_margin += $margin;
@@ -142,19 +146,19 @@
         $total_saldo_margin += $saldo_margin;
         $total_saldo_catab += $saldo_catab;
 
-		// if($jenis == '0'){
-		// 	$pembiayaan = 'Kelompok';
-		// } else {
-		// 	$pembiayaan = 'Individu';
-		// }
+		if($jenis == '0'){
+			$pembiayaan = 'Kelompok';
+		} else {
+			$pembiayaan = 'Individu';
+		}
 	?>    
     <tr>
       <td class="konten"><?php echo $no++; ?></td>
       <td class="konten"><?php echo $rekening; ?></td>
       <td class="konten"><?php echo $nama; ?></td>
       <td class="konten"><?php echo $ktp; ?></td>
-      <!-- <td class="konten"><?php echo $pembiayaan; ?></td> -->
-      <!-- <td class="konten"><?php echo $majelis; ?></td> -->
+      <td class="konten"><?php echo $pembiayaan; ?></td>
+      /* <td class="konten"><?php echo $majelis; ?></td> */
       <td class="konten"><?php echo $produk; ?></td>
       <td class="konten"><?php echo $sektor; ?></td>
       <td class="konten"><?php echo $peruntukan; ?></td>
@@ -163,13 +167,14 @@
       <td class="nominal"><?php echo number_format($pokok,0,',','.'); ?></td>
       <td class="nominal"><?php echo number_format($margin,0,',','.'); ?></td>
       <td class="konten"><?php echo $jangka_waktu; ?></td>
-      <td class="konten"><?php echo $tgl_jtempo; ?></td>
       <td class="konten"><?php echo $bayar; ?></td>
       <td class="konten"><?php echo $saldo; ?></td>
       <td class="nominal"><?php echo number_format($saldo_pokok,0,',','.'); ?></td>
       <td class="nominal"><?php echo number_format($saldo_margin,0,',','.'); ?></td>
       <td class="nominal"><?php echo number_format($saldo_catab,0,',','.'); ?></td>
-      <td class="nominal"><?php echo $fl_reschedulle; ?></td>
+      <td class="konten"><?php echo $tgl_jtempo; ?></td>
+      <td class="konten"><?php echo $fl_reschedulle; ?></td>
+      <td class="konten"><?php echo $petugas; ?></td>
     </tr>
     <?php } ?>    
     <tr>

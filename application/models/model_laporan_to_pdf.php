@@ -3354,16 +3354,13 @@ class Model_laporan_to_pdf extends CI_Model
 	public function export_rekap_anggota_keluar_semua_cabang($tanggal, $tanggal2)
 	{
 		$sql = "SELECT
-							mfi_branch.branch_code,
-							mfi_branch.branch_name,
-							Count(mfi_cif_mutasi.cif_no) AS num
-					FROM
-							mfi_cif_mutasi
-							JOIN mfi_cif ON mfi_cif_mutasi.cif_no = mfi_cif.cif_no
-							JOIN mfi_branch ON mfi_branch.branch_code = mfi_cif.branch_code
-					WHERE
-							mfi_cif_mutasi.tipe_mutasi='1' and 
-							mfi_cif_mutasi.tanggal_mutasi BETWEEN ? AND ? ";
+				mfi_branch.branch_code,
+				mfi_branch.branch_name,
+				Count(mfi_cif_mutasi.cif_no) AS num
+				FROM mfi_cif_mutasi
+				JOIN mfi_cif ON mfi_cif_mutasi.cif_no = mfi_cif.cif_no
+				JOIN mfi_branch ON mfi_branch.branch_code = mfi_cif.branch_code
+				WHERE mfi_cif_mutasi.tipe_mutasi='1' and mfi_cif_mutasi.tanggal_mutasi BETWEEN ? AND ? ";
 
 		$param[] = $tanggal;
 		$param[] = $tanggal2;
@@ -3494,6 +3491,105 @@ class Model_laporan_to_pdf extends CI_Model
 	// END REKAP ANGGOTA KELUAR 
 	/****************************************************************************************/
 
+
+
+	/****************************************************************************************/
+	// BEGIN REKAP ANGGOTA MASUK 	
+	/****************************************************************************************/
+
+	//by cabang
+	public function export_rekap_anggota_masuk_by_cabang($branch_code, $tanggal, $tanggal2)
+	{
+		$param = array();
+		$sql = " select 
+					d.branch_code, d.branch_name, 
+					count(a.cif_no) num 
+					from mfi_cif_mutasi  a 
+					left outer join mfi_cif b on a.cif_no=b.cif_no 
+					left outer join mfi_cm c on b.cm_code=c.cm_code 
+					left outer join mfi_branch d on b.branch_code=d.branch_code 
+					where a.tipe_mutasi='1'
+					and a.tanggal_mutasi between ? and ? ";
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		if ($branch_code != "00000") {
+			$sql .= " AND b.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
+			$param[] = $branch_code;
+		}
+		$sql .= " group by 1,2 ";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	//petugas
+	public function export_rekap_anggota_masuk_petugas($branch_code, $tanggal, $tanggal2)
+	{
+		$param = array();
+		$sql = "select 
+			       d.fa_code, d.fa_name,
+				   count(a.cif_no) num 
+				   from mfi_cif_mutasi  a
+				   left outer join mfi_cif b on a.cif_no=b.cif_no 
+				   left outer join mfi_cm c on b.cm_code=c.cm_code 
+				   left outer join mfi_fa d on c.fa_code=d.fa_code 
+				   where a.tipe_mutasi='1'
+				   and a.tanggal_mutasi between ? and ? ";
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		if ($branch_code != "00000") {
+			$sql .= " AND b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
+			$param[] = $branch_code;
+		}
+		$sql .= " group by 1,2 ";
+
+		$query = $this->db->query($sql, $param);
+		return $query->result_array();
+	}
+
+	//kecamatan
+	public function export_rekap_anggota_masuk_kecamatan($branch_code, $tanggal, $tanggal2)
+	{
+		$param = array();
+		$sql = "SELECT 
+					e.kecamatan_code, e.kecamatan, 
+					count(a.cif_no) num 
+					from mfi_cif_mutasi  a 
+					left outer join mfi_cif b on a.cif_no=b.cif_no 
+					left outer join mfi_cm c on b.cm_code=c.cm_code 
+					left outer join mfi_kecamatan_desa d on c.desa_code=d.desa_code 
+					left outer join mfi_city_kecamatan e on d.kecamatan_code=e.kecamatan_code 
+					where a.tipe_mutasi='1' 
+					and a.tanggal_mutasi between ? and ? 
+					";
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+		if ($branch_code != "00000") {
+			$sql .= " AND b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
+			$param[] = $branch_code;
+		}
+		$sql .= " group by 1,2 ";
+
+		$query = $this->db->query($sql, $param);
+		return $query->result_array();
+	}
+
+	/****************************************************************************************/
+	// END REKAP ANGGOTA MASUK
+	/****************************************************************************************/
 
 
 	/****************************************************************************************/
@@ -5356,12 +5452,12 @@ class Model_laporan_to_pdf extends CI_Model
 		mcm.cm_name,
 		mafr.amount,
 		mafr.financing_type,
-		mafr.pembiayaan_ke,
-		mafr.peruntukan,
+		mf.fa_name
 		FROM mfi_account_financing_reg AS mafr
 		JOIN mfi_cif AS mc ON mafr.cif_no = mc.cif_no
 		JOIN mfi_cm AS mcm ON mc.cm_code = mcm.cm_code
 		JOIN mfi_branch AS mb ON mcm.branch_id = mb.branch_id
+		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
 
 		WHERE mafr.tanggal_pengajuan BETWEEN ? AND ? ";
 
@@ -5379,7 +5475,7 @@ class Model_laporan_to_pdf extends CI_Model
 		}
 
 		if ($petugas != '00000') {
-			$sql .= "AND mcm.fa_code = ? ";
+			$sql .= "AND mf.fa_code = ? ";
 			$param[] = $petugas;
 		}
 
@@ -11213,9 +11309,27 @@ class Model_laporan_to_pdf extends CI_Model
 	function export_lap_list_anggota_bulan_lalu($cabang, $petugas, $majelis, $tanggal)
 	{
 		$sql = "SELECT  
-				a.closing_id, a.closing_from_date, a.closing_thru_date, b.branch_code, a.cif_no, b.nama, c.cm_name, h.desa, e.fa_name,  
-				a.saldo_tab_sukarela, a.saldo_tab_wajib, a.saldo_tab_kelompok, 	a.saldo_rr_tab_sukarela, a.saldo_rr_tab_wajib, 	a.saldo_rr_tab_kelompok,  i.setoran_lwk, 
-				sum(k.saldo_memo) saldo_tabber, sum(l.pokok) pokok, sum(l.margin) margin, sum(m.saldo_pokok) saldo_pokok, sum(m.saldo_margin) saldo_margin,  sum(m.saldo_catab) saldo_catab 			 
+				a.closing_id, 
+				a.closing_from_date, 
+				a.closing_thru_date, 
+				b.branch_code, 
+				a.cif_no, 
+				b.nama, 
+				c.cm_name, 
+				h.desa, 
+				e.fa_name,  
+				a.saldo_tab_sukarela, 
+				a.saldo_tab_wajib, 
+				a.saldo_tab_kelompok, 	
+				a.saldo_rr_tab_sukarela, 
+				a.saldo_rr_tab_wajib, 	
+				a.saldo_rr_tab_kelompok,  
+				i.setoran_lwk, 
+				sum(k.saldo_memo) saldo_tabber, 
+				sum(l.pokok) pokok, sum(l.margin) margin, 
+				sum(m.saldo_pokok) saldo_pokok, 
+				sum(m.saldo_margin) saldo_margin,  
+				sum(m.saldo_catab) saldo_catab 			 
 				FROM mfi_closing_balance_data a 															
 				left outer JOIN mfi_cif b on b.cif_no=a.cif_no 															
 				left outer JOIN mfi_account_default_balance i on i.cif_no=a.cif_no 															
@@ -11287,6 +11401,7 @@ class Model_laporan_to_pdf extends CI_Model
 		INNER JOIN mfi_cif AS mc ON mafr.cif_no = mc.cif_no
 		INNER JOIN mfi_cm AS mcm ON mc.cm_code = mcm.cm_code
 		INNER JOIN mfi_branch AS mb ON mcm.branch_id = mb.branch_id
+		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
 
 		WHERE mafr.tanggal_pengajuan between ? AND ?
 		 ";
@@ -11301,7 +11416,7 @@ class Model_laporan_to_pdf extends CI_Model
 		}
 
 		if ($petugas != '00000') {
-			$sql .= "AND mcm.cm_code = ? ";
+			$sql .= "AND mf.fa_code = ? ";
 			$param[] = $petugas;
 		}
 
@@ -11346,11 +11461,13 @@ class Model_laporan_to_pdf extends CI_Model
 		mafr.amount,
 		mafr.financing_type,
 		mafr.pembiayaan_ke,
-		mafr.peruntukan 
+		mafr.peruntukan,
+		mf.fa_name
 		FROM mfi_account_financing_reg AS mafr
 		JOIN mfi_cif AS mc ON mafr.cif_no = mc.cif_no
 		JOIN mfi_cm AS mcm ON mc.cm_code = mcm.cm_code
 		JOIN mfi_branch AS mb ON mcm.branch_id = mb.branch_id
+		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
 
 		WHERE mafr.tanggal_pengajuan BETWEEN ? AND ? ";
 
@@ -11364,7 +11481,7 @@ class Model_laporan_to_pdf extends CI_Model
 		}
 
 		if ($petugas != '00000') {
-			$sql .= "AND mcm.cm_code = ? ";
+			$sql .= "AND mf.fa_code = ? ";
 			$param[] = $petugas;
 		}
 
@@ -13189,7 +13306,7 @@ class Model_laporan_to_pdf extends CI_Model
 
 
 	// List Anggota Masuk
-	function jqgrid_count_anggota_masuk($cabang, $majelis, $tanggal, $tanggal2)
+	function jqgrid_count_anggota_masuk($cabang, $majelis, $tanggal, $tanggal2, $petugas)
 	{
 
 		$sql = "SELECT
@@ -13199,6 +13316,7 @@ class Model_laporan_to_pdf extends CI_Model
 		
 		JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
 		JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
+		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
 		WHERE mc.tgl_gabung BETWEEN ? AND ?  ";
 
 
@@ -13211,6 +13329,11 @@ class Model_laporan_to_pdf extends CI_Model
 			$param[] = $cabang;
 		}
 
+		if ($petugas != '00000') {
+			$sql .= "AND mf.fa_code = ? ";
+			$param[] = $petugas;
+		}
+		
 		if ($majelis != '00000') {
 			$sql .= "AND mcm.cm_code = ?";
 			$param[] = $majelis;
@@ -13257,9 +13380,7 @@ class Model_laporan_to_pdf extends CI_Model
 		return $row['num'];
 	}
 
-
-
-	function jqgrid_list_anggota_masuk($sidx, $sord, $limit_rows, $start, $cabang, $majelis, $tanggal, $tanggal2)
+	function jqgrid_list_anggota_masuk($sidx, $sord, $limit_rows, $start, $cabang, $petugas, $majelis, $tanggal, $tanggal2)
 	{
 		$order = '';
 		$limit = '';
@@ -13277,10 +13398,12 @@ class Model_laporan_to_pdf extends CI_Model
 		mc.tmp_lahir,
 		mc.tgl_lahir,
 		mc.usia,
-		mc.alamat
+		mc.alamat,
+		mf.fa_name
 		FROM mfi_cif AS mc
 		JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
 		JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
+		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
 		WHERE mc.tgl_gabung BETWEEN ? AND ? ";
 
 
@@ -13291,6 +13414,11 @@ class Model_laporan_to_pdf extends CI_Model
 		if ($cabang != '00000') {
 			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $cabang;
+		}
+
+		if ($petugas != '00000') {
+			$sql .= "AND mf.fa_code = ? ";
+			$param[] = $petugas;
 		}
 
 		if ($majelis != '00000') {

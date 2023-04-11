@@ -32,6 +32,48 @@ Class Model_kantor_layanan extends CI_Model {
 		return $query->result_array();
 	}
 
+	function get_all_tahun(){
+		$sql = "SELECT mfi_target_cabang.tahun from mfi_target_cabang";
+		$query = $this->db->query($sql);
+
+		return $query->result_array();
+	}
+	
+	function get_all_target_cabang(){
+		$sql = "SELECT * from mfi_target_cabang";
+		$query = $this->db->query($sql);
+
+		return $query->result_array();
+	}
+	
+	function get_target_item(){
+		$sql = "SELECT mfi_target_cabang.target_item from mfi_target_cabang";
+		$query = $this->db->query($sql);
+
+		return $query->result_array();
+	}
+	
+	function get_all_bulan(){
+		$sql = "SELECT 
+		mfi_target_cabang.t1,
+		mfi_target_cabang.t2,
+		mfi_target_cabang.t3,
+		mfi_target_cabang.t4,
+		mfi_target_cabang.t5,
+		mfi_target_cabang.t6,
+		mfi_target_cabang.t7,
+		mfi_target_cabang.t8,
+		mfi_target_cabang.t9,
+		mfi_target_cabang.t10,
+		mfi_target_cabang.t11,
+		mfi_target_cabang.t12
+		
+		from mfi_target_cabang";
+		$query = $this->db->query($sql);
+
+		return $query->result_array();
+	}
+
     function get_all_status_cabang()
     {
     	$sql = "SELECT code_value, display_text FROM mfi_list_code_detail WHERE code_group = 'status_cabang'";
