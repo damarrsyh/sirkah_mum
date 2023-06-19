@@ -513,8 +513,11 @@ class Laporan_to_pdf extends GMN_Controller
 
             ob_start();
 
+<<<<<<< HEAD
             $datas = '';
 
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
             $config['full_tag_open'] = '<p>';
             $config['full_tag_close'] = '</p>';
@@ -746,9 +749,19 @@ class Laporan_to_pdf extends GMN_Controller
     {
         $branch_code = $this->uri->segment(3);
         $date = $this->uri->segment(4);
+<<<<<<< HEAD
         $kol = $this->uri->segment(5);
         $fa_code = $this->uri->segment(6);
         $kreditur = $this->uri->segment(7);
+=======
+        $desc_date = substr($date, 0, 2) . '/' . substr($date, 2, 2) . '/' . substr($date, 4, 4);
+        $date = substr($date, 4, 4) . '-' . substr($date, 2, 2) . '-' . substr($date, 0, 2);
+        $branch_data = $this->model_cif->get_branch_by_branch_id($branch_id);
+        $branch_code = $branch_data['branch_code'];
+        if ($branch_id == "") {
+            echo "<script>alert('Mohon pilih kantor cabang terlebih dahulu !');javascript:window.close();</script>";
+        } else {
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
         $kol = urldecode($kol);
         $desc_date = substr($date, 0, 2) . '/' . substr($date, 2, 2) . '/' . substr($date, 4, 4);
@@ -769,20 +782,49 @@ class Laporan_to_pdf extends GMN_Controller
         } else {
             ob_start();
 
+<<<<<<< HEAD
             $config['full_tag_open'] = '<p>';
             $config['full_tag_close'] = '</p>';
 
             $data['PAR'] = $this->model_laporan_to_pdf->get_laporan_par_terhitung($date, $branch_code, $kol, $fa_code, $kreditur);
 
             $this->load->view('laporan/export_pdf_list_kolektibilitas', $data);
+=======
+
+            $config['full_tag_open'] = '<p>';
+            $config['full_tag_close'] = '</p>';
+
+            //$data['lap_lr'] = $this->model_laporan_to_pdf->export_lap_lr($cabang);
+            //$data['tanggal']= $tanggal;
+
+            $data['result'] = $datas;
+            if ($branch_id != '0000') {
+                $data['cabang'] = $this->model_laporan_to_pdf->get_cabang($branch_code);
+            } else {
+                $data['cabang'] = "Semua Data";
+            }
+            //$data['report_item'] = $this->model_laporan_to_pdf->getReportItem();
+            $data['date'] = $desc_date;
+            $data['branch_name'] = $branch_data['branch_name'];
+            $data['par'] = $this->model_laporan_to_pdf->get_laporan_par($date);
+
+            $this->load->view('anggota/export_lap_aging', $data);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
             $content = ob_get_clean();
 
             try {
+<<<<<<< HEAD
                 $html2pdf = new HTML2PDF('L', 'A4', 'fr', true, 'UTF-8', 5);
                 $html2pdf->pdf->SetDisplayMode('fullpage');
                 $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
                 $html2pdf->Output('export_list_kolektibilitas_"' . $cabang . '".pdf');
+=======
+                $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
+                $html2pdf->pdf->SetDisplayMode('fullpage');
+                $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+                $html2pdf->Output('Laporan Aging.pdf');
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
             } catch (HTML2PDF_exception $e) {
                 echo $e;
                 exit;
@@ -3206,6 +3248,7 @@ class Laporan_to_pdf extends GMN_Controller
     /****************************************************************************/
 
 
+<<<<<<< HEAD
     function export_rekap_target_realisasi()
     {
         $branch_code  = $this->uri->segment(3);
@@ -3253,6 +3296,8 @@ class Laporan_to_pdf extends GMN_Controller
 
 
 
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
     /****************************************************************************************/
     // START REKAP PELUNASAN
     // Author : Aiman
@@ -3578,6 +3623,10 @@ class Laporan_to_pdf extends GMN_Controller
         } else {
 
             $datas = $this->model_laporan_to_pdf->export_rekap_pelunasan_pembiayaan_petugas($cabang, $tanggal1_, $tanggal2_);
+<<<<<<< HEAD
+=======
+            //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
             ob_start();
 
@@ -4036,6 +4085,192 @@ class Laporan_to_pdf extends GMN_Controller
 
     /****************************************************************************/
     //END LAPORAN REKAP ANGGOTA KELUAR  
+    /****************************************************************************/
+    
+    /****************************************************************************/
+    //BEGIN LAPORAN REKAP ANGGOTA MASUK
+    /****************************************************************************/
+
+    //Rekap anggota_masuk by cabang
+    public function export_rekap_anggota_masuk_cabang()
+    {
+        $tanggal1       = $this->uri->segment(3);
+        $tanggal1__     = substr($tanggal1, 0, 2) . '-' . substr($tanggal1, 2, 2) . '-' . substr($tanggal1, 4, 4);
+        $tanggal1_      = substr($tanggal1, 4, 4) . '-' . substr($tanggal1, 2, 2) . '-' . substr($tanggal1, 0, 2);
+        $tanggal2       = $this->uri->segment(4);
+        $tanggal2__     = substr($tanggal2, 0, 2) . '-' . substr($tanggal2, 2, 2) . '-' . substr($tanggal2, 4, 4);
+        $tanggal2_      = substr($tanggal2, 4, 4) . '-' . substr($tanggal2, 2, 2) . '-' . substr($tanggal2, 0, 2);
+        $cabang         = $this->uri->segment(5);
+        if ($cabang == false) {
+            $cabang = "0000";
+        } else {
+            $cabang =   $cabang;
+        }
+
+        if ($tanggal1 == "") {
+            echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+        } else if ($tanggal2 == "") {
+            echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+        } else {
+
+            $datas = $this->model_laporan_to_pdf->export_rekap_anggota_masuk_by_cabang($cabang, $tanggal1_, $tanggal2_);
+            //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+
+            ob_start();
+
+
+            $config['full_tag_open'] = '<p>';
+            $config['full_tag_close'] = '</p>';
+
+            $data['result'] = $datas;
+
+            $data['result'] = $datas;
+            if ($cabang != '0000') {
+                $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
+            } else {
+                $data['cabang'] = "SEMUA CABANG";
+            }
+            $data['tanggal1_'] = $tanggal1__;
+            $data['tanggal2_'] = $tanggal2__;
+            //$data['report_item'] = $this->model_laporan_to_pdf->getReportItem();
+
+            $this->load->view('laporan/export_rekap_anggota_masuk_by_cabang', $data);
+
+            $content = ob_get_clean();
+
+            try {
+                $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
+                $html2pdf->pdf->SetDisplayMode('fullpage');
+                $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+                $html2pdf->Output('export_rekap_anggota_masuk_by_cabang"' . $tanggal1__ . '_"' . $tanggal1__ . '""_"' . $cabang . '".pdf');
+            } catch (HTML2PDF_exception $e) {
+                echo $e;
+                exit;
+            }
+        }
+    }
+
+    //Rekap anggota_masuk by Petugas
+    public function export_rekap_anggota_masuk_petugas()
+    {
+        $tanggal1       = $this->uri->segment(3);
+        $tanggal1__     = substr($tanggal1, 0, 2) . '-' . substr($tanggal1, 2, 2) . '-' . substr($tanggal1, 4, 4);
+        $tanggal1_      = substr($tanggal1, 4, 4) . '-' . substr($tanggal1, 2, 2) . '-' . substr($tanggal1, 0, 2);
+        $tanggal2       = $this->uri->segment(4);
+        $tanggal2__     = substr($tanggal2, 0, 2) . '-' . substr($tanggal2, 2, 2) . '-' . substr($tanggal2, 4, 4);
+        $tanggal2_      = substr($tanggal2, 4, 4) . '-' . substr($tanggal2, 2, 2) . '-' . substr($tanggal2, 0, 2);
+        $cabang         = $this->uri->segment(5);
+        if ($cabang == false) {
+            $cabang = "0000";
+        } else {
+            $cabang =   $cabang;
+        }
+
+        if ($tanggal1 == "") {
+            echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+        } else if ($tanggal2 == "") {
+            echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+        } else {
+
+            $datas = $this->model_laporan_to_pdf->export_rekap_anggota_masuk_petugas($cabang, $tanggal1_, $tanggal2_);
+            //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+
+            ob_start();
+
+
+            $config['full_tag_open'] = '<p>';
+            $config['full_tag_close'] = '</p>';
+
+            $data['result'] = $datas;
+
+            $data['result'] = $datas;
+            if ($cabang != '0000') {
+                $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
+            } else {
+                $data['cabang'] = "SEMUA CABANG";
+            }
+            $data['tanggal1_'] = $tanggal1__;
+            $data['tanggal2_'] = $tanggal2__;
+            //$data['report_item'] = $this->model_laporan_to_pdf->getReportItem();
+
+            $this->load->view('laporan/export_rekap_anggota_masuk_by_petugas', $data);
+
+            $content = ob_get_clean();
+
+            try {
+                $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
+                $html2pdf->pdf->SetDisplayMode('fullpage');
+                $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+                $html2pdf->Output('export_rekap_anggota_masuk_by_petugas"' . $tanggal1__ . '_"' . $tanggal1__ . '""_"' . $cabang . '".pdf');
+            } catch (HTML2PDF_exception $e) {
+                echo $e;
+                exit;
+            }
+        }
+    }
+
+    //Rekap anggota_masuk by kecamatan
+    public function export_rekap_anggota_masuk_kecamatan()
+    {
+        $tanggal1       = $this->uri->segment(3);
+        $tanggal1__     = substr($tanggal1, 0, 2) . '-' . substr($tanggal1, 2, 2) . '-' . substr($tanggal1, 4, 4);
+        $tanggal1_      = substr($tanggal1, 4, 4) . '-' . substr($tanggal1, 2, 2) . '-' . substr($tanggal1, 0, 2);
+        $tanggal2       = $this->uri->segment(4);
+        $tanggal2__     = substr($tanggal2, 0, 2) . '-' . substr($tanggal2, 2, 2) . '-' . substr($tanggal2, 4, 4);
+        $tanggal2_      = substr($tanggal2, 4, 4) . '-' . substr($tanggal2, 2, 2) . '-' . substr($tanggal2, 0, 2);
+        $cabang         = $this->uri->segment(5);
+        $kecamatan      = $this->uri->segment(6);
+        if ($cabang == false) {
+            $cabang = "0000";
+        } else {
+            $cabang =   $cabang;
+        }
+
+        if ($tanggal1 == "") {
+            echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+        } else if ($tanggal2 == "") {
+            echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+        } else {
+
+            $datas = $this->model_laporan_to_pdf->export_rekap_anggota_masuk_kecamatan($cabang, $tanggal1_, $tanggal2_, $kecamatan);
+            //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+
+            ob_start();
+
+
+            $config['full_tag_open'] = '<p>';
+            $config['full_tag_close'] = '</p>';
+
+            $data['result'] = $datas;
+
+            $data['result'] = $datas;
+            if ($cabang != '0000') {
+                $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
+            } else {
+                $data['cabang'] = "SEMUA CABANG";
+            }
+            $data['tanggal1_'] = $tanggal1__;
+            $data['tanggal2_'] = $tanggal2__;
+            //$data['report_item'] = $this->model_laporan_to_pdf->getReportItem();
+
+            $this->load->view('laporan/export_rekap_anggota_masuk_by_kecamatan', $data);
+
+            $content = ob_get_clean();
+
+            try {
+                $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
+                $html2pdf->pdf->SetDisplayMode('fullpage');
+                $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+                $html2pdf->Output('export_rekap_anggota_masuk_by_kecamatan"' . $tanggal1__ . '_"' . $tanggal1__ . '""_"' . $cabang . '".pdf');
+            } catch (HTML2PDF_exception $e) {
+                echo $e;
+                exit;
+            }
+        }
+    }
+
+    /****************************************************************************/
+    //END LAPORAN REKAP ANGGOTA MASUK 
     /****************************************************************************/
 
 
@@ -4948,7 +5183,15 @@ class Laporan_to_pdf extends GMN_Controller
 
         if ($branch_code == "") {
             echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+<<<<<<< HEAD
         } else {
+=======
+        } /*
+        else if ($cm_code=="")
+        {
+         echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+        }*/ else {
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
             ob_start();
 
@@ -5097,9 +5340,16 @@ class Laporan_to_pdf extends GMN_Controller
     {
         $cabang = $this->uri->segment(3);
         $majelis = $this->uri->segment(4);
+<<<<<<< HEAD
         $from = $this->uri->segment(5);
         $from = $this->datepicker_convert(true, $from, '/');
         $thru = $this->uri->segment(6);
+=======
+        $fa_code = $this->uri->segment(5);
+        $from = $this->uri->segment(6);
+        $from = $this->datepicker_convert(true, $from, '/');
+        $thru = $this->uri->segment(7);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
         $thru = $this->datepicker_convert(true, $thru, '/');
 
         ob_start();
@@ -5107,7 +5357,11 @@ class Laporan_to_pdf extends GMN_Controller
         $config['full_tag_open']    = '<p>';
         $config['full_tag_close']   = '</p>';
 
+<<<<<<< HEAD
         $data['list_anggota_keluar'] = $this->model_laporan->export_list_anggota_masuk($cabang, $majelis, $from, $thru);
+=======
+        $data['list_anggota_masuk'] = $this->model_laporan->export_list_anggota_masuk($cabang, $majelis, $fa_code, $from, $thru);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
         // $data['result']= $datas;
         if ($cabang != '0000') {
@@ -8333,7 +8587,10 @@ class Laporan_to_pdf extends GMN_Controller
         for ($x = 0; $x < count($data_rembug); $x++) {
             $cm_code = $data_rembug[$x]['cm_code'];
             $cm = $data_rembug[$x]['cm_name'];
+<<<<<<< HEAD
             $desa = $data_rembug[$x]['desa'];
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
             $rows = $this->model_transaction->get_trx_rembug_data($cm_code, $tanggal);
             $i = 0;
@@ -8359,24 +8616,39 @@ class Laporan_to_pdf extends GMN_Controller
                             $data['data'][$i]['pokok_pembiayaan'] = ($row['pokok_pembiayaan'] == null) ? 0 : $row['pokok_pembiayaan'];
                             $data['data'][$i]['margin_pembiayaan'] = ($row['margin_pembiayaan'] == null) ? 0 : $row['margin_pembiayaan'];
                             $data['data'][$i]['catab_pembiayaan'] = ($row['catab_pembiayaan'] == null) ? 0 : $row['catab_pembiayaan'];
+<<<<<<< HEAD
                             $data['data'][$i]['tanggal_akad'] = ($row['tanggal_akad'] == null) ? 0 : $row['tanggal_akad'];
                             $data['data'][$i]['tabungan_kelompok'] = ($row['tabungan_kelompok'] == null) ? 0 : $row['tabungan_kelompok'];
                             $data['data'][$i]['jumlah_angsuran'] = ($row['jumlah_angsuran'] == null) ? 0 : $row['jumlah_angsuran'];
                             $data['data'][$i]['pokok'] = '';
                             $data['data'][$i]['droping'] = ($row['droping'] == null) ? 0 : $row['droping'];
+=======
+                            $data['data'][$i]['tabungan_kelompok'] = ($row['tabungan_kelompok'] == null) ? 0 : $row['tabungan_kelompok'];
+                            $data['data'][$i]['jumlah_angsuran'] = ($row['jumlah_angsuran'] == null) ? 0 : $row['jumlah_angsuran'];
+                            $data['data'][$i]['pokok'] = '';
+                            $data['data'][$i]['droping'] = '';
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
                             $data['data'][$i]['angsuran_pokok'] = ($row['angsuran_pokok'] == null) ? 0 : $row['angsuran_pokok'];
                             $data['data'][$i]['angsuran_margin'] = ($row['angsuran_margin'] == null) ? 0 : $row['angsuran_margin'];
                             $data['data'][$i]['angsuran_catab'] = ($row['angsuran_catab'] == null) ? 0 : $row['angsuran_catab'];
                             $data['data'][$i]['angsuran_tab_wajib'] = ($row['angsuran_tab_wajib'] == null) ? 0 : $row['angsuran_tab_wajib'];
                             $data['data'][$i]['angsuran_tab_kelompok'] = ($row['angsuran_tab_kelompok'] == null) ? 0 : $row['angsuran_tab_kelompok'];
                             $data['data'][$i]['adm'] = '';
+<<<<<<< HEAD
                             $data['data'][$i]['asuransi'] = ($row['asuransi'] == null) ? 0 : $row['asuransi'];
+=======
+                            $data['data'][$i]['asuransi'] = '';
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
                             $data['data'][$i]['nick_name'] = ($data_tabungan_berencana[$j]['nick_name'] == null) ? 0 : $data_tabungan_berencana[$j]['nick_name'];
                             $data['data'][$i]['setoran_berencana'] = ($data_tabungan_berencana[$j]['rencana_setoran'] == null) ? 0 : $data_tabungan_berencana[$j]['rencana_setoran'];
                             $data['data'][$i]['taber_saldo_bayar'] = ($data_tabungan_berencana[$j]['rencana_jangka_waktu'] - $data_tabungan_berencana[$j]['counter_angsruan']);
                             $data['data'][$i]['saldo_dtk'] = ($row['saldo_dtk'] == null) ? 0 : $row['saldo_dtk'];
                             $data['data'][$i]['saldo_lwk'] = ($row['saldo_lwk'] == null) ? 0 : $row['saldo_lwk'];
+<<<<<<< HEAD
                             $data['data'][$i]['setoran_mingguan'] = ($row['setoran_mingguan'] == null) ? 0 : $row['setoran_mingguan'] + $row['setoran_lwk'];
+=======
+                            $data['data'][$i]['setoran_mingguan'] = ($row['setoran_mingguan'] == null) ? 0 : $row['setoran_mingguan'];
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
                             $data['data'][$i]['margin'] = ($row['margin'] == null) ? 0 : $row['margin'];
                             $data['data'][$i]['saldo_pokok'] = ($row['saldo_pokok'] == null) ? 0 : $row['saldo_pokok'];
                             $data['data'][$i]['saldo_margin'] = ($row['saldo_margin'] == null) ? 0 : $row['saldo_margin'];
@@ -8448,7 +8720,10 @@ class Laporan_to_pdf extends GMN_Controller
                     $data['data'][$i]['pokok_pembiayaan'] = ($row['pokok_pembiayaan'] == null) ? 0 : $row['pokok_pembiayaan'];
                     $data['data'][$i]['margin_pembiayaan'] = ($row['margin_pembiayaan'] == null) ? 0 : $row['margin_pembiayaan'];
                     $data['data'][$i]['catab_pembiayaan'] = ($row['catab_pembiayaan'] == null) ? 0 : $row['catab_pembiayaan'];
+<<<<<<< HEAD
                     $data['data'][$i]['tanggal_akad'] = ($row['tanggal_akad'] == null) ? 0 : $row['tanggal_akad'];
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
                     $data['data'][$i]['tabungan_kelompok'] = ($row['tabungan_kelompok'] == null) ? 0 : $row['tabungan_kelompok'];
                     $data['data'][$i]['jumlah_angsuran'] = ($row['jumlah_angsuran'] == null) ? 0 : $row['jumlah_angsuran'];
                     $data['data'][$i]['pokok'] = '';
@@ -8465,7 +8740,11 @@ class Laporan_to_pdf extends GMN_Controller
                     $data['data'][$i]['taber_saldo_bayar'] = '';
                     $data['data'][$i]['saldo_dtk'] = ($row['saldo_dtk'] == null) ? 0 : $row['saldo_dtk'];
                     $data['data'][$i]['saldo_lwk'] = ($row['saldo_lwk'] == null) ? 0 : $row['saldo_lwk'];
+<<<<<<< HEAD
                     $data['data'][$i]['setoran_mingguan'] = ($row['setoran_mingguan'] == null) ? 0 : $row['setoran_mingguan'] + $row['setoran_lwk'];
+=======
+                    $data['data'][$i]['setoran_mingguan'] = ($row['setoran_mingguan'] == null) ? 0 : $row['setoran_mingguan'];
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
                     $data['data'][$i]['margin'] = ($row['margin'] == null) ? 0 : $row['margin'];
                     $data['data'][$i]['saldo_pokok'] = ($row['saldo_pokok'] == null) ? 0 : $row['saldo_pokok'];
                     $data['data'][$i]['saldo_margin'] = ($row['saldo_margin'] == null) ? 0 : $row['saldo_margin'];
@@ -8495,7 +8774,11 @@ class Laporan_to_pdf extends GMN_Controller
             $html2pdf = new HTML2PDF('L', array('330', '216'), 'en', true, 'UTF-8', 5);
             $html2pdf->pdf->SetDisplayMode('fullpage');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+<<<<<<< HEAD
             $html2pdf->Output('FORM TRANSAKSI REMBUG.pdf');
+=======
+            $html2pdf->Output('FORMULIR TRANSAKSI REMBUG.pdf');
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
         } catch (HTML2PDF_exception $e) {
             echo $e;
             exit;
@@ -8760,7 +9043,11 @@ class Laporan_to_pdf extends GMN_Controller
             $html2pdf = new HTML2PDF('L', 'A4', 'fr', true, 'UTF-8', 5);
             $html2pdf->pdf->SetDisplayMode('fullpage');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+<<<<<<< HEAD
             $html2pdf->Output('REKAP_ANGSURAN_' . $cabang . '.pdf');
+=======
+            $html2pdf->Output('REKAP ANGSURAN ' . $post_pembiayaan . '.pdf');
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
         } catch (HTML2PDF_exception $e) {
             echo $e;
             exit;
@@ -9956,6 +10243,11 @@ class Laporan_to_pdf extends GMN_Controller
 
         $data['result'] = $datas;
 
+<<<<<<< HEAD
+=======
+        $data['result'] = $datas;
+
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
         if ($cabang != '00000') {
             $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
         } else {
@@ -9978,6 +10270,7 @@ class Laporan_to_pdf extends GMN_Controller
         }
     }
 
+<<<<<<< HEAD
     public function export_rekap_saldo_anggota_rembug_lalu()
     {
         $cabang = $this->uri->segment(3);
@@ -10009,11 +10302,138 @@ class Laporan_to_pdf extends GMN_Controller
 
         $content = ob_get_clean();
 
+=======
+    //Berdasarkan Rembug
+    public function export_rekap_saldo_anggota_rembug1()
+    {
+        $cabang         = $this->uri->segment(3);
+        if ($cabang == false) {
+            $cabang = "00000";
+        } else {
+            $cabang =   $cabang;
+        }
+        // $datas = $this->model_laporan_to_pdf->export_rekap_outstanding_pembiayaan_semua_cabang($cabang,$tanggal1_,$tanggal2_);
+        $datas = $this->model_laporan_to_pdf->export_rekap_saldo_anggota_rembug1($cabang);
+        //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+
+        ob_start();
+
+
+        $config['full_tag_open'] = '<p>';
+        $config['full_tag_close'] = '</p>';
+
+        $data['result'] = $datas;
+
+        $data['result'] = $datas;
+        if ($cabang != '00000') {
+            $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
+        } else {
+            $data['cabang'] = "SEMUA CABANG";
+        }
+
+        $this->load->view('laporan/export_pdf_rekap_saldo_anggota_rembug', $data);
+
+        $content = ob_get_clean();
+
         try {
             $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
             $html2pdf->pdf->SetDisplayMode('fullpage');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+            $html2pdf->Output('REKAP SALDO ANGGOTA BY REMBUG.pdf');
+            // $html2pdf->Output('export_list_jatuh_tempo"'.$tanggal1__.'_"'.$tanggal1__.'""_"'.$cabang.'".pdf');
+        } catch (HTML2PDF_exception $e) {
+            echo $e;
+            exit;
+        }
+        // }
+    }
+
+    public function export_rekap_saldo_anggota_rembug_lalu()
+    {
+        $cabang         = $this->uri->segment(3);
+        if ($cabang == false) {
+            $cabang = "00000";
+        } else {
+            $cabang =   $cabang;
+        }
+        // $datas = $this->model_laporan_to_pdf->export_rekap_outstanding_pembiayaan_semua_cabang($cabang,$tanggal1_,$tanggal2_);
+        $datas = $this->model_laporan_to_pdf->export_rekap_saldo_anggota_rembug_lalu($cabang);
+        //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+
+        ob_start();
+
+
+        $config['full_tag_open'] = '<p>';
+        $config['full_tag_close'] = '</p>';
+
+        $data['result'] = $datas;
+
+        $data['result'] = $datas;
+        if ($cabang != '00000') {
+            $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
+        } else {
+            $data['cabang'] = "SEMUA CABANG";
+        }
+
+        $this->load->view('laporan/export_pdf_rekap_saldo_anggota_rembug', $data);
+
+        $content = ob_get_clean();
+
+        try {
+            $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
+            $html2pdf->pdf->SetDisplayMode('fullpage');
+            $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+            $html2pdf->Output('REKAP SALDO ANGGOTA BY REMBUG.pdf');
+            // $html2pdf->Output('export_list_jatuh_tempo"'.$tanggal1__.'_"'.$tanggal1__.'""_"'.$cabang.'".pdf');
+        } catch (HTML2PDF_exception $e) {
+            echo $e;
+            exit;
+        }
+        // }
+    }
+
+    //Berdasarkan Petugas
+    public function export_rekap_saldo_anggota_petugas1()
+    {
+        $cabang         = $this->uri->segment(3);
+        if ($cabang == false) {
+            $cabang = "00000";
+        } else {
+            $cabang =   $cabang;
+        }
+        // $datas = $this->model_laporan_to_pdf->export_rekap_outstanding_pembiayaan_semua_cabang($cabang,$tanggal1_,$tanggal2_);
+        $datas = $this->model_laporan_to_pdf->export_rekap_saldo_anggota_petugas1($cabang);
+        //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+
+        ob_start();
+
+
+        $config['full_tag_open'] = '<p>';
+        $config['full_tag_close'] = '</p>';
+
+        $data['result'] = $datas;
+
+        $data['result'] = $datas;
+        if ($cabang != '00000') {
+            $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
+        } else {
+            $data['cabang'] = "SEMUA CABANG";
+        }
+
+        $this->load->view('laporan/export_pdf_rekap_saldo_anggota_petugas', $data);
+
+        $content = ob_get_clean();
+
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
+        try {
+            $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
+            $html2pdf->pdf->SetDisplayMode('fullpage');
+            $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+<<<<<<< HEAD
             $html2pdf->Output('REKAP SALDO ANGGOTA BULAN LALU BY REMBUG.pdf');
+=======
+            $html2pdf->Output('REKAP SALDO ANGGOTA BY PETUGAS.pdf');
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
             // $html2pdf->Output('export_list_jatuh_tempo"'.$tanggal1__.'_"'.$tanggal1__.'""_"'.$cabang.'".pdf');
         } catch (HTML2PDF_exception $e) {
             echo $e;
@@ -10024,6 +10444,7 @@ class Laporan_to_pdf extends GMN_Controller
 
     public function export_rekap_saldo_anggota_petugas_lalu()
     {
+<<<<<<< HEAD
         $cabang = $this->uri->segment(3);
         $hari = $this->uri->segment(4);
         $bulan = $this->uri->segment(5);
@@ -10041,14 +10462,40 @@ class Laporan_to_pdf extends GMN_Controller
 
         $data['result'] = $datas;
 
+=======
+        $cabang         = $this->uri->segment(3);
+        if ($cabang == false) {
+            $cabang = "00000";
+        } else {
+            $cabang =   $cabang;
+        }
+        // $datas = $this->model_laporan_to_pdf->export_rekap_outstanding_pembiayaan_semua_cabang($cabang,$tanggal1_,$tanggal2_);
+        $datas = $this->model_laporan_to_pdf->export_rekap_saldo_anggota_petugas_lalu($cabang);
+        //$cabang_ = $this->model_laporan_to_pdf->get_cabang($cabang);
+
+        ob_start();
+
+
+        $config['full_tag_open'] = '<p>';
+        $config['full_tag_close'] = '</p>';
+
+        $data['result'] = $datas;
+
+        $data['result'] = $datas;
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
         if ($cabang != '00000') {
             $data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
         } else {
             $data['cabang'] = "SEMUA CABANG";
         }
+<<<<<<< HEAD
         $data['tanggal'] =  $tanggal;
 
         $this->load->view('laporan/export_pdf_rekap_saldo_anggota_petugas_lalu', $data);
+=======
+
+        $this->load->view('laporan/export_pdf_rekap_saldo_anggota_petugas', $data);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
         $content = ob_get_clean();
 
@@ -10056,7 +10503,11 @@ class Laporan_to_pdf extends GMN_Controller
             $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
             $html2pdf->pdf->SetDisplayMode('fullpage');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+<<<<<<< HEAD
             $html2pdf->Output('REKAP SALDO ANGGOTA BULAN LALU BY PETUGAS.pdf');
+=======
+            $html2pdf->Output('REKAP SALDO ANGGOTA BY PETUGAS.pdf');
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
             // $html2pdf->Output('export_list_jatuh_tempo"'.$tanggal1__.'_"'.$tanggal1__.'""_"'.$cabang.'".pdf');
         } catch (HTML2PDF_exception $e) {
             echo $e;

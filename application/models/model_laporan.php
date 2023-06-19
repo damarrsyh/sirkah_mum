@@ -23,6 +23,7 @@ class Model_laporan extends CI_Model
 		$this->db->query($sql, $param);
 	}
 
+<<<<<<< HEAD
 
 	function fn_insert_realisasi_bln_x($branch_code, $jenistarget, $tahuntarget, $cx)
 	{
@@ -32,6 +33,8 @@ class Model_laporan extends CI_Model
 		$this->db->query($sql, $param);
 	}
 
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	function show_fa_name($fa_code)
 	{
 		$sql = "SELECT fa_name FROM mfi_fa WHERE fa_code = ?";
@@ -2021,7 +2024,11 @@ class Model_laporan extends CI_Model
 
 
 	// BEGIN LIST ANGGOTA MASUK
+<<<<<<< HEAD
 	function export_list_anggota_masuk($cabang, $majelis, $from, $thru)
+=======
+	function export_list_anggota_masuk($cabang, $majelis, $fa_code, $from, $thru)
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	{
 		$sql = "SELECT
 		mc.cif_no,
@@ -2033,10 +2040,12 @@ class Model_laporan extends CI_Model
 		mc.tmp_lahir,
 		mc.tgl_lahir,
 		mc.usia,
-		mc.alamat
+		mc.alamat,
+		mf.fa_name
 		FROM mfi_cif AS mc
 		JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
 		JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
+		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
 		WHERE mc.tgl_gabung BETWEEN ? AND ? ";
 
 		$param = array();
@@ -2045,10 +2054,27 @@ class Model_laporan extends CI_Model
 		$param[] = $thru;
 
 		if ($cabang != '00000') {
+<<<<<<< HEAD
 			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $cabang;
 		}
 
+=======
+			$sql .= "AND mc.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $cabang;
+		}
+
+		if ($fa_code != '00000') {
+			$sql .= "AND mcm.fa_code = ? ";
+			$param[] = $fa_code;
+		}
+
+		if ($fa_code != '00000') {
+			$sql .= "AND mf.fa_code = ? ";	
+			$param[] = $fa_code;
+		}
+
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 		if ($majelis != '00000') {
 			$sql .= "AND mcm.cm_code = ?";
 			$param[] = $majelis;
@@ -2944,6 +2970,7 @@ class Model_laporan extends CI_Model
 		return $query->result_array();
 	}
 
+<<<<<<< HEAD
 	public function get_tahun($branch_code = '')
 	{
 		$param = array();
@@ -2963,6 +2990,8 @@ class Model_laporan extends CI_Model
 		return $query->result_array();
 	}
 
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	function get_tanggal_closing($branch_code)
 	{
 		$sql = "SELECT closing_from_date,closing_thru_date FROM mfi_closing_ledger_data ";
@@ -3046,6 +3075,7 @@ class Model_laporan extends CI_Model
 		return $query->result_array();
 	}
 
+<<<<<<< HEAD
 	function get_item()
 	{
 		$sql = "SELECT display_text as item from mfi_list_code_detail where code_group='targetcabang' ";
@@ -3053,6 +3083,8 @@ class Model_laporan extends CI_Model
 		return $query->result_array();
 	}
 
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	function get_cm_by_fa_code($fa_code)
 	{
 		$param = array();
@@ -3632,7 +3664,11 @@ class Model_laporan extends CI_Model
 
 	function get_branch_by_code($branch_code)
 	{
+<<<<<<< HEAD
 		$sql = "select * from mfi_branch where branch_code=?";
+=======
+		$sql = "select branch_name from mfi_branch where branch_code=?";
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 		$query = $this->db->query($sql, array($branch_code));
 		return $query->row_array();
 	}
@@ -4045,6 +4081,7 @@ class Model_laporan extends CI_Model
 		return $query->result_array();
 	}
 
+<<<<<<< HEAD
 	function get_tahun_target()
 	{
 		$sql = "SELECT tahun from mfi_target_cabang group by 1 order by 1 asc";
@@ -4052,6 +4089,8 @@ class Model_laporan extends CI_Model
 		return $query->result_array();
 	}
 
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	function show_peruntukan($code)
 	{
 		$sql = "SELECT * FROM mfi_list_code_detail

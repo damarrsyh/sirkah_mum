@@ -278,7 +278,7 @@ var gridaja = function(){
 	  	},
 	  	rowNum: 50,
 	  	rowList: [50,100,150,200,250,300,350,400],
-	  	colNames:['Rekening','Nama','KTP','Majelis','Droping','Pokok','Margin','Bayar','Saldo','J Waktu','Saldo Pokok','Saldo Margin','Saldo Catab','Produk','Sektor','Peruntukan','Sumber Dana','Reschedulle', 'Tgl Jatuh Tempo'],
+	  	colNames:['Rekening','Nama','KTP','Majelis','Droping','Pokok','Margin','Bayar','Saldo','J Waktu','Saldo Pokok','Saldo Margin','Saldo Catab','Produk','Sektor','Peruntukan','Sumber Dana','Reschedulle', 'Tgl Jatuh Tempo','Petugas'],
 	  	colModel:[
 			{name:'account_financing_no',index:'account_financing_no'},
 		  	{name:'nama',index:'nama'},
@@ -298,7 +298,8 @@ var gridaja = function(){
 		  	{name:'peruntukan',index:'peruntukan',align:"center"},
         {name:'kreditur',index:'kreditur',align:"center"},
         {name:'fl_reschedulle',index:'fl_reschedulle',align:"center"},
-        {name:'tanggal_jtempo',index:'tanggal_jtempo',align:"center"}
+        {name:'tanggal_jtempo',index:'tanggal_jtempo',align:"center"},
+        {name:'petugas',index:'petugas',align:"center"},
 	  	],
 	  	shrinkToFit: true,
 	  	pager: '#plist485',

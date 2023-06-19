@@ -160,8 +160,14 @@ class Laporan_to_csv extends GMN_Controller
             $nama = $result['nama'];
             $cm_name = $result['cm_name'];
             $financing = $result['financing_type'];
+<<<<<<< HEAD
             $amount = $result['amount'];
             $stat = $result['status'];
+=======
+        	$amount = $result['amount'];
+        	$stat = $result['status'];
+            $petugas = $result['fa_name'];
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
             if ($stat == 0) {
                 $status = 'Registrasi';
@@ -185,10 +191,18 @@ class Laporan_to_csv extends GMN_Controller
                 'Nama' => $nama,
                 'Majelis' => $cm_name,
                 'pembiayaan' => $jenis,
+<<<<<<< HEAD
                 'Tanggal Registrasi' => $tanggal_pengajuan,
                 'Rencana Cair' => $rencana_droping,
                 'Jumlah Pengajuan' => $amount,
                 'Status' => $status
+=======
+            	'Tanggal Registrasi' => $tanggal_pengajuan,
+            	'Rencana Cair' => $rencana_droping,
+            	'Jumlah Pengajuan' => $amount,
+                'Status' => $status,
+                'Petugas'           => $petugas
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
             );
         }
 
@@ -1215,6 +1229,7 @@ class Laporan_to_csv extends GMN_Controller
                 $kreditur = $result['krd'];
                 $tgl_jtempo = $result['tanggal_jtempo'];
                 $reschedulle = $result['fl_reschedulle'];
+                $petugas = $result['fa_name'];
 
                 if ($jenis == '0') {
                     $pembiayaan = 'Kelompok';
@@ -1223,6 +1238,7 @@ class Laporan_to_csv extends GMN_Controller
                 }
 
                 $arr_csv[] = array(
+<<<<<<< HEAD
                     'No'                 => ($i + 1),
                     'Rekening'          => "'" . $rekening,
                     'Nama'              => $nama,
@@ -1245,6 +1261,31 @@ class Laporan_to_csv extends GMN_Controller
                     'Saldo Margin'      => $saldo_margin,
                     'Saldo catab'       => $saldo_catab,
                     'Re-schedulle'      => $reschedulle
+=======
+                'No'                 => ($i + 1),
+                'Rekening'          => "'".$rekening,
+                'Nama'              => $nama,
+                'No. KTP'           => "'".$ktp,
+                'Jenis'             => $pembiayaan,
+                'Majelis'           => $majelis,
+                'Produk'            => $produk,
+                'Sektor'            => $sektor,
+                'Peruntukan'        => $peruntukan,
+                'Sumber Dana'       => $kreditur,
+                'Droping'           => $droping,
+                'Pokok'             => $pokok,
+                'Margin'            => $margin,
+                'Jangka Waktu'      => $jangka_waktu,
+                'T. Jatuh Tempo'    => $tgl_jtempo,
+                'Freq Bayar'        => $bayar, 
+                'Freq Seharusnya'   => $seharusnya, 
+                'Freq Sisa'         => $saldo,
+                'Saldo Pokok'       => $saldo_pokok,
+                'Saldo Margin'      => $saldo_margin,
+                'Saldo catab'       => $saldo_catab,
+                'Re-schedulle'      => $reschedulle,
+                'Petugas'           => $petugas
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
                 );
             }
         } else if ($cif_type == 1) {
@@ -1272,6 +1313,7 @@ class Laporan_to_csv extends GMN_Controller
                 $jangka_waktu = $result['jangka_waktu'];
                 $tgl_jtempo = $result['tanggal_jtempo'];
                 $reschedulle = $result['fl_reschedulle'];
+                $petugas = $result['fa_name'];
 
                 if ($jenis == '0') {
                     $pembiayaan = 'Kelompok';
@@ -1280,6 +1322,7 @@ class Laporan_to_csv extends GMN_Controller
                 }
 
                 $arr_csv[] = array(
+<<<<<<< HEAD
                     'No' => ($i + 1),
                     'Rekening' => "'" . $rekening,
                     'Nama' => $nama,
@@ -1301,6 +1344,30 @@ class Laporan_to_csv extends GMN_Controller
                     'Saldo Margin' => $saldo_margin,
                     'Saldo Catab' => $saldo_catab,
                     'Re-schedulle' => $reschedulle
+=======
+                'No' => ($i + 1),
+                'Rekening' => "'".$rekening,
+                'Nama' => $nama,
+                'No. KTP' => "'".$ktp,
+                // 'Jenis' => $pembiayaan,
+                // 'Majelis' => $majelis,
+                'Produk' => $produk,
+                'Sektor' => $sektor,
+                'Peruntukan' => $peruntukan,
+                'Sumber Dana' => $kreditur,
+                'Droping' => $droping,
+                'Pokok' => $pokok,
+                'Margin' => $margin,
+                'Jangka Waktu' => $jangka_waktu,
+                'T. Jatuh Tempo' => $tgl_jtempo,
+                'Bayar' => $bayar,
+                'Freq' => $saldo,
+                'Saldo Pokok' => $saldo_pokok,
+                'Saldo Margin' => $saldo_margin,
+                'Saldo Catab' => $saldo_catab,
+                'Re-schedulle' => $reschedulle,
+                'Petugas' => $petugas
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
                 );
             }
         }
@@ -1375,6 +1442,7 @@ class Laporan_to_csv extends GMN_Controller
             $saldo_catab = $result['saldo_catab'];
             $fl_reschedulle = $result['fl_reschedulle'];
             $tanggal_jtempo = $result['tanggal_jtempo'];
+            $petugas = $result['fa_name'];
 
             if ($jenis == '0') {
                 $pembiayaan = 'Kelompok';
@@ -1404,7 +1472,8 @@ class Laporan_to_csv extends GMN_Controller
                 'Saldo Margin' => $saldo_margin,
                 'Saldo Catab' => $saldo_catab,
                 'Reschedulle' => $fl_reschedulle,
-                'Jatuh Tempo' => $tanggal_jtempo
+                'Jatuh Tempo' => $tanggal_jtempo,
+                'Petugas' => $petugas
             );
         }
 
@@ -2604,10 +2673,17 @@ class Laporan_to_csv extends GMN_Controller
     {
         $cabang = $this->uri->segment(3);
         $majelis = $this->uri->segment(4);
+        $fa_code = $this->uri->segment(4);
         $from = $this->uri->segment(5);
         $from = $this->datepicker_convert(true, $from, '/');
         $thru = $this->uri->segment(6);
+<<<<<<< HEAD
         $thru = $this->datepicker_convert(true, $thru, '/');
+=======
+        $thru = $this->datepicker_convert(true,$thru,'/');
+      
+        $datas = $this->model_laporan->export_list_anggota_masuk($cabang,$majelis,$fa_code,$from,$thru);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
         $datas = $this->model_laporan->export_list_anggota_masuk($cabang, $majelis, $from, $thru);
 
@@ -2625,24 +2701,26 @@ class Laporan_to_csv extends GMN_Controller
             $nama                        = $result['nama'];
             $cm_name                     = $result['cm_name'];
             $tgl_gabung                  = $result['tgl_gabung'];
-            $ibu_kandung              = $result['ibu_kandung'];
-            $tmp_lahir          = $result['tmp_lahir'];
-            $tgl_lahir           = $result['tgl_lahir'];
-            $usia                  = $result['usia'];
+            $ibu_kandung                 = $result['ibu_kandung'];
+            $tmp_lahir                   = $result['tmp_lahir'];
+            $tgl_lahir                   = $result['tgl_lahir'];
+            $usia                        = $result['usia'];
             $alamat                      = $result['alamat'];
+            $fa_code                     = $result['fa_name'];
 
             $arr_csv[] = array(
                 'No'                      => ($i + 1),
                 'ID'                      => "'" . $cif_no,
                 'Nama'                    => $nama,
-                'Majelis'            => $cm_name,
+                'Majelis'                 => $cm_name,
                 'Tanggal Gabung'          => $tgl_gabung,
-                'Jenis Kelamin'          => 'Perempuan',
-                'Ibu Kandung'                  => $ibu_kandung,
-                'Tempat Lahir'        => $tmp_lahir,
-                'Tanggal Lahir'                  => $tgl_lahir,
-                'usia'           => $usia,
-                'Alamat'       => $alamat
+                'Jenis Kelamin'           => 'Perempuan',
+                'Ibu Kandung'             => $ibu_kandung,
+                'Tempat Lahir'            => $tmp_lahir,
+                'Tanggal Lahir'           => $tgl_lahir,
+                'usia'                    => $usia,
+                'Alamat'                  => $alamat,
+                'Petugas'                 => $fa_code 
             );
         }
 
@@ -2999,32 +3077,32 @@ class Laporan_to_csv extends GMN_Controller
             $result = $datas[$i];
 
             $cif_no = $result['cif_no'];
-            $nama = $result['nama'];
-            $rembug = $result['cm_name'];
-            $desa = $result['desa'];
-            $pokok = $result['pokok'];
-            $margin = $result['margin'];
-            $lwk = $result['setoran_lwk'];
-            $saldo_pokok = $result['saldo_pokok'];
-            $saldo_margin = $result['saldo_margin'];
+            $nama               = $result['nama'];
+            $rembug             = $result['cm_name'];
+            $desa               = $result['desa'];
+            $lwk                = $result['setoran_lwk'];
+            $saldo_pokok        = $result['saldo_pokok'];
+            $saldo_margin       = $result['saldo_margin'];
             $saldo_tab_sukarela = $result['saldo_tab_sukarela'];
-            $saldo_tab_wajib = $result['saldo_tab_wajib'];
+            $pokok              = $result['pokok'];
+            $margin             = $result['margin'];
+            $saldo_tab_wajib    = $result['saldo_tab_wajib'];
             $saldo_tab_kelompok = $result['saldo_tab_kelompok'];
-            $saldo_catab = $result['saldo_catab'];
-            $saldo_tabber = $result['saldo_tabber'];
-
+            $saldo_catab        = $result['saldo_catab'];
+            $saldo_tabber       = $result['saldo_tabber'];
+            
             $arr_csv[] = array(
                 'No' => ($i + 1),
                 'Cif No' => "'" . $cif_no,
                 'Nama' => $nama,
                 'Majelis' => $rembug,
                 'Desa' => $desa,
-                'Pembiayaan pokok' => $pokok,
-                'Pembiayaan Margin' => $margin,
                 'Lwk' => $lwk,
                 'Saldo Simpanan Wajib' => $saldo_tab_wajib,
                 'Saldo Simpanan Kelompok' => $saldo_tab_kelompok,
                 'Saldo Simpanan Sukarela' => $saldo_tab_sukarela,
+                'Pembiayaan pokok' => $pokok,
+                'Pembiayaan Margin' => $margin,
                 'Saldo Pokok' => $saldo_pokok,
                 'Saldo Margin' => $saldo_margin,
                 'Saldo Catab' => $saldo_catab,

@@ -44,6 +44,7 @@
    <div class="portlet-body">
       <div class="clearfix">
             <!-- BEGIN FILTER-->
+<<<<<<< HEAD
           <table id="sorting_saldo">
           
             <tr id="r_cabang">
@@ -134,6 +135,96 @@
 
           </table>
           <p><hr></p>
+=======
+              <table id="sorting_saldo">
+              
+                <tr id="r_cabang">
+                  <td width="100">Cabang</td>
+                  <td>
+                          <input type="text" name="branch_name" id="branch_name" data-required="1" class="medium m-wrap" style="background-color:#eee;" value="<?php echo $this->session->userdata('branch_name') ?>" />
+                          <input type="hidden" id="cabang" name="cabang" value="<?php echo $this->session->userdata('branch_code') ?>">
+                          <?php if($this->session->userdata('flag_all_branch')=='1'){ ?>
+                            <a id="browse_rembug" class="btn blue" data-toggle="modal" href="#dialog_rembug">...</a>
+                          <?php } ?>
+                      
+                          <div id="dialog_rembug" class="modal hide fade" tabindex="-1" data-width="500" style="margin-top:-200px;">
+                             <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                <h3>Cari Kantor Cabang</h3>
+                             </div>
+                             <div class="modal-body">
+                                <div class="row-fluid">
+                                   <div class="span12">
+                                      <h4>Masukan Kata Kunci</h4>
+                                      <p><input type="text" name="keyword" id="keyword" placeholder="Search..." class="span12 m-wrap"></p> 
+                                      <p><select name="result" id="result" size="7" class="span12 m-wrap"></select></p>
+                                   </div>
+                                </div>
+                             </div>
+                             <div class="modal-footer">
+                                <button type="button" id="close" data-dismiss="modal" class="btn">Close</button>
+                                <button type="button" id="select_cabang" class="btn blue">Select</button>
+                             </div>
+                          </div>               
+
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+        
+        <tr>
+                    <td style="padding-bottom:10px;" width="100">Filter By</td>
+                    <td>
+
+                      <select name="filter" id="filter" style="width:200px;">
+                        <option value="">Pilih</option>
+                        <option value="0">Cabang</option>
+                        <option value="1">Kecamatan</option>
+                        <option value="2">Petugas</option>
+                      </select>
+                    </td>
+                 </tr>
+				
+				 <tr id="kecamatan" style="display:none;">
+                    <td style="padding-bottom:10px;" width="100">Kecamatan</td>
+                    <td>
+                      <select name="kecamatan_code" id="kecamatan_code" class="chosen" style="width:300px;">
+                        <option value="all">ALL</option>
+                        <?php foreach($kecamatan as $kec): ?>
+                          <option value="<?php echo $kec['kecamatan_code'] ?>"><?php echo $kec['kecamatan'] ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </td>
+                 </tr>
+				
+                <tr>
+                  <td width="100" valign="top">Tanggal</td>
+                  <td valign="top">
+                    <input type="text" name="tanggal" id="tanggal" tabindex="2" value="<?php echo $current_date; ?>" placeholder="dd/mm/yyyy" class="mask_date date-picker" maxlength="10" style="width:90px;padding:4px;margin-top:5px;margin-bottom:5px;box-shadow:0 0 0;">
+                    sd
+                    <input type="text" name="tanggal2" id="tanggal2" tabindex="2" value="<?php echo $current_date; ?>" placeholder="dd/mm/yyyy" class="mask_date date-picker" maxlength="10" style="width:90px;padding:4px;margin-top:5px;margin-bottom:5px;box-shadow:0 0 0;">
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                     <button class="green btn" id="previewpdf">Preview</button>
+                     <button class="green btn" id="previewxls">Preview Excel</button>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </table>
+            <p><hr></p>
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
           <!-- END FILTER-->
       </div>
    </div>
@@ -252,6 +343,7 @@ $('#filter').change(function(){
                 window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_anggota_masuk_cabang/'+tanggal+'/'+tanggal2+'/'+cabang);
               } 
           } 
+<<<<<<< HEAD
 		      else if (filter=='1') 
           {
             window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_anggota_masuk_kecamatan/'+tanggal+'/'+tanggal2+'/'+cabang+'/'+kecamatan);
@@ -264,6 +356,16 @@ $('#filter').change(function(){
           ///{
             ///window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_anggota_keluar_alasan/'+tanggal+'/'+tanggal2+'/'+cabang);
           ///}          
+=======
+		  else if (filter=='1') 
+          {
+            window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_anggota_masuk_kecamatan/'+tanggal+'/'+tanggal2+'/'+cabang+'/'+kecamatan);
+          }
+		  else if (filter=='2') 
+          {
+            window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_anggota_masuk_petugas/'+tanggal+'/'+tanggal2+'/'+cabang);
+          }                
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
           else
           {
             alert("Parameter Kosong");
@@ -285,15 +387,24 @@ $('#filter').change(function(){
           {            
               if(cabang=='0000' || cabang=='') 
               {            
+<<<<<<< HEAD
                 window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_keluar_semua_cabang/'+tanggal+'/'+tanggal2+'/'+cabang);
               }        
               else
               {            
                 window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_keluar_semua_cabang/'+tanggal+'/'+tanggal2+'/'+cabang);
+=======
+                window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_masuk_semua_cabang/'+tanggal+'/'+tanggal2+'/'+cabang);
+              }        
+              else
+              {            
+                window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_masuk_cabang/'+tanggal+'/'+tanggal2+'/'+cabang);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
               } 
           } 
           else if (filter=='1') 
           {
+<<<<<<< HEAD
             window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_keluar_kecamatan/'+tanggal+'/'+tanggal2+'/'+cabang);
           }
           else if (filter=='2') 
@@ -304,6 +415,14 @@ $('#filter').change(function(){
           ///{
           ///  window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_keluar_alasan/'+tanggal+'/'+tanggal2+'/'+cabang);
           ///}
+=======
+            window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_masuk_kecamatan/'+tanggal+'/'+tanggal2+'/'+cabang);
+          }
+          else if (filter=='2') 
+          {
+            window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_anggota_masuk_petugas/'+tanggal+'/'+tanggal2+'/'+cabang);
+          }
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
           else
           {
             alert("Parameter Kosong");

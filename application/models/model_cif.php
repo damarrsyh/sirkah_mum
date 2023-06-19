@@ -202,6 +202,8 @@ Class Model_cif extends CI_Model {
 		$this->db->delete('mfi_cif',$param);
 	}
 
+	// [BEGIN] BRANCH SETUP REMBUG	
+
 	/********************************************************************************************/
 
 	
@@ -225,6 +227,7 @@ Class Model_cif extends CI_Model {
 		return $query->result_array();
 	}
 
+<<<<<<< HEAD
 	public function add_target_cabang($data)
 	{
 		$this->db->insert('mfi_target_cabang',$data);
@@ -269,6 +272,8 @@ Class Model_cif extends CI_Model {
 		return $query->result_array();
 	}
 
+=======
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	public function add_rembug($data)
 	{
 		$this->db->insert('mfi_cm',$data);
@@ -316,8 +321,13 @@ Class Model_cif extends CI_Model {
 
 		return $query->row_array();
 	}
+<<<<<<< HEAD
 
 	public function edit_rembug($data,$param)
+=======
+	
+	public function edit_rembug($data, $param)
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	{
 		$this->db->update('mfi_cm',$data,$param);
 	}
@@ -333,11 +343,16 @@ Class Model_cif extends CI_Model {
 	public function get_gl_account_by_account_code($account_code)
 	{
 		$sql = 'select * from mfi_gl_account where account_code = ?';
+<<<<<<< HEAD
 		$query = $this->db->query($sql,array($account_code));
 
+=======
+		$query = $this->db->query($sql, array($account_code));
+		
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 		return $query->row_array();
 	}
-
+	
 	public function get_ajax_branch_code_($branch_id)
 	{
 		$sql = "select max(right(cm_code,4)) AS jumlah from mfi_cm where branch_id = ?";
@@ -346,19 +361,122 @@ Class Model_cif extends CI_Model {
 		return $query->row_array();
 	}
 
+	
 	public function get_ajax_sequenc_fa($branch_code)
 	{
 		$sql = "select max(right(fa_code,4)) AS max from mfi_fa where left(branch_code,5) = ?";
+<<<<<<< HEAD
 		$query = $this->db->query($sql,array($branch_code));
+=======
+		$query = $this->db->query($sql, array($branch_code));
+		
+		return $query->row_array();
+	}
+	
+	/********************************************************************************************/
+	
+	/********************************************************************************************/
+	
+	
+	// [BEGIN] BRANCH SETUP TARGET CABANG
+	
+	/********************************************************************************************/
+	
+	public function datatable_target_cabang($sWhere = '', $sOrder = '', $sLimit = '')
+	{
+		$sql = "SELECT 
+		mtc.target_id,
+		mtc.tahun,
+		mtc.target_item,
+		mtc.t1,
+		mtc.t2,
+		mtc.t3,
+		mtc.t4,
+		mtc.t5,
+		mtc.t6,
+		mtc.t7,
+		mtc.t8,
+		mtc.t9,
+		mtc.t10,
+		mtc.t11,
+		mtc.t12
+		
+		FROM mfi_target_cabang AS mtc ";
+
+	if ($sWhere != "")
+	$sql .= "$sWhere ";
+
+	if ($sOrder != "")
+	$sql .= "$sOrder ";
+
+	if ($sLimit != "")
+	$sql .= "$sLimit ";
+	
+	$query = $this->db->query($sql);
+	
+	return $query->result_array();
+	}
+
+	public function add_target_cabang($data)
+	{
+		$this->db->insert('mfi_target_cabang', $data);
+	}
+
+	public function get_data_by_target_id($target_id)
+	{
+		$sql = "SELECT
+				mtc.target_id,
+				mtc.tahun,
+				mtc.item_target,
+				mtc.t1,
+				mtc.t2,
+				mtc.t3,
+				mtc.t4,
+				mtc.t5,
+				mtc.t6,
+				mtc.t7,
+				mtc.t8,
+				mtc.t9,
+				mtc.t10,
+				mtc.t11,
+				mtc.t12
+				FROM
+				mfi_target_cabang AS mtc 
+				WHERE target_id = ?";
+		$query = $this->db->query($sql, array($target_id));
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
 		return $query->row_array();
 	}
 
-	/********************************************************************************************/
+	
+	public function delete_target_cabang($param)
+	{
+		$this->db->delete('mfi_target_cabang', $param);
+	}
 
+
+	public function get_ajax_branch_name_($branch_id)
+	{
+		$sql = "select AS jumlah from mfi_target_cabang where branch_id = ?";
+		$query = $this->db->query($sql, array($branch_id));
+	
+		return $query->row_array();
+	}
+	
+	/********************************************************************************************/
+	
+	/********************************************************************************************/
+	
 	// [BEGIN] BRANCH SETUP KANTOR CABANG
+<<<<<<< HEAD
 
 	function datatable_kantor_cabang_setup($sWhere,$sOrder,$sLimit){
+=======
+	
+	function datatable_kantor_cabang_setup($sWhere, $sOrder, $sLimit)
+	{
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 		$sql = "SELECT
 		mb.branch_id,
 		mb.branch_name,
@@ -375,9 +493,15 @@ Class Model_cif extends CI_Model {
 		FROM mfi_branch AS mb
 		JOIN mfi_list_code_detail AS mlcd ON mb.branch_officer_title = mlcd.code_value::INTEGER
 		WHERE mlcd.code_group = 'jabatan' ";
+<<<<<<< HEAD
 		
 		if($sWhere != ''){
 			$sql .= $sWhere.' ';
+=======
+
+if ($sWhere != '') {
+	$sql .= $sWhere . ' ';
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 		}
 
 		if($sOrder != ''){
@@ -612,6 +736,7 @@ Class Model_cif extends CI_Model {
 
 	function get_all_branch_()
 	{
+<<<<<<< HEAD
 	    $sql = "SELECT 
 					     branch_id
 					    ,branch_code
@@ -623,6 +748,14 @@ Class Model_cif extends CI_Model {
     
 		    return $query->result_array();
 	}
+=======
+		$sql = "SELECT 
+		branch_id
+		,branch_code
+		,branch_name
+		FROM 
+		mfi_branch";
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
 	public function edit_petugas($data,$param)
 	{
@@ -1226,6 +1359,28 @@ Class Model_cif extends CI_Model {
 		return $query->result_array();
 	}
 
+	public function get_bulan()
+	{
+		$sql = "SELECT
+					 mfi_target_cabang.t1,
+					 mfi_target_cabang.t2,
+					 mfi_target_cabang.t3,
+					 mfi_target_cabang.t4,
+					 mfi_target_cabang.t5,
+					 mfi_target_cabang.t6,
+					 mfi_target_cabang.t7,
+					 mfi_target_cabang.t8,
+					 mfi_target_cabang.t9,
+					 mfi_target_cabang.t10,
+					 mfi_target_cabang.t11,
+					 mfi_target_cabang.t12
+				FROM
+					 mfi_target_cabangf
+				";
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
 	public function edit_desa($data, $param)
 	{
 		$this->db->update('mfi_kecamatan_desa', $data, $param);
@@ -1728,7 +1883,20 @@ Class Model_cif extends CI_Model {
 		return $row['branch_id'];
 	}
 
+<<<<<<< HEAD
 	public function get_desa_by_keyword($keyword,$kecamatan)
+=======
+	public function get_branch_id_by_branch_name($branch_name)
+	{
+		$sql = "select branch_id from mfi_branch where branch_name = ?";
+		$query = $this->db->query($sql, array($branch_name));
+
+		$row = $query->row_array();
+		return $row['branch_id'];
+	}
+
+	public function get_desa_by_keyword($keyword, $kecamatan)
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 	{
 		$sql = "select
 				mfi_kecamatan_desa.desa_code,

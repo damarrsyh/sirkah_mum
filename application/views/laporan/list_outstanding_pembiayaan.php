@@ -300,7 +300,7 @@ var gridaja = function(){
 	  	},
 	  	rowNum: 50,
 	  	rowList: [50,100,150,200,250,300,350,400],
-	  	colNames:['Rekening','Nama','KTP','Majelis','Droping','Pokok','Margin','Bayar','Saldo','Saldo Pokok','Saldo Margin','Produk','Sektor','Peruntukan','Sumber Dana','Reschedulle'],
+	  	colNames:['Rekening','Nama','KTP','Majelis','Droping','Pokok','Margin','Bayar','Saldo','Saldo Pokok','Saldo Margin','Produk','Sektor','Peruntukan','Sumber Dana','Reschedulle','Petugas'],
 	  	colModel:[
 			{name:'account_financing_no',index:'account_financing_no'},
 		  	{name:'nama',index:'nama'},
@@ -317,7 +317,8 @@ var gridaja = function(){
 		  	{name:'sektor',index:'sektor',align:"center"},
 		  	{name:'peruntukan',index:'peruntukan',align:"center"},
         {name:'kreditur',index:'kreditur',align:"center"},
-        {name:'fl_reschedulle',index:'fl_reschedulle',align:"center"}
+        {name:'fl_reschedulle',index:'fl_reschedulle',align:"center"},
+        {name:'petugas',index:'petugas',align:"center"}
 	  	],
 	  	shrinkToFit: true,
 	  	pager: '#plist485',
@@ -336,7 +337,7 @@ var gridajaha = function(){
     height: 'auto',
     autowidth: true,
     postData: {
-      fa_code : function(){return $('#fa_code').val()},
+        fa_code : function(){return $('#fa_code').val()},
         cm_code : function(){return $('#cm_code').val()},
         branch_code : function(){return $('#branch_code').val()},
         cif_type : function(){return $('#cif_type').val()},
@@ -348,7 +349,7 @@ var gridajaha = function(){
       },
       rowNum: 50,
       rowList: [50,100,150,200,250,300,350,400],
-      colNames:['Rekening','Nama','KTP','Droping','Pokok','Margin','Bayar','Saldo','Saldo Pokok','Saldo Margin','Produk','Sektor','Peruntukan','Kreditur','Reschedulle'],
+      colNames:['Rekening','Nama','KTP','Droping','Pokok','Margin','Bayar','Saldo','Saldo Pokok','Saldo Margin','Produk','Sektor','Peruntukan','Kreditur','Reschedulle','Petugas'],
       colModel:[
       {name:'account_financing_no',index:'account_financing_no'},
         {name:'nama',index:'nama'},
@@ -365,7 +366,8 @@ var gridajaha = function(){
         {name:'sektor',index:'sektor',align:"center"},
         {name:'peruntukan',index:'peruntukan',align:"center"},
         {name:'kreditur',index:'kreditur',align:"center"},
-        {name:'fl_reschedulle',index:'fl_reschedulle',align:"center"}
+        {name:'fl_reschedulle',index:'fl_reschedulle',align:"center"},
+        {name:'petugas',index:'petugas',align:"center"}
       ],
       shrinkToFit: true,
       pager: '#plist4856',

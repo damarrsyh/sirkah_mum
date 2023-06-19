@@ -136,7 +136,11 @@
         <?php echo $cabang;?>
         </div>
         <div style="text-align:center;padding-top:10px;font-family:Arial;font-size:18px;">
+<<<<<<< HEAD
         Rekap Anggota Masuk Berdasarkan Kecamatan
+=======
+        Rekap Anggota Keluar Berdasarkan Kecamatan
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
         </div>
         <div style="text-align:left;padding-top:20px;font-family:Arial;font-size:13px;">
         Tanggal : <?php echo $tanggal1_;?> s/d <?php echo $tanggal2_;?>

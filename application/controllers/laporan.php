@@ -1568,13 +1568,14 @@ class Laporan extends GMN_Controller
 				$peruntukans = $row['peruntukan'];
 				$kreditur = $row['krd'];
 				$fl_reschedulle = $row['fl_reschedulle'];
+				$petugas = $row['fa_name'];
 
 				if ($bayar == NULL) {
 					$bayar = '0';
 				}
 
 				$responce['rows'][$i]['account_financing_no'] = $rekening;
-				$responce['rows'][$i]['cell'] = array($rekening, $nama, $ktp, $droping, $pokok, $margin, $bayar, $saldo, $saldo_pokok, $saldo_margin, $produk, $sektors, $peruntukans, $kreditur, $fl_reschedulle);
+				$responce['rows'][$i]['cell'] = array($rekening, $nama, $ktp, $droping, $pokok, $margin, $bayar, $saldo, $saldo_pokok, $saldo_margin, $produk, $sektors, $peruntukans, $kreditur, $fl_reschedulle, $petugas);
 
 				$i++;
 			} else {
@@ -1594,13 +1595,14 @@ class Laporan extends GMN_Controller
 				$peruntukans = $row['peruntukan'];
 				$kreditur = $row['krd'];
 				$fl_reschedulle = $row['fl_reschedulle'];
+				$petugas = $row['fa_name'];
 
 				if ($bayar == NULL) {
 					$bayar = '0';
 				}
 
 				$responce['rows'][$i]['account_financing_no'] = $rekening;
-				$responce['rows'][$i]['cell'] = array($rekening, $nama, $ktp, $rembug, $droping, $pokok, $margin, $bayar, $saldo, $saldo_pokok, $saldo_margin, $produk, $sektors, $peruntukans, $kreditur, $fl_reschedulle);
+				$responce['rows'][$i]['cell'] = array($rekening, $nama, $ktp, $rembug, $droping, $pokok, $margin, $bayar, $saldo, $saldo_pokok, $saldo_margin, $produk, $sektors, $peruntukans, $kreditur, $fl_reschedulle, $petugas);
 
 				$i++;
 			}
@@ -1695,13 +1697,14 @@ class Laporan extends GMN_Controller
 			$kreditur = $row['krd'];
 			$fl_reschedulle = $row['fl_reschedulle'];
 			$tanggal_jtempo = $row['tanggal_jtempo'];
+			$petugas = $row['fa_name'];
 
 			if ($bayar == NULL) {
 				$bayar = '0';
 			}
 
 			$responce['rows'][$i]['account_financing_no'] = $rekening;
-			$responce['rows'][$i]['cell'] = array($rekening, $nama, $ktp, $rembug, $droping, $pokok, $margin, $bayar, $saldo, $jangka_waktu, $saldo_pokok, $saldo_margin, $saldo_catab, $produk, $sektors, $peruntukans, $kreditur, $fl_reschedulle, $tanggal_jtempo);
+			$responce['rows'][$i]['cell'] = array($rekening, $nama, $ktp, $rembug, $droping, $pokok, $margin, $bayar, $saldo, $jangka_waktu, $saldo_pokok, $saldo_margin, $saldo_catab, $produk, $sektors, $peruntukans, $kreditur, $fl_reschedulle, $tanggal_jtempo, $petugas);
 
 			$i++;
 		}
@@ -2266,6 +2269,19 @@ class Laporan extends GMN_Controller
 		$this->load->view('core', $data);
 	}
 	// END LAPORAN REKAP PENCARIAN PEMBIAYAAN
+	/****************************************************************************************/
+
+	/****************************************************************************************/
+	// BEGIN LAPORAN REKAP ANGGOTA MASUK 
+	public function rekap_anggota_masuk()
+	{
+		$data['container'] = 'laporan/rekap_anggota_masuk';
+		$data['current_date'] = $this->format_date_detail($this->current_date(), 'id', false, '/');
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$data['kecamatan'] = $this->model_laporan->get_kecamatan();
+		$this->load->view('core', $data);
+	}
+	// END LAPORAN REKAP ANGGOTA MASUK
 	/****************************************************************************************/
 
 
@@ -4023,6 +4039,7 @@ class Laporan extends GMN_Controller
 			$rencana_droping = $row['rencana_droping'];
 			$amount = $row['amount'];
 			$status = $row['status'];
+			$petugas = $row['fa_name'];
 
 			if ($pembiayaan == 1) {
 				$jenis = 'Individu';
@@ -4050,7 +4067,11 @@ class Laporan extends GMN_Controller
 			}
 
 			$responce['rows'][$i]['registration_no'] = $rekening;
+<<<<<<< HEAD
 			$responce['rows'][$i]['cell'] = array($rekening, $nama, $rembug, $jenis2, $tanggal_pengajuan, $rencana_droping, $amount, $status2);
+=======
+			$responce['rows'][$i]['cell'] = array($rekening, $cif_no, $nama, $rembug, $jenis2, $pembiayaan_ke, $peruntukan, $tanggal_pengajuan, $rencana_droping, $amount, $status2, $petugas);
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
 
 			$i++;
 		}
@@ -4913,7 +4934,6 @@ class Laporan extends GMN_Controller
 			$i++;
 		}
 
-
 		echo json_encode($responce);
 	}
 
@@ -4930,6 +4950,7 @@ class Laporan extends GMN_Controller
 		$sort = isset($_REQUEST['sord']) ? $_REQUEST['sord'] : 'DESC';
 		$cabang = $_REQUEST['branch_code'];
 		$majelis = $_REQUEST['cm_code'];
+		$petugas = $_REQUEST['fa_code'];
 		$tanggal = isset($_REQUEST['tanggal']) ? $_REQUEST['tanggal'] : '';
 		$tanggal2 = isset($_REQUEST['tanggal2']) ? $_REQUEST['tanggal2'] : '';
 
@@ -4944,12 +4965,7 @@ class Laporan extends GMN_Controller
 			$limit_rows = $totalrows;
 		}
 
-		$count = $this->model_laporan_to_pdf->jqgrid_count_anggota_masuk(
-			$cabang,
-			$majelis,
-			$tanggal,
-			$tanggal2
-		);
+		$count = $this->model_laporan_to_pdf->jqgrid_count_anggota_masuk($cabang, $majelis, $petugas, $tanggal, $tanggal2);
 
 		if ($count > 0) {
 			$total_pages = ceil($count / $limit_rows);
@@ -4962,7 +4978,7 @@ class Laporan extends GMN_Controller
 		$start = $limit_rows * $page - $limit_rows;
 		if ($start < 0) $start = 0;
 
-		$result = $this->model_laporan_to_pdf->jqgrid_list_anggota_masuk($sidx, $sort, $limit_rows, $start, $cabang, $majelis, $tanggal, $tanggal2);
+		$result = $this->model_laporan_to_pdf->jqgrid_list_anggota_masuk($sidx, $sort, $limit_rows, $start, $cabang, $majelis, $petugas, $tanggal, $tanggal2);
 
 		$responce['page'] = $page;
 		$responce['total'] = $total_pages;
@@ -4983,19 +4999,20 @@ class Laporan extends GMN_Controller
 			$tgl_lahir 		= date('d/m/y', strtotime($row['tgl_lahir']));
 			$usia 			= $row['usia'];
 			$alamat 		= $row['alamat'];
+			$petugas		= $row['fa_name'];
 
 
 			if ($jenis_kelamin == "W") {
 				$kelamin = "Wanita";
-			} else {
+			} else {                                             
 				$kelamin = "Pria";
 			}
 
-			//$lahir = date("d-m-Y", strtotime($row['tgl_gabung']));
-			//date_format($tgl_gabung,"d-m-Y");
+			// $lahir = date("d-m-Y", strtotime($row['tgl_gabung']));
+			// date_format($tgl_gabung,"d-m-Y");
 
 			$responce['rows'][$i]['cif_no'] = $cif_no;
-			$responce['rows'][$i]['cell'] = array($cif_no, $nama, $majelis, $tgl_gabung, $kelamin, $ibu_kandung, $tmp_lahir, $tgl_lahir, $usia, $alamat);
+			$responce['rows'][$i]['cell'] = array($cif_no, $nama, $majelis, $tgl_gabung, $kelamin, $ibu_kandung, $tmp_lahir, $tgl_lahir, $usia, $alamat, $petugas);
 
 			$i++;
 		}

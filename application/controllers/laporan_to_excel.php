@@ -1664,11 +1664,14 @@ class Laporan_to_excel extends GMN_Controller {
 
 		$objPHPExcel->getActiveSheet()->mergeCells('J7:J8');
 		$objPHPExcel->getActiveSheet()->setCellValue('J7','Status');
+		
+		$objPHPExcel->getActiveSheet()->mergeCells('K7:K8');
+		$objPHPExcel->getActiveSheet()->setCellValue('K7','Petugas');
 
-		$objPHPExcel->getActiveSheet()->getStyle('B7:J7')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$objPHPExcel->getActiveSheet()->getStyle('B7:J7')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$objPHPExcel->getActiveSheet()->getStyle('B8:J8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$objPHPExcel->getActiveSheet()->getStyle('B8:J8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$objPHPExcel->getActiveSheet()->getStyle('B7:K7')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$objPHPExcel->getActiveSheet()->getStyle('B7:K7')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$objPHPExcel->getActiveSheet()->getStyle('B8:K8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$objPHPExcel->getActiveSheet()->getStyle('B8:K8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 		$objPHPExcel->getActiveSheet()->getStyle('B7:B8')->applyFromArray($styleArray);
 		$objPHPExcel->getActiveSheet()->getStyle('C7:C8')->applyFromArray($styleArray);
@@ -1682,11 +1685,12 @@ class Laporan_to_excel extends GMN_Controller {
 		$objPHPExcel->getActiveSheet()->getStyle('H8')->applyFromArray($styleArray);
 		$objPHPExcel->getActiveSheet()->getStyle('I7:I8')->applyFromArray($styleArray);
 		$objPHPExcel->getActiveSheet()->getStyle('J7:J8')->applyFromArray($styleArray);
+		$objPHPExcel->getActiveSheet()->getStyle('K7:K8')->applyFromArray($styleArray);
 		
 		$objPHPExcel->getActiveSheet()->getStyle('B2:B6')->getFont()->setBold(true);
 		$objPHPExcel->getActiveSheet()->getStyle('B2:B6')->getFont()->setSize(12);
 
-		$objPHPExcel->getActiveSheet()->getStyle('B7:J8')->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle('B7:K8')->getFont()->setBold(true);
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
@@ -1697,6 +1701,7 @@ class Laporan_to_excel extends GMN_Controller {
 		$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(20);
 
 		$ii = 9;
 		$row_total = count($datas) + 9;
@@ -1709,6 +1714,7 @@ class Laporan_to_excel extends GMN_Controller {
         	$registration_no = $datas[$i]['registration_no'];
         	$nama = $datas[$i]['nama'];
         	$cm_name = $datas[$i]['cm_name'];
+        	$petugas = $datas[$i]['fa_name'];
 
         	$tanggal_pengajuan = $datas[$i]['tanggal_pengajuan'];
         	$tanggal_pengajuan = $this->format_date_detail($tanggal_pengajuan,'id',false,'/');
@@ -1743,6 +1749,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$objPHPExcel->getActiveSheet()->setCellValue('H'.$ii,$rencana_droping);
 			$objPHPExcel->getActiveSheet()->setCellValue('I'.$ii,$amount);
 			$objPHPExcel->getActiveSheet()->setCellValue('J'.$ii,$status);
+			$objPHPExcel->getActiveSheet()->setCellValue('K'.$ii,$petugas);
 
 			$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':B'.$ii)->applyFromArray($styleArray);
 			$objPHPExcel->getActiveSheet()->getStyle('C'.$ii.':C'.$ii)->applyFromArray($styleArray);
@@ -1753,8 +1760,9 @@ class Laporan_to_excel extends GMN_Controller {
 			$objPHPExcel->getActiveSheet()->getStyle('H'.$ii.':H'.$ii)->applyFromArray($styleArray);
 			$objPHPExcel->getActiveSheet()->getStyle('I'.$ii.':I'.$ii)->applyFromArray($styleArray);
 			$objPHPExcel->getActiveSheet()->getStyle('J'.$ii.':J'.$ii)->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('K'.$ii.':K'.$ii)->applyFromArray($styleArray);
 
-			$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':J'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':K'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 			$objPHPExcel->getActiveSheet()->getStyle('I'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 			$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':L'.$ii)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -1763,8 +1771,8 @@ class Laporan_to_excel extends GMN_Controller {
 			
 		}
 
-		$objPHPExcel->getActiveSheet()->getStyle('B'.$row_total.':J'.$row_total)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		$objPHPExcel->getActiveSheet()->getStyle('B'.$row_total.':J'.$row_total)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$objPHPExcel->getActiveSheet()->getStyle('B'.$row_total.':K'.$row_total)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+		$objPHPExcel->getActiveSheet()->getStyle('B'.$row_total.':K'.$row_total)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 		$objPHPExcel->getActiveSheet()->getStyle('I'.$row_total)->applyFromArray($styleArray);
 
@@ -2754,14 +2762,17 @@ class Laporan_to_excel extends GMN_Controller {
 
 			$sheet->mergeCells('V8:V9');
 			$sheet->setCellValue('V8','Reschedulle');
+			
+			$sheet->mergeCells('W8:W9');
+			$sheet->setCellValue('W8','Petugas');
 
-			$sheet->getStyle('B8:V8')->getFont()->setBold(TRUE);
-			$sheet->getStyle('B8:V8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$sheet->getStyle('B8:V8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$sheet->getStyle('B8:W8')->getFont()->setBold(TRUE);
+			$sheet->getStyle('B8:W8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$sheet->getStyle('B8:W8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-			$sheet->getStyle('B9:V9')->getFont()->setBold(TRUE);
-			$sheet->getStyle('B9:V9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$sheet->getStyle('B9:V9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$sheet->getStyle('B9:W9')->getFont()->setBold(TRUE);
+			$sheet->getStyle('B9:W9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$sheet->getStyle('B9:W9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 			$sheet->getStyle('B8:B9')->applyFromArray($styleArray);
 			$sheet->getStyle('C8:E8')->applyFromArray($styleArray);
@@ -2787,6 +2798,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$sheet->getStyle('T9')->applyFromArray($styleArray);
 			$sheet->getStyle('U9')->applyFromArray($styleArray);
 			$sheet->getStyle('V8:V9')->applyFromArray($styleArray);
+			$sheet->getStyle('W8:W9')->applyFromArray($styleArray);
 
 			$sheet->getColumnDimension('B')->setWidth(10);
 			$sheet->getColumnDimension('C')->setWidth(30);
@@ -2809,6 +2821,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$sheet->getColumnDimension('T')->setWidth(15);
 			$sheet->getColumnDimension('U')->setWidth(15);
 			$sheet->getColumnDimension('V')->setWidth(15);
+			$sheet->getColumnDimension('W')->setWidth(15);
 
 			$ii = 10;
 			$total_pokok = 0;
@@ -2842,6 +2855,7 @@ class Laporan_to_excel extends GMN_Controller {
 				$kreditur = $datas[$i]['krd'];
 				$tgl_jtempo = $datas[$i]['tanggal_jtempo'];
 				$fl_reschedulle = $datas[$i]['fl_reschedulle'];
+				$petugas = $datas[$i]['fa_name'];
 
 				$total_pokok += $pokok;
 		        $total_margin += $margin;
@@ -2877,6 +2891,7 @@ class Laporan_to_excel extends GMN_Controller {
 				$sheet->setCellValue('T'.$ii,$saldo_margin);
 				$sheet->setCellValue('U'.$ii,$saldo_catab);
 				$sheet->setCellValue('V'.$ii,$fl_reschedulle);
+				$sheet->setCellValue('W'.$ii,$petugas);
 
 				$sheet->getStyle('B'.$ii)->applyFromArray($styleArray);
 				$sheet->getStyle('C'.$ii)->applyFromArray($styleArray);
@@ -2899,6 +2914,7 @@ class Laporan_to_excel extends GMN_Controller {
 				$sheet->getStyle('T'.$ii)->applyFromArray($styleArray);
 				$sheet->getStyle('U'.$ii)->applyFromArray($styleArray);
 				$sheet->getStyle('V'.$ii)->applyFromArray($styleArray);
+				$sheet->getStyle('W'.$ii)->applyFromArray($styleArray);
 
 				$sheet->getStyle('B'.$ii.':K'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 				$sheet->getStyle('L'.$ii.':M'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -3016,14 +3032,17 @@ class Laporan_to_excel extends GMN_Controller {
 
 			$sheet->mergeCells('S8:S9');
 			$sheet->setCellValue('S8','Reschedulle');
+			
+			$sheet->mergeCells('T8:T9');
+			$sheet->setCellValue('T8','Reschedulle');
 
-			$sheet->getStyle('B8:S8')->getFont()->setBold(TRUE);
-			$sheet->getStyle('B8:S8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$sheet->getStyle('B8:S8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$sheet->getStyle('B8:T8')->getFont()->setBold(TRUE);
+			$sheet->getStyle('B8:T8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$sheet->getStyle('B8:T8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-			$sheet->getStyle('B9:S9')->getFont()->setBold(TRUE);
-			$sheet->getStyle('B9:S9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			$sheet->getStyle('B9:S9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$sheet->getStyle('B9:T9')->getFont()->setBold(TRUE);
+			$sheet->getStyle('B9:T9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$sheet->getStyle('B9:T9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 			$sheet->getStyle('B8:B9')->applyFromArray($styleArray);
 			$sheet->getStyle('C8:E8')->applyFromArray($styleArray);
@@ -3046,6 +3065,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$sheet->getStyle('Q9')->applyFromArray($styleArray);
 			$sheet->getStyle('R9')->applyFromArray($styleArray);
 			$sheet->getStyle('S8:S9')->applyFromArray($styleArray);
+			$sheet->getStyle('T8:T9')->applyFromArray($styleArray);
 
 			$sheet->getColumnDimension('B')->setWidth(10);
 			$sheet->getColumnDimension('C')->setWidth(30);
@@ -3065,6 +3085,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$sheet->getColumnDimension('Q')->setWidth(15);
 			$sheet->getColumnDimension('R')->setWidth(15);
 			$sheet->getColumnDimension('S')->setWidth(15);
+			$sheet->getColumnDimension('T')->setWidth(15);
 
 			$ii = 10;
 			$total_pokok = 0;
@@ -3095,6 +3116,7 @@ class Laporan_to_excel extends GMN_Controller {
 				$jangka_waktu = $datas[$i]['jangka_waktu'];
 				$tgl_jtempo = $datas[$i]['tanggal_jtempo'];
 				$fl_reschedulle = $datas[$i]['fl_reschedulle'];
+				$petugas = $datas[$i]['petugas]'];
 
 				$total_pokok += $pokok;
 		        $total_margin += $margin;
@@ -3128,6 +3150,7 @@ class Laporan_to_excel extends GMN_Controller {
 				$sheet->setCellValue('Q'.$ii,$saldo_margin);
 				$sheet->setCellValue('R'.$ii,$saldo_catab);
 				$sheet->setCellValue('S'.$ii,$fl_reschedulle);
+				$sheet->setCellValue('T'.$ii,$petugas);
 
 				$sheet->getStyle('B'.$ii)->applyFromArray($styleArray);
 				$sheet->getStyle('C'.$ii)->applyFromArray($styleArray);
@@ -3147,6 +3170,7 @@ class Laporan_to_excel extends GMN_Controller {
 				$sheet->getStyle('Q'.$ii)->applyFromArray($styleArray);
 				$sheet->getStyle('R'.$ii)->applyFromArray($styleArray);
 				$sheet->getStyle('S'.$ii)->applyFromArray($styleArray);
+				$sheet->getStyle('T'.$ii)->applyFromArray($styleArray);
 
 				$sheet->getStyle('B'.$ii.':I'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 				$sheet->getStyle('J'.$ii.':K'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -3324,14 +3348,17 @@ class Laporan_to_excel extends GMN_Controller {
 
 		$sheet->mergeCells('W8:W9');
 		$sheet->setCellValue('W8','TGL Jatuh Tempo');
+		
+		$sheet->mergeCells('X8:X9');
+		$sheet->setCellValue('X8','Petugas');
 
-		$sheet->getStyle('B8:W8')->getFont()->setBold(TRUE);
-		$sheet->getStyle('B8:W8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$sheet->getStyle('B8:W8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$sheet->getStyle('B8:X8')->getFont()->setBold(TRUE);
+		$sheet->getStyle('B8:X8')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$sheet->getStyle('B8:X8')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-		$sheet->getStyle('B9:W9')->getFont()->setBold(TRUE);
-		$sheet->getStyle('B9:W9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$sheet->getStyle('B9:W9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$sheet->getStyle('B9:X9')->getFont()->setBold(TRUE);
+		$sheet->getStyle('B9:X9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$sheet->getStyle('B9:X9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 		$sheet->getStyle('B8:B9')->applyFromArray($styleArray);
 		$sheet->getStyle('C8:F8')->applyFromArray($styleArray);
@@ -3357,6 +3384,7 @@ class Laporan_to_excel extends GMN_Controller {
 		$sheet->getStyle('U9')->applyFromArray($styleArray);
 		$sheet->getStyle('V8:V9')->applyFromArray($styleArray);
 		$sheet->getStyle('W8:W9')->applyFromArray($styleArray);
+		$sheet->getStyle('X8:X9')->applyFromArray($styleArray);
 
 		$sheet->getColumnDimension('B')->setWidth(10);
 		$sheet->getColumnDimension('C')->setWidth(30);
@@ -3380,6 +3408,7 @@ class Laporan_to_excel extends GMN_Controller {
 		$sheet->getColumnDimension('U')->setWidth(15);
 		$sheet->getColumnDimension('V')->setWidth(15);
 		$sheet->getColumnDimension('W')->setWidth(15);
+		$sheet->getColumnDimension('X')->setWidth(15);
 
 		$ii = 10;
 		$total_pokok = 0;
@@ -3413,6 +3442,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$kreditur = $datas[$i]['krd'];
 			$fl_reschedulle = $datas[$i]['fl_reschedulle'];
 			$tanggal_jtempo = $datas[$i]['tanggal_jtempo'];
+			$petugas = $datas[$i]['fa_name'];
 
 			$total_pokok += $pokok;
 	        $total_margin += $margin;
@@ -3444,6 +3474,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$sheet->setCellValue('U'.$ii,$saldo_catab);
 			$sheet->setCellValue('V'.$ii,$fl_reschedulle);
 			$sheet->setCellValue('W'.$ii,$tanggal_jtempo);
+			$sheet->setCellValue('X'.$ii,$petugas);
 
 			$sheet->getStyle('B'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('C'.$ii)->applyFromArray($styleArray);
@@ -3467,6 +3498,7 @@ class Laporan_to_excel extends GMN_Controller {
 			$sheet->getStyle('U'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('V'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('W'.$ii)->applyFromArray($styleArray);
+			$sheet->getStyle('X'.$ii)->applyFromArray($styleArray);
 
 			$sheet->getStyle('B'.$ii.':K'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			$sheet->getStyle('L'.$ii.':M'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
@@ -28836,12 +28868,13 @@ public function export_rekap_jumlah_anggota_petugas()
 	function export_list_anggota_masuk(){
         $cabang = $this->uri->segment(3);
         $majelis = $this->uri->segment(4);
+		$fa_code = $this->uri->segment(4);
         $from = $this->uri->segment(5);
         $from = $this->datepicker_convert(true,$from,'/');
         $thru = $this->uri->segment(6);
         $thru = $this->datepicker_convert(true,$thru,'/');
       
-    	$datas = $this->model_laporan->export_list_anggota_masuk($cabang,$majelis,$from,$thru);
+    	$datas = $this->model_laporan->export_list_anggota_masuk($cabang,$majelis,$fa_code,$from,$thru);
 
         if ($cabang !='0000') 
         {
@@ -28904,13 +28937,15 @@ public function export_rekap_jumlah_anggota_petugas()
 		$objPHPExcel->getActiveSheet()->setCellValue('I5',"Usia");
 		$objPHPExcel->getActiveSheet()->mergeCells('J5:J6');
 		$objPHPExcel->getActiveSheet()->setCellValue('J5',"Alamat");
+		$objPHPExcel->getActiveSheet()->mergeCells('K5:K6');
+		$objPHPExcel->getActiveSheet()->setCellValue('K5',"Petugas");
 
 		$objPHPExcel->getActiveSheet()->getStyle('A1:A3')->getFont()->setBold(true);
 		$objPHPExcel->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$objPHPExcel->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$objPHPExcel->getActiveSheet()->getStyle('A5:J6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$objPHPExcel->getActiveSheet()->getStyle('A5:J6')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$objPHPExcel->getActiveSheet()->getStyle('A5:J6')->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle('A5:K6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$objPHPExcel->getActiveSheet()->getStyle('A5:K6')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$objPHPExcel->getActiveSheet()->getStyle('A5:K6')->getFont()->setBold(true);
 		$objPHPExcel->getActiveSheet()->getStyle('A5:B5')->applyFromArray($styleArray);
 		$objPHPExcel->getActiveSheet()->getStyle('A6')->applyFromArray($styleArray);
 		$objPHPExcel->getActiveSheet()->getStyle('B6')->applyFromArray($styleArray);
@@ -28930,6 +28965,8 @@ public function export_rekap_jumlah_anggota_petugas()
 		$objPHPExcel->getActiveSheet()->getStyle('I6')->applyFromArray($styleArray);
 		$objPHPExcel->getActiveSheet()->getStyle('J5')->applyFromArray($styleArray);
 		$objPHPExcel->getActiveSheet()->getStyle('J6')->applyFromArray($styleArray);
+		$objPHPExcel->getActiveSheet()->getStyle('K5')->applyFromArray($styleArray);
+		$objPHPExcel->getActiveSheet()->getStyle('K6')->applyFromArray($styleArray);
 		
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
@@ -28941,6 +28978,7 @@ public function export_rekap_jumlah_anggota_petugas()
 		$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(12);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
 
 				
 		$ii = 7;
@@ -28956,6 +28994,7 @@ public function export_rekap_jumlah_anggota_petugas()
 			$objPHPExcel->getActiveSheet()->setCellValue('H'.$ii,$this->format_date_detail($datas[$i]['tgl_lahir'],'id',false,'-'));
 			$objPHPExcel->getActiveSheet()->setCellValue('I'.$ii,$datas[$i]['usia']);
 			$objPHPExcel->getActiveSheet()->setCellValue('J'.$ii,$datas[$i]['alamat']);
+			$objPHPExcel->getActiveSheet()->setCellValue('K'.$ii,$datas[$i]['fa_name']);
 
 			$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':I'.$ii)->getFont()->setSize(9);
 			$ii++;

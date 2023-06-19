@@ -276,11 +276,71 @@ var showin = function(){
       })
    })
 
+<<<<<<< HEAD
    $("#keyword","#dialog_branch").keyup(function(e){
       e.preventDefault();
       keyword = $(this).val();
       if(e.which==13)
       {
+=======
+      var showin = function() {
+         //GRID SEMUA DATA ANGGOTA
+         jQuery("#list485").jqGrid({
+            url: site_url + 'laporan/jqgrid_list_pengajuan_pembiayaan',
+            //data: mydata,
+            datatype: 'json',
+            height: 'auto',
+            autowidth: true,
+            postData: {
+               fa_code: function() {
+                  return $("#fa_code").val()
+               },
+               branch_code: function() {
+                  return $("#branch_code").val()
+               },
+               financing_type: function() {
+                  return $("#financing_type").val()
+               },
+               tanggal: function() {
+                  return $("#tanggal").val()
+               },
+               tanggal2: function() {
+                  return $("#tanggal2").val()
+               },
+               cm_code: function() {
+                  return $("#cm_code").val()
+               }
+            },
+            rowNum: 50,
+            rowList: [50, 100, 150, 200, 250, 300, 350, 400],
+            colNames: ['No. Registrasi', 'No Anggota', 'Nama', 'Majelis', 'Pembiayaan', 'Pembiayaan Ke', 'Peruntukan', 'Tgl Pengajuan', 'Tgl Rencana Cair', 'Jumlah', 'Status','Petugas'],
+            colModel: [
+               {name: 'registration_no',     index: 'registration_no'},
+               {name: 'cif_no',              index: 'cif_no'},
+               {name: 'nama',                index: 'nama'},
+               {name: 'cm_code',             index: 'cm_name'},
+               {name: 'rencana_droping',     index: 'rencana_droping'},
+               {name: 'financing_type',      index: 'financing_type'},
+               {name: 'pembiayaan_ke',       index: 'pembiayaan_ke'},
+               {name: 'peruntukan',          index: 'peruntukan'},
+               {name: 'tanggal_pengajuan',   index: 'tanggal_pengajuan'},
+               {name: 'amount',              index: 'amount',align: 'right'},
+               {name: 'status',              index: 'status'},
+               {name: 'petugas',             index: 'petugas'}
+            ],
+            shrinkToFit: true,
+            pager: "#plist485",
+            viewrecords: true,
+            sortname: 'registration_no',
+            sortorder: 'asc',
+            grouping: false,
+            rownumbers: true
+         });
+      }
+
+      /* BEGIN DIALOG ACTION BRANCH */
+      $("#browse_branch").click(function() {
+>>>>>>> fa72a87dd8587cd62a2c3aecb932f9d1cda64dda
          $.ajax({
             type: "POST",
             url: site_url+"cif/get_branch_by_keyword",
