@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------
 | DATABASE CONNECTIVITY SETTINGS
@@ -49,9 +49,8 @@ $active_group = 'default';
 $active_record = TRUE;
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'postgres';
-$db['default']['password'] = '1234';
-$db['default']['database'] = 'mumdbnew'; 
-///$db['default']['database'] = 'demo_mum_subangdb';
+$db['default']['password'] = '12345';
+$db['default']['database'] = 'dbmummei';
 $db['default']['dbdriver'] = 'postgre';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

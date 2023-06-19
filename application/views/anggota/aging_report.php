@@ -102,7 +102,7 @@
                    <td>Petugas</td>
                    <td><input type="text" name="fa" readonly="readonly" value="SEMUA PETUGAS" class="medium m-wrap" style="background:#EEE;" >
                     <a id="browse_fa" class="btn blue" data-toggle="modal" href="#dialog_fa">...</a></td> 
-                    <td><input type="hidden" name="fa_code" id="fa_code"  value="" > </td> 
+                    <td><input type="hidden" name="fa_code" id="fa_code"  value="00000" > </td> 
                </tr>
 
                <tr>
@@ -142,7 +142,8 @@
                   <td></td>
                   <td>
                     <button type="button" class="green btn" id="showgrid">Tampilkan</button>
-                    <button class="green btn" id="previewxls">Excel</button>
+                    <button class="green btn" id="previewpdf">PDF</button>
+                    <button class="green btn" id="previewxls">EXCEL</button>
                     <button class="green btn" id="previewcsv">CSV</button>
                   </td>
                </tr>
@@ -394,7 +395,25 @@ var showin = function(){
          });
    }
    
-   tanggal_par();
+   tanggal_par(); 
+
+   $("#previewpdf").click(function(e){
+      e.preventDefault();
+      var branch_id = $("#branch_id").val();
+      var branch_code = $("#branch_code").val();
+      var fa_code = $("input[name='fa_code']").val();
+      var date = $("select[name='date']").val().replace(/\//g,'');
+      var kol = $("select[name='kol']").val();
+      var kreditur = $('#kreditur').val();
+
+      if(date==""){
+        alert("Silahkan Pilih Tanggal Kolektibilitas!");
+      }else if(kol==""){
+        alert("Silahkan Pilih Kolektibilitas")
+      }else{
+        window.open(site_url+'laporan_to_pdf/export_lap_aging/'+branch_code+'/'+date+'/'+kol+'/'+fa_code+'/'+kreditur);
+      }
+    });
    
    $("#previewxls").click(function(e){
       e.preventDefault();
@@ -403,7 +422,7 @@ var showin = function(){
       var date = $("select[name='date']").val().replace(/\//g,'');
       var kol = $("select[name='kol']").val();
       var kreditur = $('#kreditur').val();
-     
+
       if(date==""){
         alert("Silahkan Pilih Tanggal Kolektibilitas!");
       }else if(kol==""){
@@ -411,7 +430,7 @@ var showin = function(){
       }else{
         window.open(site_url+'laporan_to_excel/export_lap_aging/'+branch_id+'/'+date+'/'+kol+'/'+fa_code+'/'+kreditur);
       }
-   });
+    });
 
    $("#previewcsv").click(function(e){
       e.preventDefault();
@@ -419,8 +438,7 @@ var showin = function(){
       var fa_code = $("input[name='fa_code']").val();
       var date = $("select[name='date']").val().replace(/\//g,'');
       var kol = $("select[name='kol']").val();
-      /// var kreditur = $('#kreditur').val();
-      var kreditur = $("select[name='kreditur']").val();
+      var kreditur = $('#kreditur').val();
 
       if(date==""){
         alert("Silahkan Pilih Tanggal Kolektibilitas!");

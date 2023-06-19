@@ -1,0 +1,7 @@
+RewriteEngine on
+
+RewriteRule ^DJ\.(.*)$ http://localhost:90/dutajaman/register/check_referal/DJ.$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* /~mum/index.php/$0 [PT,L]

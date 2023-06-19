@@ -266,7 +266,7 @@ $(function(){
     e.preventDefault();
     var branch_code = $("#branch_code").val();
     var branch = $("#branch").val();
-	var majelis = $("#majelis").val();
+	  var majelis = $("#majelis").val();
     var hari = $("#hari_transaksi").val();
     var fa_code = $("#petugas").val();
     var tanggal = $("#tanggal").val();

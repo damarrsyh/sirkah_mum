@@ -1,33 +1,7 @@
 <?php
 
-Class Model_dashboard extends CI_Model {
-
-	// public function get_anggota($branch_code)
-	// {
-	// 	$sql = "SELECT
-	// 	COUNT (*) AS num
-	// 	FROM 
-	// 	mfi_cif where status=1 ";
-	// 	if($branch_code!="00000"){
-	// 		$sql.=" and branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
-	// 	}
-	// 	$query = $this->db->query($sql,array($branch_code));
-
-	// 	return $query->result_array();
-	// }
-
-	public function get_anggota($branch_code)
-	{
-		$this->db->where('mfi_cif.status =', '1');
-
-		if($branch_code != '00000'){
-			$this->db->where("mfi_cif.branch_code in (select branch_code from mfi_branch_member where branch_induk = '".$branch_code."')", NULL, FALSE);
-		}
-
-
-		return $this->db->count_all_results('mfi_cif');
-	}
-
+class Model_dashboard extends CI_Model
+{
 	public function get_all_anggota()
 	{
 		$sql = "SELECT
@@ -39,18 +13,128 @@ Class Model_dashboard extends CI_Model {
 		return $query->result_array();
 	}
 
-	public function get_petugas($branch_code)
+	function get_cabang()
 	{
-		$sql = "SELECT
-		COUNT (*) AS num
-		FROM 
-		mfi_fa where status=1 ";
-		if($branch_code!="00000"){
-			$sql.=" AND branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
-		}
-		$query = $this->db->query($sql,array($branch_code));
+		$sql = "SELECT branch_code FROM mfi_cif WHERE status = 1 GROUP BY 1 ORDER BY 1 ";
+
+		$query = $this->db->query($sql);
 
 		return $query->result_array();
+	}
+
+	function get_petugas($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT COUNT(*) AS num FROM mfi_fa WHERE status = 1 ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?)";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
+	}
+
+	function get_cabang_num($branch_code)
+	{
+		$param = array();
+
+		$sql = " SELECT count(DISTINCT branch_code) as num from mfi_cif where status='1' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?)";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param); 
+
+		return $query->row_array();
+	}
+
+	function get_anggota($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT COUNT(*) AS num FROM mfi_cif WHERE status = '1' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?)";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
+	}
+
+	function get_simwa_simpok_sukarela($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT SUM(a.tabungan_minggon) AS total_simwa, SUM(a.setoran_lwk) AS total_simpok, SUM(a.tabungan_sukarela) AS total_sukarela FROM mfi_account_default_balance AS a, mfi_cif AS b WHERE a.cif_no = b.cif_no AND b.status = '1' ";
+
+		if ($branch_code <> '00000') {
+			$sql .= "AND b.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?)";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
+	}
+
+	function get_dtk($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT SUM(saldo_memo) AS saldo_taber FROM mfi_account_saving WHERE status_rekening = '1' AND product_code = '0099' ";
+
+		if ($branch_code <> '00000') {
+			$sql .= "AND branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
+	}
+
+	function get_taber($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT SUM(saldo_memo) AS saldo_taber FROM mfi_account_saving WHERE status_rekening = '1' AND product_code <> '0099' ";
+
+		if ($branch_code <> '00000') {
+			$sql .= "AND branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
+	}
+
+	function get_shu($branch_code, $closing_thru_date, $account_code)
+	{
+		$param = array();
+
+		$sql = "SELECT SUM(saldo) AS amount FROM mfi_closing_ledger_data WHERE closing_thru_date = ? AND flag_akhir_tahun = 'T' AND account_code LIKE ? ";
+
+		$param[] = $closing_thru_date;
+		$param[] = $account_code . '%';
+
+		if ($branch_code <> '00000') {
+			$sql .= "AND branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
 	}
 
 	public function get_all_petugas()
@@ -75,45 +159,325 @@ Class Model_dashboard extends CI_Model {
 		return $query->result_array();
 	}
 
-	public function get_rembug($branch_code)
+	function get_rembug($branch_code)
 	{
-		$sql = "SELECT
-		COUNT (*) AS num
-		FROM mfi_cm,mfi_branch
-		WHERE mfi_cm.branch_id=mfi_branch.branch_id and status_aktif='Y' 
-		";
-		if($branch_code!="00000"){
-			$sql.=" AND branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
-		}
-		$query = $this->db->query($sql,array($branch_code));
+		$param = array();
 
-		return $query->result_array();
+		$sql = "SELECT COUNT(mcm.*) AS num FROM mfi_cm AS mcm, mfi_branch AS mb WHERE mcm.branch_id = mb.branch_id AND status_aktif = 'Y' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_code = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
 	}
 
-	function chart_anggota($branch_code){
+	function chart_anggota($branch_code)
+	{
+		$param = array();
+
 		$sql = "SELECT
 		mb.branch_code,
 		mb.branch_name AS display_text,
 		COUNT(mc.*) AS count
 		FROM mfi_branch AS mb
-		JOIN mfi_cif AS mc ON mc.branch_code = mb.branch_code";
+		JOIN mfi_cif AS mc ON mc.branch_code = mb.branch_code
+		WHERE mc.status = '1' ";
 
-		$array = array();
-
-		if($branch_code != '00000'){
-			$sql .= " AND mb.branch_code IN (SELECT branch_code FROM mfi_branch_member
-			WHERE branch_induk = ?)";
-			$array = array($branch_code);
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
 		}
 
-		$sql .= " GROUP BY 1,2";
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
 
-		$query = $this->db->query($sql,$array);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function chart_peruntukan($branch_code){
+	function chart_petugas($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		COUNT(mf.*) AS count
+		FROM mfi_branch AS mb
+		JOIN mfi_fa AS mf ON mf.branch_code = mb.branch_code
+		WHERE mf.status = '1' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_rembug($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		COUNT(mcm.*) AS count
+		FROM mfi_branch AS mb
+		JOIN mfi_cm AS mcm ON mcm.branch_id = mb.branch_id
+		WHERE mcm.status_aktif = 'Y' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_simwa($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(madb.tabungan_minggon) AS total_simwa
+		FROM mfi_branch AS mb
+		JOIN mfi_cif AS mc ON mc.branch_code = mb.branch_code
+		JOIN mfi_account_default_balance AS madb ON madb.cif_no = mc.cif_no
+		WHERE mc.status = '1' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_simpok($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(madb.setoran_lwk) AS total_simpok
+		FROM mfi_branch AS mb
+		JOIN mfi_cif AS mc ON mc.branch_code = mb.branch_code
+		JOIN mfi_account_default_balance AS madb ON madb.cif_no = mc.cif_no
+		WHERE mc.status = '1' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_sukarela($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(madb.tabungan_sukarela) AS total_sukarela
+		FROM mfi_branch AS mb
+		JOIN mfi_cif AS mc ON mc.branch_code = mb.branch_code
+		JOIN mfi_account_default_balance AS madb ON madb.cif_no = mc.cif_no
+		WHERE mc.status = '1' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_dtk($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(mas.saldo_memo) AS total_taber
+		FROM mfi_branch AS mb
+		JOIN mfi_account_saving AS mas ON mas.branch_code = mb.branch_code
+		WHERE mas.status_rekening = '1' AND mas.product_code = '0099' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_taber($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(mas.saldo_memo) AS total_taber
+		FROM mfi_branch AS mb
+		JOIN mfi_account_saving AS mas ON mas.branch_code = mb.branch_code
+		WHERE mas.status_rekening = '1' AND mas.product_code <> '0099' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_disbursement($branch_code, $periode_awal, $periode_akhir)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(maf.pokok) AS total_disbursement
+		FROM mfi_branch AS mb
+		JOIN mfi_account_financing AS maf ON maf.branch_code = mb.branch_code
+		JOIN mfi_account_financing_droping AS mafd ON mafd.account_financing_no = maf.account_financing_no
+		WHERE mafd.droping_date BETWEEN ? AND ? ";
+
+		$param[] = $periode_awal;
+		$param[] = $periode_akhir;
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_outstanding($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(maf.saldo_pokok) AS total_outstanding
+		FROM mfi_branch AS mb
+		JOIN mfi_account_financing AS maf ON maf.branch_code = mb.branch_code
+		WHERE maf.status_rekening = '1' ";
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_par($branch_code)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		SUM(mp.saldo_pokok) AS total_par
+		FROM mfi_branch AS mb
+		JOIN mfi_par AS mp ON mp.branch_code = mb.branch_code
+		WHERE mp.tanggal_hitung = ? AND mp.par NOT IN('0','10') ";
+
+		$param[] = $this->get_max_par_tanggal_hitung();
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_shu($branch_code, $closing_thru_date)
+	{
+		$param = array();
+
+		$sql = "SELECT
+		mb.branch_code,
+		mb.branch_name AS display_text,
+		(SELECT SUM(saldo) FROM mfi_closing_ledger_data WHERE branch_code = ? AND closing_thru_date = ? AND flag_akhir_tahun = 'T' AND account_code LIKE '4%') AS pendapatan,
+		(SELECT SUM(saldo) FROM mfi_closing_ledger_data WHERE branch_code = ? AND closing_thru_date = ? AND flag_akhir_tahun = 'T' AND account_code LIKE '5%') AS biaya
+		FROM mfi_branch AS mb ";
+
+		$param[] = $branch_code;
+		$param[] = $closing_thru_date;
+		$param[] = $branch_code;
+		$param[] = $closing_thru_date;
+
+		if ($branch_code != '00000') {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
+
+		$sql .= "GROUP BY 1,2 ORDER BY 1";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	function chart_peruntukan($branch_code)
+	{
 		$sql = "SELECT
 		a.peruntukan,
 		b.display_text,
@@ -125,8 +489,8 @@ Class Model_dashboard extends CI_Model {
 
 		$array = array();
 
-		if($branch_code != '00000'){
-			$sql .=" AND branch_code IN (SELECT branch_code FROM mfi_branch_member
+		if ($branch_code != '00000') {
+			$sql .= " AND branch_code IN (SELECT branch_code FROM mfi_branch_member
 			WHERE branch_induk = ?)";
 
 			$array = array($branch_code);
@@ -134,26 +498,26 @@ Class Model_dashboard extends CI_Model {
 
 		$sql .= " GROUP BY 1,2 ORDER BY 3 DESC";
 
-		$query = $this->db->query($sql,$array);
+		$query = $this->db->query($sql, $array);
 		return $query->result_array();
 	}
 
 	/**
 	 * APM 20-Jan-02
 	 */
-	
+
 	public function get_max_par_tanggal_hitung()
 	{
 		$where = NULL;
-		if($this->session->userdata('branch_code') != '00000'){
+		if ($this->session->userdata('branch_code') != '00000') {
 			$branch_code = $this->session->userdata('branch_code');
-			$where = "WHERE branch_code = '".$branch_code."'";
+			$where = "WHERE branch_code = '" . $branch_code . "'";
 		}
-		$exec = $this->db->query("SELECT MAX(tanggal_hitung) AS tanggal_hitung FROM mfi_par ".$where);
+		$exec = $this->db->query("SELECT MAX(tanggal_hitung) AS tanggal_hitung FROM mfi_par " . $where);
 
 		$count = $exec->num_rows();
 
-		if($count == 0){
+		if ($count == 0) {
 			return NULL;
 			exit;
 		}
@@ -167,18 +531,18 @@ Class Model_dashboard extends CI_Model {
 		$tanggal_hitung = $this->get_max_par_tanggal_hitung();
 
 		$param_pars   = $this->db->get('mfi_param_par');
-		$i            = 0;		
+		$i            = 0;
 		$par_desc[$i] = ['Pembiayaan Lancar', '0'];
 
 		foreach ($param_pars->result() as $param_par) {
 			$i++;
-			$par_desc[$i] = ['Tertunggak '.$param_par->par_desc.' Hari', $param_par->par_desc];
+			$par_desc[$i] = ['Tertunggak ' . $param_par->par_desc . ' Hari', $param_par->par_desc];
 		}
 
 		$total = 0;
 		foreach ($par_desc as $key) {
 			$this->db->select('SUM(saldo_pokok) AS saldo_pokok');
-			if($this->session->userdata('branch_code') != '00000'){
+			if ($this->session->userdata('branch_code') != '00000') {
 				$this->db->where('branch_code', $this->session->userdata('branch_code'));
 			}
 			$this->db->where('tanggal_hitung', $tanggal_hitung);
@@ -190,7 +554,7 @@ Class Model_dashboard extends CI_Model {
 
 		foreach ($par_desc as $key) {
 			$this->db->select('SUM(saldo_pokok) AS saldo_pokok');
-			if($this->session->userdata('branch_code') != '00000'){
+			if ($this->session->userdata('branch_code') != '00000') {
 				$this->db->where('branch_code', $this->session->userdata('branch_code'));
 			}
 			$this->db->where('tanggal_hitung', $tanggal_hitung);
@@ -200,7 +564,7 @@ Class Model_dashboard extends CI_Model {
 			$persennya = number_format(($exec->row()->saldo_pokok / $total) * 100, 2);
 
 			$data[] = [
-				'label' => $key[0].' ('.number_format($exec->row()->saldo_pokok,0).') '.$persennya.'%',
+				'label' => $key[0] . ' (' . number_format($exec->row()->saldo_pokok, 0) . ') ' . $persennya . '%',
 				'value' => $exec->row()->saldo_pokok
 			];
 		}
@@ -212,57 +576,65 @@ Class Model_dashboard extends CI_Model {
 	{
 		$tanggal_hitung = $this->get_max_par_tanggal_hitung();
 		$this->db->select('SUM(saldo_pokok) AS saldo_pokok, SUM(cadangan_piutang) AS cpp');
-		if($this->session->userdata('branch_code') != '00000')
-		{
+		if ($this->session->userdata('branch_code') != '00000') {
 			$this->db->where('branch_code', $this->session->userdata('branch_code'));
 		}
 
 		$not_in = ['0', '10'];
 		$this->db->where('tanggal_hitung', $tanggal_hitung);
-		$this->db->where_not_in('par', $not_in );
+		$this->db->where_not_in('par', $not_in);
 
 		$query = $this->db->get('mfi_par');
 		return $query->row_array();
 	}
 
+	public function get_par_all_v2($branch_code)
+	{
+		$tanggal_hitung = $this->get_max_par_tanggal_hitung();
+		$this->db->select('SUM(saldo_pokok) AS saldo_pokok');
+		if ($branch_code != '00000') {
+			$this->db->where('branch_code', $branch_code);
+		}
+
+		$this->db->where('tanggal_hitung', $tanggal_hitung);
+		$query = $this->db->get('mfi_par');
+		return $query->row_array();
+	}
 
 	public function get_par_all()
 	{
 		$tanggal_hitung = $this->get_max_par_tanggal_hitung();
 		$this->db->select('SUM(saldo_pokok) AS saldo_pokok');
-		if($this->session->userdata('branch_code') != '00000')
-		{
+		if ($this->session->userdata('branch_code') != '00000') {
 			$this->db->where('branch_code', $this->session->userdata('branch_code'));
 		}
 
 		$this->db->where('tanggal_hitung', $tanggal_hitung);
-		$query = $this->db->get('mfi_par'); 
+		$query = $this->db->get('mfi_par');
 		return $query->row_array();
 	}
 
 	public function get_outstanding()
 	{
 		$this->db->select('SUM(saldo_pokok) AS outstanding');
-		if($this->session->userdata('branch_code') != '00000')
-		{
+		if ($this->session->userdata('branch_code') != '00000') {
 			$this->db->where('branch_code', $this->session->userdata('branch_code'));
 		}
-		$this->db->where('status_rekening', '1' );
-		$query = $this->db->get('mfi_account_financing'); 
+		$this->db->where('status_rekening', '1');
+		$query = $this->db->get('mfi_account_financing');
 		return $query->row_array();
 	}
 
 	public function get_outstanding_taber()
 	{
 		$this->db->select('SUM(saldo_memo) AS outstanding_taber');
-		if($this->session->userdata('branch_code') != '00000')
-		{
+		if ($this->session->userdata('branch_code') != '00000') {
 			$this->db->where('branch_code', $this->session->userdata('branch_code'));
 		}
-		$not_in = ['0006', '0009','0099'];
-		$this->db->where('status_rekening', '1' );
+		$not_in = ['0006', '0009', '0099'];
+		$this->db->where('status_rekening', '1');
 		$this->db->where_not_in('product_code', $not_in);
-		$query = $this->db->get('mfi_account_saving'); 
+		$query = $this->db->get('mfi_account_saving');
 		return $query->row_array();
 	}
 
@@ -292,8 +664,8 @@ Class Model_dashboard extends CI_Model {
 				'product_code'     => $key->product_code,
 				'product_name'     => $key->nick_name,
 				'nominal'          => $key->nominal,
-				'nominal_formated' => number_format($key->nominal,0),
-				'persen'           => number_format($persennya,2),
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
 			];
 		}
 		return $data;
@@ -302,39 +674,53 @@ Class Model_dashboard extends CI_Model {
 
 	public function get_periode_awal()
 	{
-		$sql = "select periode_awal from mfi_trx_kontrol_periode where status = 1 limit 1"; 
+		$sql = "select periode_awal from mfi_trx_kontrol_periode where status = 1 limit 1";
+		$query = $this->db->query($sql);
+		return $query->row_array();
+	} 
+
+	public function get_tahun()
+	{
+		$sql = "select year (periode_awal) from mfi_trx_kontrol_periode where status = 1 limit 1";
+		$query = $this->db->query($sql);
+		return $query->row_array();
+	}
+
+	public function get_bulan()
+	{
+		$sql = "select month (periode_awal) from mfi_trx_kontrol_periode where status = 1 limit 1";
 		$query = $this->db->query($sql);
 		return $query->row_array();
 	}
 
 	public function get_periode_akhir()
 	{
-		$sql = "select periode_akhir from mfi_trx_kontrol_periode where status = 1 limit 1"; 
+		$sql = "select periode_akhir from mfi_trx_kontrol_periode where status = 1 limit 1";
 		$query = $this->db->query($sql);
 		return $query->row_array();
 	}
 
-	public function get_drop( $periode_awal, $periode_akhir, $branch_code )
+	public function get_drop($periode_awal, $periode_akhir, $branch_code)
 	{
 		$sql = "SELECT prdfin.product_code, prdfin.product_name, prdfin.nick_name, 
 				SUM(accfin.pokok) as nominal  
 				FROM mfi_product_financing as prdfin 
 				left join mfi_account_financing AS accfin on prdfin.product_code= accfin.product_code and accfin.status_rekening<>'0' and accfin.tanggal_akad  between ? and ?    
-				"; 
+				";
 
 		$param   = array();
 		$param[] = $periode_awal;
 		$param[] = $periode_akhir;
 
-		if($branch_code != '00000'){
-			$sql .=" and accfin.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
+		if ($branch_code != '00000') {
+			$sql .= " and accfin.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
 
 			$param[] = $branch_code;
 		}
-		
-		$sql .="group by 1,2,3  order by 1 ";
 
-		$que = $this->db->query($sql,$param);
+		$sql .= "group by 1,2,3  order by 1 ";
+
+		$que = $this->db->query($sql, $param);
 
 		$total = 0;
 		foreach ($que->result() as $key) {
@@ -347,14 +733,389 @@ Class Model_dashboard extends CI_Model {
 				'product_code'     => $key->product_code,
 				'product_name'     => $key->nick_name,
 				'nominal'          => $key->nominal,
-				'nominal_formated' => number_format($key->nominal,0),
-				'persen'           => number_format($persennya,2),
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
 			];
 		}
 		return $data;
 	}
 
-	public function get_angs( $periode_awal, $periode_akhir, $branch_code )
+	public function get_drop_vs($periode_awal, $periode_akhir, $branch_code, $tahun, $bulan )
+	{
+		if ($branch_code == '00000') {
+			$sql = "SELECT target_item product_code, 'droping target' product_name , 'target' nick_name , sum(t";
+			$sql .=	$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='301' group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'droping real' product_name ,  'realisasi' nick_name, 
+					(select sum (pokok) from mfi_account_financing where status_rekening='1' and tanggal_akad between ? and ? ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='301' group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $periode_awal; 
+			$param[] = $periode_akhir; 
+			$param[] = $tahun; 			
+		}
+		else 
+		{
+			$sql = "SELECT target_item product_code, 'droping target' product_name , 'target' nick_name , sum(t";
+			$sql .=$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='301' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'droping real' product_name ,  'realisasi' nick_name, 
+					(select  coalesce (SUM(pokok),0) from mfi_account_financing where status_rekening='1' and tanggal_akad between ? and ? 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='301' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 
+			$param[] = $periode_awal; 
+			$param[] = $periode_akhir; 
+			$param[] = $branch_code; 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 			
+
+		}
+
+		$que = $this->db->query($sql, $param);
+
+		$total = 0;
+		foreach ($que->result() as $key) {
+			$total += $key->nominal;
+		}
+
+		foreach ($que->result() as $key) {
+			///$persennya = ($key->nominal / $total) * 100; 
+			$persennya =0;
+			$data[] = [
+				'product_code'     => $key->product_code,
+				'product_name'     => $key->nick_name,
+				'nominal'          => $key->nominal,
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
+			];
+		}
+		return $data;
+	}
+
+	public function get_outs_vs($periode_awal, $periode_akhir, $branch_code, $tahun, $bulan )
+	{	
+		if ($branch_code == '00000') { 
+			$sql = "SELECT target_item product_code, 'outstanding target' product_name , 'target' nick_name , sum(t";
+			$sql .= $bulan;
+			$sql .= ") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='302' group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'outstanding real' product_name ,  'realisasi' nick_name, 
+					(select sum (saldo_pokok) from mfi_account_financing where status_rekening='1' ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='302' group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $tahun; 	
+		} 
+		else 
+		{
+			$sql = "SELECT target_item product_code, 'outstanding target' product_name , 'target' nick_name , sum(t";
+			$sql .= $bulan;
+			$sql .= ") nominal " ;
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='302' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'outstanding real' product_name ,  'realisasi' nick_name, 
+					(select coalesce (SUM(saldo_pokok),0) from mfi_account_financing where status_rekening='1' 
+					 and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='302' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) group by 1, 2, 3 ";			
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 
+			$param[] = $branch_code; 
+			$param[] = $tahun; 
+			$param[] = $branch_code;
+		} 
+
+		$que = $this->db->query($sql, $param);
+
+		$total = 0;
+		foreach ($que->result() as $key) {
+			$total += $key->nominal;
+		}
+
+		foreach ($que->result() as $key) {
+			///$persennya = ($key->nominal / $total) * 100;
+			$persennya =0;
+			$data[] = [
+				'product_code'     => $key->product_code,
+				'product_name'     => $key->nick_name,
+				'nominal'          => $key->nominal,
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
+			];
+		}
+		return $data;
+	}
+
+	public function get_par_vs($periode_awal, $periode_akhir, $branch_code, $tahun, $bulan )
+	{	
+		if ($branch_code == '00000') { 
+			$sql = "SELECT target_item product_code, 'PAR target' product_name , 'target' nick_name , sum(t"; 
+			$sql .= $bulan;
+			$sql .= ")/count(c1)  nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='303' group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'PAR real' product_name ,  'realisasi' nick_name, 
+					((select sum (saldo_pokok) from mfi_par where par>10 and tanggal_hitung=?) / (select sum (saldo_pokok) from mfi_par where tanggal_hitung=?) *100 ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='303' group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $periode_akhir ; 
+			$param[] = $periode_akhir ; 
+			$param[] = $tahun; 	
+		} 
+		else 
+		{
+			$sql = "SELECT target_item product_code, 'PAR target' product_name , 'target' nick_name , sum(t";
+			$sql .= $bulan;
+			$sql .= ")/count(c1) nominal " ;
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='303' and branch_code IN 
+				      (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'PAR real' product_name ,  'realisasi' nick_name, 
+					( (select SUM(a.saldo_pokok) from mfi_par a, mfi_account_financing b where a.account_financing_no=b.account_financing_no and a.par>10 and  a.tanggal_hitung=? 
+					   and b.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk =? )) / 
+					  (select SUM(c.saldo_pokok)  from mfi_par c, mfi_account_financing d where c.account_financing_no=d.account_financing_no and c.tanggal_hitung=?  
+					   and d.branch_code  IN (SELECT branch_code FROM mfi_branch_member where branch_induk =? )) *100 ) nominal 
+					from mfi_target_cabang where tahun=? and target_item='303' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk =? ) group by 1, 2, 3 " ; 			
+			
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 
+			$param[] = $periode_akhir ;
+			$param[] = $branch_code; 
+			$param[] = $periode_akhir ;
+			$param[] = $branch_code; 
+			$param[] = $tahun; 
+			$param[] = $branch_code;
+		} 
+
+		$que = $this->db->query($sql, $param);
+
+		$total = 0;
+		foreach ($que->result() as $key) {
+			$total += $key->nominal;
+		}
+
+		foreach ($que->result() as $key) {
+			///$persennya = ($key->nominal / $total) * 100;
+			$persennya =0;
+			$data[] = [
+				'product_code'     => $key->product_code,
+				'product_name'     => $key->nick_name,
+				'nominal'          => $key->nominal,
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
+			];
+		}
+		return $data;
+	}
+
+	public function get_rekagt_vs($periode_awal, $periode_akhir, $branch_code, $tahun, $bulan )
+	{
+		if ($branch_code == '00000') {
+			$sql = "SELECT target_item product_code, 'rekrutmen target' product_name , 'target' nick_name , sum(t";
+			$sql .=	$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='101' group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'rekrutmen real' product_name ,  'realisasi' nick_name, 
+					(select count (cif_no) from mfi_cif where tgl_gabung between ? and ? ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='101' group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $periode_awal; 
+			$param[] = $periode_akhir; 
+			$param[] = $tahun; 			
+		}
+		else 
+		{
+			$sql = "SELECT target_item product_code, 'rekrutmen target' product_name , 'target' nick_name , sum(t";
+			$sql .=$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='101' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'rekrutmen real' product_name ,  'realisasi' nick_name, 
+					(select  coalesce (count(cif_no),0) from mfi_cif where tgl_gabung between ? and ? 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='101' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 
+			$param[] = $periode_awal; 
+			$param[] = $periode_akhir; 
+			$param[] = $branch_code; 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 			
+
+		}
+
+		$que = $this->db->query($sql, $param);
+
+		$total = 0;
+		foreach ($que->result() as $key) {
+			$total += $key->nominal;
+		}
+
+		foreach ($que->result() as $key) {
+			///$persennya = ($key->nominal / $total) * 100; 
+			$persennya =0;
+			$data[] = [
+				'product_code'     => $key->product_code,
+				'product_name'     => $key->nick_name,
+				'nominal'          => $key->nominal,
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
+			];
+		}
+		return $data;
+	}
+
+	public function get_outagt_vs($periode_awal, $periode_akhir, $branch_code, $tahun, $bulan )
+	{
+		if ($branch_code == '00000') {
+			$sql = "SELECT target_item product_code, 'keluar target' product_name , 'target' nick_name , sum(t";
+			$sql .=	$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='102' group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'keluar real' product_name ,  'realisasi' nick_name, 
+					(select count (cif_no) from mfi_cif_mutasi where tipe_mutasi='1' and status_mutasi='1' and tanggal_mutasi between ? and ? ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='102' group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $periode_awal; 
+			$param[] = $periode_akhir; 
+			$param[] = $tahun; 			
+		}
+		else 
+		{
+			$sql = "SELECT target_item product_code, 'keluar target' product_name , 'target' nick_name , sum(t";
+			$sql .=$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='102' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'kelaur real' product_name ,  'realisasi' nick_name, 
+					(select  coalesce (count(a.cif_no),0) from mfi_cif_mutasi a, mfi_cif b where a.cif_no=b.cif_no and a.tipe_mutasi='1' and a.status_mutasi='1' and a.tanggal_mutasi between ? and ? 
+					and b.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='102' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 
+			$param[] = $periode_awal; 
+			$param[] = $periode_akhir; 
+			$param[] = $branch_code; 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 			
+
+		}
+
+		$que = $this->db->query($sql, $param);
+
+		$total = 0;
+		foreach ($que->result() as $key) {
+			$total += $key->nominal;
+		}
+
+		foreach ($que->result() as $key) {
+			///$persennya = ($key->nominal / $total) * 100; 
+			$persennya =0;
+			$data[] = [
+				'product_code'     => $key->product_code,
+				'product_name'     => $key->nick_name,
+				'nominal'          => $key->nominal,
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
+			];
+		}
+		return $data;
+	}
+
+	public function get_jmlagt_vs($periode_awal, $periode_akhir, $branch_code, $tahun, $bulan )
+	{
+		if ($branch_code == '00000') {
+			$sql = "SELECT target_item product_code, 'Jml Anggota target' product_name , 'target' nick_name , sum(t";
+			$sql .=	$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='103' group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'Jml Anggota real' product_name ,  'realisasi' nick_name, 
+					(select count (cif_no) from mfi_cif where status='1' ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='103' group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $tahun; 			
+		}
+		else 
+		{
+			$sql = "SELECT target_item product_code, 'Jml Anggota target' product_name , 'target' nick_name , sum(t";
+			$sql .=$bulan;
+			$sql .=") nominal ";
+			$sql .= " from mfi_target_cabang where tahun=? and target_item='103' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?) group by 1,2,3  
+					union all 
+					SELECT target_item product_code, 'Jml Anggota real' product_name ,  'realisasi' nick_name, 
+					(select  coalesce (count(cif_no),0) from mfi_cif where status='1' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  ) nominal  
+					from mfi_target_cabang where tahun=? and target_item='103' 
+					and branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)  group by 1, 2, 3 ";
+
+			$param   = array(); 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 
+			$param[] = $branch_code; 
+			$param[] = $tahun; 
+			$param[] = $branch_code; 
+		}
+
+		$que = $this->db->query($sql, $param);
+
+		$total = 0;
+		foreach ($que->result() as $key) {
+			$total += $key->nominal;
+		}
+
+		foreach ($que->result() as $key) {
+			///$persennya = ($key->nominal / $total) * 100; 
+			$persennya =0;
+			$data[] = [
+				'product_code'     => $key->product_code,
+				'product_name'     => $key->nick_name,
+				'nominal'          => $key->nominal,
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
+			];
+		}
+		return $data;
+	} 
+
+	public function get_angs($periode_awal, $periode_akhir, $branch_code)
 	{
 		$sql = "SELECT mpf.product_code, mpf.product_name, mpf.nick_name, sum(mtcmd.angsuran_pokok*mtcmd.freq) nominal 
 				from mfi_trx_cm_detail as mtcmd
@@ -362,21 +1123,21 @@ Class Model_dashboard extends CI_Model {
 				join mfi_account_financing  as maf on mtcmd.account_financing_no=maf.account_financing_no 
 				left join mfi_product_financing as mpf on maf.product_code=mpf.product_code 
 				where mtcmd.freq>0 and mtcm.trx_date between ? and ? 
-				"; 
+				";
 
 		$param   = array();
 		$param[] = $periode_awal;
 		$param[] = $periode_akhir;
 
-		if($branch_code != '00000'){
-			$sql .=" where branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
+		if ($branch_code != '00000') {
+			$sql .= " where branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
 
 			$param[] = $branch_code;
 		}
-		
-		$sql .="group by 1,2,3  order by 1 ";
 
-		$que = $this->db->query($sql,$param);
+		$sql .= "group by 1,2,3  order by 1 ";
+
+		$que = $this->db->query($sql, $param);
 
 		$total = 0;
 		foreach ($que->result() as $key) {
@@ -389,54 +1150,51 @@ Class Model_dashboard extends CI_Model {
 				'product_code'     => $key->product_code,
 				'product_name'     => $key->nick_name,
 				'nominal'          => $key->nominal,
-				'nominal_formated' => number_format($key->nominal,0),
-				'persen'           => number_format($persennya,2),
+				'nominal_formated' => number_format($key->nominal, 0),
+				'persen'           => number_format($persennya, 2),
 			];
 		}
 		return $data;
 	}
 
 
-	public function get_disbursement( $periode_awal, $periode_akhir, $branch_code )
+	public function get_disbursement($periode_awal, $periode_akhir, $branch_code)
 	{
 		$sql = "SELECT SUM(accfin.pokok) as disbursement  
 				FROM mfi_account_financing as accfin, mfi_account_financing_droping as accfd  
 				WHERE accfin.account_financing_no = accfd.account_financing_no  and accfd.droping_date  between ? and ?    
-				"; 
+				";
 		$param   = array();
 		$param[] = $periode_awal;
 		$param[] = $periode_akhir;
 
-		if($branch_code != '00000'){
-			$sql .=" and accfin.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
+		if ($branch_code != '00000') {
+			$sql .= " and accfin.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
 			$param[] = $branch_code;
 		}
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->row_array();
 	}
 
-	public function get_payment( $periode_awal, $periode_akhir, $branch_code )
+	public function get_payment($periode_awal, $periode_akhir, $branch_code)
 	{
 		$sql = "SELECT sum(mtcmd.angsuran_pokok*mtcmd.freq) as payment 
 				from mfi_trx_cm_detail as mtcmd
 				join mfi_trx_cm  as mtcm on mtcm.trx_cm_id=mtcmd.trx_cm_id 
 				join mfi_account_financing  as maf on mtcmd.account_financing_no=maf.account_financing_no 
 				where mtcmd.freq>0 and mtcm.trx_date between ? and ?    
-				"; 
+				";
 		$param   = array();
 		$param[] = $periode_awal;
 		$param[] = $periode_akhir;
 
-		if($branch_code != '00000'){
-			$sql .=" and maf.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
+		if ($branch_code != '00000') {
+			$sql .= " and maf.branch_code IN (SELECT branch_code FROM mfi_branch_member where branch_induk = ?)";
 			$param[] = $branch_code;
 		}
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->row_array();
 	}
-
-
-
 }

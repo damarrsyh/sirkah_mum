@@ -23,7 +23,7 @@
       <!-- END BEGIN STYLE CUSTOMIZER -->
       <!-- BEGIN PAGE TITLE-->
       <h3 class="form-section">
-        Laporan <small>Rekap Saldo Anggota</small>
+        Laporan <small>Rekap Saldo Anggota Bulan Lalu </small>
       </h3>
       <!-- END PAGE TITLE-->
    </div>
@@ -35,7 +35,7 @@
 <!-- BEGIN EXAMPLE TABLE PORTLET-->
 <div class="portlet box blue" id="wrapper-table">
    <div class="portlet-title">
-      <div class="caption"><i class="icon-globe"></i>Rekap Saldo Anggota</div>
+      <div class="caption"><i class="icon-globe"></i>Rekap Saldo Anggota Bulan Lalu </div>
       <div class="tools">
          <a href="javascript:;" class="collapse"></a>
       </div>
@@ -279,16 +279,12 @@ var gridaja = function(){
         var hari = tanggal.substr(-2,2);
         var bulan = tanggal.substr(5,2);
         var tahun = tanggal.substr(0,4);
-          if (filter=='0'){            
-              if(cabang=='00000' || cabang=='' || tanggal==''){            
-                window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_semua_cabang_lalu/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);
-              }else{            
-                window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_cabang/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);
-              } 
+          if (filter=='0'){                      
+            window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_cabang_lalu/'+cabang+'/'+hari+'/'+bulan+'/'+tahun); 
           }else if (filter=='1'){
-            window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_rembug/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);
+            window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_rembug_lalu/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);
           }else if (filter=='2'){
-            window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_petugas/'+cabang);
+            window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_petugas_lalu/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);
           // }else if (filter=='3'){
             // window.open('<?php echo site_url();?>laporan_to_pdf/export_rekap_saldo_anggota_nominal/'+cabang);
           // }else if (filter=='4'){
@@ -304,16 +300,16 @@ var gridaja = function(){
         e.preventDefault();
         var filter = $("#filter").val();
         var cabang = $("#cabang").val();
+        var tanggal = $('#tanggal').val();
+        var hari = tanggal.substr(-2,2);
+        var bulan = tanggal.substr(5,2);
+        var tahun = tanggal.substr(0,4);
           if (filter=='0'){            
-              if(cabang=='0000' || cabang==''){            
-                window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_semua_cabang/'+cabang);
-              }else{            
-                window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_cabang/'+cabang);
-              } 
+            window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_cabang_lalu/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);           
           }else if (filter=='1'){
-            window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_rembug/'+cabang);
+            window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_rembug_lalu/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);
           }else if (filter=='2'){
-            window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_petugas/'+cabang);
+            window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_petugas_lalu/'+cabang+'/'+hari+'/'+bulan+'/'+tahun);
           // }else if (filter=='3'){
             // window.open('<?php echo site_url();?>laporan_to_excel/export_rekap_saldo_anggota_nominal/'+cabang);
           // }else if (filter=='4'){

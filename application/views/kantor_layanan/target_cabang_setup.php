@@ -43,7 +43,7 @@
 
 
 <!-- BEGIN EXAMPLE TABLE PORTLET-->
-<div class="portlet box purple" id="wrapper-table">
+<div class="portlet box grey" id="wrapper-table">
    <div class="portlet-title">
       <div class="caption"><i class="icon-globe"></i>Target Cabang Pusat</div>
       <div class="tools">
@@ -67,7 +67,7 @@
             Kantor Cabang &nbsp; : &nbsp;
             <input type="text" name="branch_name" id="branch_name" class="medium m-wrap" disabled>
             <input type="hidden" name="branch_code" id="branch_code">
-            <a id="browse" class="btn purple" data-toggle="modal" href="#dialog_kantor_cabang">...</a>
+            <a id="browse" class="btn " data-toggle="modal" href="#dialog_kantor_cabang">...</a>
             <!-- <input type="submit" id="filter" value="Filter" class="btn blue"> -->
          </label>
       </div>
@@ -88,14 +88,14 @@
          </div>
          <div class="modal-footer">
             <button type="button" id="close" data-dismiss="modal" class="btn">Close</button>
-            <button type="button" id="select" class="btn blue">Select</button>
+            <button type="button" id="select" class="btn green">Select</button>
          </div>
       </div>
 
-      <table class="table table-striped table-bordered table-hover" id="rembug_table">
+      <table class="table table-striped table-bordered table-hover" id="target_cabang">
          <thead>
             <tr>
-               <th style="width:8px;"><input type="checkbox" class="group-checkable" data-set="#rembug_table .checkboxes" /></th>
+               <th style=""><input type="checkbox" class="group-checkable" data-set="#target_cabang .checkboxes" /></th>
                <th width="">Tahun</th>
                <th width="">Item Target</th>
                <th width="">Jan</th>
@@ -123,7 +123,7 @@
 
 
 
-<!-- BEGIN ADD REMBUG -->
+<!-- BEGIN ADD TARGET CABANG -->
 <div id="add" class="hide">
 
    <div class="portlet box green">
@@ -135,7 +135,7 @@
       </div>
       <div class="portlet-body form">
          <!-- BEGIN FORM-->
-         <form action="<?php echo site_url('cif/add_rembug'); ?>" method="post" id="form_add" class="form-horizontal">
+         <form action="<?php echo site_url('cif/add_target_cabang'); ?>" method="post" id="form_add" class="form-horizontal">
             <input type="hidden" name="add_branch_code" id="add_branch_code">
             <div class="alert alert-error hide">
                <button class="close" data-dismiss="alert"></button>
@@ -143,19 +143,19 @@
             </div>
             <div class="alert alert-success hide">
                <button class="close" data-dismiss="alert"></button>
-               Rembug Berhasil Ditambahkan !
+               Target Cabang Berhasil Ditambahkan !
             </div>
             <br>
             <div class="control-group">
                <label class="control-label">Cabang<span class="required">*</span></label>
                <div class="controls">
-                  <input type="text" name="id_rembug" id="id_rembug" data-required="1" class="medium m-wrap" readonly="readonly" />
+                  <input type="text" name="id_cabang" id="id_cabang" data-required="1" class="medium m-wrap" readonly="readonly" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Tahun<span class="required">*</span></label>
                <div class="controls">
-                  <input name="nama_rembug" type="text" class="medium m-wrap" />
+                  <input name="tahun" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
@@ -167,73 +167,73 @@
             <div class="control-group">
                <label class="control-label">Januari<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_1" type="text" class="medium m-wrap" />
+                  <input name="t1" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Februari<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_2" type="text" class="medium m-wrap" />
+                  <input name="t2" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Maret<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_3" type="text" class="medium m-wrap" />
+                  <input name="t3" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">April<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_4" type="text" class="medium m-wrap" />
+                  <input name="t4" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Mei<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_5" type="text" class="medium m-wrap" />
+                  <input name="t5" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Juni<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_6" type="text" class="medium m-wrap" />
+                  <input name="t6" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Juli<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_7" type="text" class="medium m-wrap" />
+                  <input name="t7" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Angustus<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_8" type="text" class="medium m-wrap" />
+                  <input name="t8" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">September<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_9" type="text" class="medium m-wrap" />
+                  <input name="t9" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Oktober<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_10" type="text" class="medium m-wrap" />
+                  <input name="t10" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">November<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_11" type="text" class="medium m-wrap" />
+                  <input name="t11" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
                <label class="control-label">Desember<span class="required">*</span></label>
                <div class="controls">
-                  <input name="t_12" type="text" class="medium m-wrap" />
+                  <input name="t12" type="text" class="medium m-wrap" />
                </div>
             </div>
             <div class="form-actions">
@@ -246,7 +246,7 @@
    </div>
 
 </div>
-<!-- END ADD REMBUG -->
+<!-- END ADD TARGET CABANG -->
 
 
 
@@ -256,7 +256,7 @@
 
    <div class="portlet box purple">
       <div class="portlet-title">
-         <div class="caption"><i class="icon-reorder"></i>Edit Rembug</div>
+         <div class="caption"><i class="icon-reorder"></i>Edit Target Cabang</div>
          <div class="tools">
             <a href="javascript:;" class="collapse"></a>
          </div>
@@ -265,20 +265,20 @@
          <!-- BEGIN FORM-->
          <form action="#" id="form_edit" class="form-horizontal">
             <input type="hidden" name="edit_branch_code" id="edit_branch_code">
-            <input type="hidden" id="cm_id" name="cm_id">
+            <input type="hidden" id="branch_code" name="branch_code">
             <div class="alert alert-error hide">
                <button class="close" data-dismiss="alert"></button>
                You have some form errors. Please check below.
             </div>
             <div class="alert alert-success hide">
                <button class="close" data-dismiss="alert"></button>
-               Rembug Berhasil Di Edit !
+               Target Cabang Berhasil Di Edit !
             </div>
 
             <div class="control-group">
-               <label class="control-label">Nama Rembug<span class="required">*</span></label>
+               <label class="control-label">Tahun<span class="required">*</span></label>
                <div class="controls">
-                  <input type="text" name="nama_rembug" data-required="1" class="medium m-wrap" />
+                  <input type="text" name="tahun" data-required="1" class="medium m-wrap" />
                </div>
             </div>
             <div class="control-group">
@@ -570,11 +570,11 @@
             $("#branch_name").val($("#result option:selected").attr('branch_name'));
             $("#close", "#dialog_kantor_cabang").trigger('click');
 
-            $('#rembug_table').dataTable({
+            $('#target_cabang').dataTable({
                "bDestroy": true,
                "bProcessing": true,
                "bServerSide": true,
-               "sAjaxSource": site_url + "cif/datatable_target_cabang",
+               "sAjaxSource": site_url + "cif/datatable_target_cabang_setup",
                "fnServerParams": function(aoData) {
                   aoData.push({
                      "name": "branch_code",
@@ -582,6 +582,17 @@
                   });
                },
                "aoColumns": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
                   null,
                   null,
                   null,
@@ -667,14 +678,14 @@
       // di dalam fungsi ini ada variable tbl_id
       // gantilah value dari tbl_id ini sesuai dengan element nya
       var dTreload = function() {
-         var tbl_id = 'rembug_table';
+         var tbl_id = 'target_cabang';
          $("select[name='" + tbl_id + "_length']").trigger('change');
          $(".paging_bootstrap li:first a").trigger('click');
          $("#" + tbl_id + "_filter input").val('').trigger('keyup');
       }
 
       // fungsi untuk check all
-      jQuery('#rembug_table .group-checkable').live('change', function() {
+      jQuery('#target_cabang .group-checkable').live('change', function() {
          var set = jQuery(this).attr("data-set");
          var checked = jQuery(this).is(":checked");
          jQuery(set).each(function() {
@@ -687,7 +698,7 @@
          jQuery.uniform.update(set);
       });
 
-      $("#rembug_table .checkboxes").livequery(function() {
+      $("#target_cabang .checkboxes").livequery(function() {
          $(this).uniform();
       });
 
@@ -718,7 +729,7 @@
                   branch_code: branch_code
                },
                success: function(response) {
-                  $("#id_rembug").val(response);
+                  $("#id_cabang").val(response);
                }
             })
 
@@ -747,22 +758,52 @@
          focusInvalid: false, // do not focus the last invalid input
          // ignore: "",
          rules: {
-            id_rembug: {
+            id_cabang: {
                minlength: 4,
                required: true
             },
-            nama_rembug: {
+            tahun: {
                required: true
             },
-            petugas_lapangan: {
+            item_target: {
                required: true
             },
-            tanggal_pembentukan: {
+            t1: {
                required: true
             },
-            hari_transaksi: {
+            t2: {
                required: true
-            }
+            },
+            t3: {
+               required: true
+            },
+            t4: {
+               required: true
+            },
+            t5: {
+               required: true
+            },
+            t6: {
+               required: true
+            },
+            t7: {
+               required: true
+            },
+            t8: {
+               required: true
+            },
+            t9: {
+               required: true
+            },
+            t10: {
+               required: true
+            },
+            t11: {
+               required: true
+            },
+            t12: {
+               required: true
+            },
          },
 
          invalidHandler: function(event, validator) { //display error alert on form submit              
@@ -947,7 +988,7 @@
                   if (response.success == true) {
                      success2.show();
                      error2.hide();
-                     $("#rembug_table_filter input").val('');
+                     $("#target_cabang_filter input").val('');
                      dTreload();
                      $("#cancel", form_edit).trigger('click')
                      alert('Successfully Updated Data');
@@ -980,17 +1021,17 @@
 
       $("#btn_delete").click(function() {
 
-         var cm_id = [];
+         var target_id = [];
          var $i = 0;
          $("input#checkbox:checked").each(function() {
 
-            cm_id[$i] = $(this).val();
+            target_id[$i] = $(this).val();
 
             $i++;
 
          });
 
-         if (cm_id.length == 0) {
+         if (target_id.length == 0) {
             alert("Please select some row to delete !");
          } else {
             var conf = confirm('Are you sure to delete this rows ?');
@@ -1000,7 +1041,7 @@
                   url: site_url + "cif/delete_rembug",
                   dataType: "json",
                   data: {
-                     cm_id: cm_id
+                     target_id: target_id
                   },
                   success: function(response) {
                      if (response.success == true) {
@@ -1020,15 +1061,23 @@
       });
 
 
-
-
-
       // begin first table
-      $('#rembug_table').dataTable({
+      $('#target_cabang').dataTable({
          "bProcessing": true,
          "bServerSide": true,
-         "sAjaxSource": site_url + "cif/datatable_rembug_setup",
+         "sAjaxSource": site_url + "cif/datatable_target_cabang_setup",
          "aoColumns": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
             null,
             null,
             null,

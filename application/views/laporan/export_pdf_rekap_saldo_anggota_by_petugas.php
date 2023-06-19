@@ -144,16 +144,18 @@
           <tbody>
             <tr>
               <td class="no">Kode</td>
-              <td class="anggota">Keterangan</td>
-              <td class="jumlah">LWK</td>
-              <td class="pokok">Wajib</td>
-              <td class="pokok">Kelompok</td>
+              <td class="anggota">Keterangan</td> 
+              <td class="jumlah">Jumlah</td>
+              <td class="jumlah">Simpok/LWK</td>
+              <td class="pokok">Simwa/Minggon</td>
+              <td class="pokok">DTK</td>
               <td class="pokok">Sukarela</td>              
               <td class="pokok">Pokok</td>
               <td class="pokok">Margin</td>
             </tr>
             <?php
             $no = 1; 
+            $total_jumlah_anggota  = 0;
             $total_setoran_lwk  = 0;
             $total_simpanan_pokok    = 0;
             $total_tabungan_minggon   = 0;
@@ -164,6 +166,7 @@
             $total_saldo_margin   = 0;
             $total_saldo_catab   = 0;
             foreach ($result as $row):
+              $total_jumlah_anggota += $row['jumlah_anggota'];
               $total_setoran_lwk += $row['setoran_lwk'];
               $total_simpanan_pokok += $row['simpanan_pokok'];
               $total_tabungan_minggon += $row['tabungan_minggon'];
@@ -177,7 +180,8 @@
             <tr class="value">
               <td class="val_anggota"><?php echo $no++;?></td>
               <td class="val_anggota" style="text-align:left;"><?php echo $row['fa_name'];?></td>
-              <td class="val_jumlah"><?php echo number_format($row['setoran_lwk'],0,',','.');?></td>
+              <td class="val_jumlah"><?php echo number_format($row['jumlah_anggota'],0,',','.');?></td>
+              <td class="val_jumlah"><?php echo number_format($row['setoran_lwk'],0,',','.');?></td>             
               <td class="val_pokok"><?php echo number_format($row['tabungan_minggon'],0,',','.');?></td>
               <td class="val_pokok"><?php echo number_format($row['dtk'],0,',','.');?></td>
               <td class="val_pokok"><?php echo number_format($row['tabungan_sukarela'],0,',','.');?></td>              
@@ -187,6 +191,7 @@
             <?php endforeach; ?>
             <tr class="value">
               <td class="val_pokok" style="font-weight:bold;border-left:solid #999" colspan="2">GRAND TOTAL :</td>
+              <td class="val_pokok"><?php echo number_format($total_jumlah_anggota,0,',','.');?></td>
               <td class="val_pokok"><?php echo number_format($total_setoran_lwk,0,',','.');?></td>
               <td class="val_pokok"><?php echo number_format($total_tabungan_minggon,0,',','.');?></td>
               <td class="val_pokok"><?php echo number_format($total_dtk,0,',','.');?></td>

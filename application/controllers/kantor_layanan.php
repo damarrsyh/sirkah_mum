@@ -49,13 +49,12 @@ class Kantor_layanan extends GMN_Controller {
 	/****************************************************************************************/	
 	// END REMBUG SETUP
 	/****************************************************************************************/
-	
-	// ------------------------------------------------------------------------------------------
-	// BEGIN TARGET CABANG SETUP
-	// ------------------------------------------------------------------------------------------
-	public function target_cabang_setup()
+
+
+
+	public function target_cabang()
 	{
-		$data['container'] = 'kantor_layanan/target_cabang_setup';
+		$data['container'] = 'kantor_layanan/target_cabang';
 		$data['branch_id'] = $this->session->userdata('branch_id');
 		$data['branch_code'] = $this->session->userdata('branch_code');
 		//$data['cabang'] = $this->model_cif->get_all_branch_();
@@ -65,9 +64,6 @@ class Kantor_layanan extends GMN_Controller {
 		$data['current_date'] = $this->format_date_detail($this->current_date(),'id',false,'/');
 		$this->load->view('core',$data);
 	}
-	/****************************************************************************************/	
-	// END TARGET CABANG SETUP
-	/****************************************************************************************/
 
 	// [BEGIN] PETUGAS LAPANGAN SETUP
 

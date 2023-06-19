@@ -1822,6 +1822,18 @@ class Laporan extends GMN_Controller
 		$this->load->view('core', $data);
 	}
 
+	function keuangan_bulanan_p1()
+	{
+		$data['container'] = 'laporan/keuangan_bulanan_p1';
+		$this->load->view('core', $data);
+	}
+
+	function keuangan_bulanan_p2()
+	{
+		$data['container'] = 'laporan/keuangan_bulanan_p2';
+		$this->load->view('core', $data);
+	}
+
 	function get_tanggal_closing()
 	{
 		$branch_code = $this->input->post('branch_code');
@@ -1890,6 +1902,7 @@ class Laporan extends GMN_Controller
 
 		$html = '';
 		$no = 1;
+		$tgl_angsur = '';
 
 		foreach ($datas as $data) {
 			$jumlah_angsur = $data['jumlah_angsuran'];
@@ -2012,6 +2025,14 @@ class Laporan extends GMN_Controller
 		$this->load->view('core', $data);
 	}
 
+	public function rekap_outstanding_piutang_p()
+	{
+		$data['container'] = 'laporan/rekap_outstanding_piutang_p';
+		$data['current_date'] = $this->format_date_detail($this->current_date(), 'id', false, '/');
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$this->load->view('core', $data);
+	}
+
 	function rekap_outstanding_bulan_lalu()
 	{
 		$data['container'] = 'laporan/rekap_outstanding_bulan_lalu';
@@ -2052,6 +2073,14 @@ class Laporan extends GMN_Controller
 		$data['cabang'] = $this->model_laporan->get_all_branch();
 		$this->load->view('core', $data);
 	}
+
+	public function rekap_pengajuan_p()
+	{
+		$data['container'] = 'laporan/rekap_pengajuan_p';
+		$data['current_date'] = $this->format_date_detail($this->current_date(), 'id', false, '/');
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$this->load->view('core', $data);
+	}
 	/****************************************************************************************/
 	// END LAPORAN REKAP PENGAJUAN
 	/****************************************************************************************/
@@ -2086,6 +2115,110 @@ class Laporan extends GMN_Controller
 	// END LAPORAN PENCARIAN PEMBIAYAAN
 	/****************************************************************************************/
 
+
+	function rekap_target_realisasi()
+	{
+		$data['container'] 		= 'laporan/rekap_target_realisasi';
+		$data['jenistarget'] 	= $this->model_laporan->get_targetcabang();
+		$data['tahuntarget'] 	= $this->model_laporan->get_tahuntarget();
+		$this->load->view('core', $data);
+	}
+
+	function rekap_target_realisasi_p1()
+	{
+		$data['container'] 		= 'laporan/rekap_target_realisasi_p1';
+		$data['jenistarget'] 	= $this->model_laporan->get_targetcabang_p1();
+		$data['tahuntarget'] 	= $this->model_laporan->get_tahuntarget();
+		$this->load->view('core', $data);
+	}
+
+	function rekap_target_realisasi_p2()
+	{
+		$data['container'] 		= 'laporan/rekap_target_realisasi_p2';
+		$data['jenistarget'] 	= $this->model_laporan->get_targetcabang_p2();
+		$data['tahuntarget'] 	= $this->model_laporan->get_tahuntarget();
+		$this->load->view('core', $data);
+	} 
+
+	function rekap_target_realisasi_p3()
+	{
+		$data['container'] 		= 'laporan/rekap_target_realisasi_p3';
+		$data['jenistarget'] 	= $this->model_laporan->get_targetcabang_p3();
+		$data['tahuntarget'] 	= $this->model_laporan->get_tahuntarget();
+		$this->load->view('core', $data);
+	}
+
+	function rekap_target_realisasi_p4()
+	{
+		$data['container'] 		= 'laporan/rekap_target_realisasi_p4';
+		$data['jenistarget'] 	= $this->model_laporan->get_targetcabang_p4();
+		$data['tahuntarget'] 	= $this->model_laporan->get_tahuntarget();
+		$this->load->view('core', $data);
+	}
+
+
+
+	function grafik_target_realisasi_proses()
+	{
+		$branch_code  = $this->input->post('branch_code');
+		$jenistarget  = $this->input->post('jenistarget');
+		$tahuntarget  = $this->input->post('tahuntarget');
+		$cx 		  = '4';
+
+		$insert_realisasi_bln_x = $this->model_laporan->fn_insert_realisasi_bln_x($branch_code, $jenistarget, $tahuntarget, $cx);
+		$get_graphic = $this->model_laporan_to_pdf->export_rekap_target_realisasi($branch_code, $jenistarget, $tahuntarget);
+		$branch_graph = $this->model_laporan->get_branch_by_code($branch_code);
+
+		$view = array();
+
+		$i = 1;
+
+		foreach ($get_graphic as $gg) {
+			$keterangan = $gg['keterangan'];
+			$b1 = $gg['b1'] * 1;
+			$b2 = $gg['b2'] * 1;
+			$b3 = $gg['b3'] * 1;
+			$b4 = $gg['b4'] * 1;
+			$b5 = $gg['b5'] * 1;
+			$b6 = $gg['b6'] * 1;
+			$b7 = $gg['b7'] * 1;
+			$b8 = $gg['b8'] * 1;
+			$b9 = $gg['b9'] * 1;
+			$b10 = $gg['b10'] * 1;
+			$b11 = $gg['b11'] * 1;
+			$b12 = $gg['b12'] * 1;
+
+			if ($i == 1) {
+				$color = '#55BBDD';
+			} else {
+				$color = '#FF0000';
+			}
+
+			$view[] = array(
+				'name' => $keterangan,
+				'data' => array($b1, $b2, $b3, $b4, $b5, $b6, $b7, $b8, $b9, $b10, $b11, $b12),
+				'color' => $color
+			);
+
+			$i++;
+		}
+		$data['container'] = 'laporan/rekap_grafik_target_realisasi';
+		$data['title'] = 'Grafik Target Realisasi';
+		$data['branch_code'] = $branch_code;
+		$data['branch_name'] = $branch_graph['branch_name'];
+		$data['branch_id'] = $branch_graph['branch_id'];
+		$data['jenistarget'] = $this->model_laporan->get_targetcabang();
+		$data['jenis_target'] = $jenistarget;
+		$data['tahuntarget'] = $this->model_laporan->get_tahuntarget();
+		$data['tahun_target'] = $tahuntarget;
+		$data['graphic'] = $get_graphic;
+		$data['detail'] = json_encode($view);
+
+		$this->load->view('core', $data);
+	}
+
+
+
 	/****************************************************************************************/
 	// BEGIN LAPORAN REKAP PENCARIAN PEMBIAYAAN
 	public function rekap_pencairan_pembiayaan()
@@ -2095,11 +2228,34 @@ class Laporan extends GMN_Controller
 		$data['cabang'] = $this->model_laporan->get_all_branch();
 		$data['kecamatan'] = $this->model_laporan->get_kecamatan();
 		$this->load->view('core', $data);
+	} 
+
+	public function rekap_pencairan_pembiayaan_p()
+	{
+		$data['container'] = 'laporan/rekap_pencairan_pembiayaan_p';
+		$data['current_date'] = $this->format_date_detail($this->current_date(), 'id', false, '/');
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$data['kecamatan'] = $this->model_laporan->get_kecamatan();
+		$this->load->view('core', $data);
 	}
+
 	// END LAPORAN REKAP PENCARIAN PEMBIAYAAN
 	/****************************************************************************************/
 
 	/****************************************************************************************/
+	// BEGIN LAPORAN REKAP ANGGOTA KELUAR 
+	public function rekap_anggota_keluar_p()
+	{
+		$data['container'] = 'laporan/rekap_anggota_keluar_p';
+		$data['current_date'] = $this->format_date_detail($this->current_date(), 'id', false, '/');
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$data['kecamatan'] = $this->model_laporan->get_kecamatan();
+		$this->load->view('core', $data);
+	}
+	// END LAPORAN REKAP PENCARIAN PEMBIAYAAN
+	/****************************************************************************************/ 
+
+		/****************************************************************************************/
 	// BEGIN LAPORAN REKAP ANGGOTA KELUAR 
 	public function rekap_anggota_keluar()
 	{
@@ -2111,6 +2267,17 @@ class Laporan extends GMN_Controller
 	}
 	// END LAPORAN REKAP PENCARIAN PEMBIAYAAN
 	/****************************************************************************************/
+
+
+	public function rekap_anggota_masuk()
+	{
+		$data['container'] = 'laporan/rekap_anggota_masuk';
+		$data['current_date'] = $this->format_date_detail($this->current_date(), 'id', false, '/');
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$data['kecamatan'] = $this->model_laporan->get_kecamatan();
+		$this->load->view('core', $data);
+	}
+
 
 
 	/****************************************************************************************/
@@ -2803,6 +2970,14 @@ class Laporan extends GMN_Controller
 		$this->load->view('core', $data);
 	}
 
+	public function rekap_saldo_anggota_p()
+	{
+		$data['container'] = 'laporan/rekap_saldo_anggota_p';
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$this->load->view('core', $data);
+	}
+
+
 	/* REKAP TRANSAKSI REMBUG */
 
 	public function rekap_transaksi_rembug()
@@ -2949,6 +3124,17 @@ class Laporan extends GMN_Controller
 	function rekap_kolektibilitas()
 	{
 		$data['container'] = 'laporan/rekap_kolektibilitas';
+		$data['cabang'] = $this->model_laporan->get_all_branch();
+		$data['data_fa'] = $this->model_laporan->get_fa_by_branch();
+		$data['data_cm'] = $this->model_laporan->get_cm_by_branch();
+		$data['data_kol'] = $this->model_laporan->get_all_par();
+		$data['tanggal'] = $this->model_laporan->get_tanggal_par();
+		$this->load->view('core', $data);
+	}
+
+	function rekap_kolektibilitas_p()
+	{
+		$data['container'] = 'laporan/rekap_kolektibilitas_p';
 		$data['cabang'] = $this->model_laporan->get_all_branch();
 		$data['data_fa'] = $this->model_laporan->get_fa_by_branch();
 		$data['data_cm'] = $this->model_laporan->get_cm_by_branch();
@@ -3264,32 +3450,26 @@ class Laporan extends GMN_Controller
 			$cabang =   $cabang;
 		}
 
-		if ($tanggal1 == "") {
-			echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
-		} else if ($tanggal2 == "") {
-			echo "<script>alert('Parameter Bulum Lengkap !');javascript:window.close();</script>";
+		$datas = $this->model_laporan->export_rekap_jumlah_anggota($cabang);
+		ob_start();
+		$config['full_tag_open'] = '<p>';
+		$config['full_tag_close'] = '</p>';
+		$data['result'] = $datas;
+		if ($cabang != '0000') {
+			$data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
 		} else {
-			$datas = $this->model_laporan->export_rekap_jumlah_anggota($cabang);
-			ob_start();
-			$config['full_tag_open'] = '<p>';
-			$config['full_tag_close'] = '</p>';
-			$data['result'] = $datas;
-			if ($cabang != '0000') {
-				$data['cabang'] = 'CABANG ' . strtoupper($this->model_laporan_to_pdf->get_cabang($cabang));
-			} else {
-				$data['cabang'] = "SEMUA CABANG";
-			}
-			$this->load->view('laporan/export_rekap_jumlah_anggota', $data);
-			$content = ob_get_clean();
-			try {
-				$html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
-				$html2pdf->pdf->SetDisplayMode('fullpage');
-				$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-				$html2pdf->Output('rekap_jumlah_anggota"' . $cabang . '".pdf');
-			} catch (HTML2PDF_exception $e) {
-				echo $e;
-				exit;
-			}
+			$data['cabang'] = "SEMUA CABANG";
+		}
+		$this->load->view('laporan/export_rekap_jumlah_anggota', $data);
+		$content = ob_get_clean();
+		try {
+			$html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 5);
+			$html2pdf->pdf->SetDisplayMode('fullpage');
+			$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+			$html2pdf->Output('rekap_jumlah_anggota"' . $cabang . '".pdf');
+		} catch (HTML2PDF_exception $e) {
+			echo $e;
+			exit;
 		}
 	}
 	// End Export Rekap Jumlah Anggota ///
@@ -3836,12 +4016,9 @@ class Laporan extends GMN_Controller
 		foreach ($result as $row) {
 
 			$rekening = $row['registration_no'];
-			$cif_no = $row['cif_no'];
 			$nama = $row['nama'];
 			$rembug = $row['cm_name'];
 			$jenis2 = $row['financing_type'];
-			$pembiayaan_ke = $row['pembiayaan_ke'];
-			$peruntukan = $row['peruntukan'];
 			$tanggal_pengajuan = $row['tanggal_pengajuan'];
 			$rencana_droping = $row['rencana_droping'];
 			$amount = $row['amount'];
@@ -3873,7 +4050,7 @@ class Laporan extends GMN_Controller
 			}
 
 			$responce['rows'][$i]['registration_no'] = $rekening;
-			$responce['rows'][$i]['cell'] = array($rekening, $$cif_no, $nama, $rembug, $jenis2, $pembiayaan_ke, $peruntukan, $tanggal_pengajuan, $rencana_droping, $amount, $status2);
+			$responce['rows'][$i]['cell'] = array($rekening, $nama, $rembug, $jenis2, $tanggal_pengajuan, $rencana_droping, $amount, $status2);
 
 			$i++;
 		}

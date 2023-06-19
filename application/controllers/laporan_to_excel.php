@@ -1,7 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Laporan_to_excel extends GMN_Controller {
-
 	function __construct(){
 		parent::__construct(true,'main','back');
 		$this->load->model("model_laporan_to_pdf");
@@ -1835,7 +1834,7 @@ class Laporan_to_excel extends GMN_Controller {
 		$sheet->getStyle('A2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		
 		$sheet->mergeCells('A3:Q3');
-		$sheet->setCellValue('A3',"Laporan Portofolio At Risk");
+		$sheet->setCellValue('A3',"Laporan List Kolektibilitas");
 		$sheet->getStyle('A3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 		$sheet->mergeCells('A4:Q4');
@@ -2048,7 +2047,7 @@ class Laporan_to_excel extends GMN_Controller {
 		// Save Excel 2007 file
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="REPORT-AGING.xlsx"');
+		header('Content-Disposition: attachment;filename="LIST-KOLEKTIBILITAS.xlsx"');
 		header('Cache-Control: max-age=0');
 
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
@@ -2309,35 +2308,37 @@ class Laporan_to_excel extends GMN_Controller {
 		$sheet->setCellValue('A3',"Laporan Saldo Rekening Anggota");
 		$sheet->getStyle('A3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-		$sheet->mergeCells('A6:B6');
-		$sheet->setCellValue('A6',"Anggota");
-		$sheet->setCellValue('A7',"ID");
-		$sheet->setCellValue('B7',"Nama");
-
-		$sheet->mergeCells('C6:C7');
-		$sheet->setCellValue('C6',"Rembug Pusat");
+		$sheet->mergeCells('A6:A7');
+		$sheet->setCellValue('A6',"No");
+		$sheet->mergeCells('B6:C6');
+		$sheet->setCellValue('B6',"Anggota");
+		$sheet->setCellValue('B7',"ID");
+		$sheet->setCellValue('C7',"Nama");
 
 		$sheet->mergeCells('D6:D7');
-		$sheet->setCellValue('D6',"Desa");
+		$sheet->setCellValue('D6',"Rembug Pusat");
 
-		$sheet->mergeCells('E6:I6');
-		$sheet->setCellValue('E6',"Saldo Simpanan");
+		$sheet->mergeCells('E6:E7');
+		$sheet->setCellValue('E6',"Desa");
 
-		$sheet->setCellValue('E7',"LWK");
-		$sheet->setCellValue('F7',"Wajib");
-		$sheet->setCellValue('G7',"Kelompok");
-		$sheet->setCellValue('H7',"Sukarela");
-		$sheet->setCellValue('I7',"Taber");
+		$sheet->mergeCells('F6:J6');
+		$sheet->setCellValue('F6',"Saldo Simpanan");
 
-		$sheet->mergeCells('J6:M6');
-		$sheet->setCellValue('J6',"Saldo Pembiayaan");
+		$sheet->setCellValue('F7',"LWK");
+		$sheet->setCellValue('G7',"Wajib");
+		$sheet->setCellValue('H7',"Kelompok");
+		$sheet->setCellValue('I7',"Sukarela");
+		$sheet->setCellValue('J7',"Taber");
 
-		$sheet->setCellValue('J7',"Pemb. Pokok");
-		$sheet->setCellValue('K7',"Pemb. Margin");
-		$sheet->setCellValue('L7',"Saldo Pokok");
-		$sheet->setCellValue('M7',"Saldo Margin");
+		$sheet->mergeCells('K6:N6');
+		$sheet->setCellValue('K6',"Saldo Pembiayaan");
 
-		$sheet->setCellValue('N7',"Petugas");
+		$sheet->setCellValue('K7',"Pemb. Pokok");
+		$sheet->setCellValue('L7',"Pemb. Margin");
+		$sheet->setCellValue('M7',"Saldo Pokok");
+		$sheet->setCellValue('N7',"Saldo Margin");
+
+		$sheet->setCellValue('O7',"Petugas");
 
 		$sheet->getStyle('A1:A4')->getFont()->setBold(true);
 		$sheet->getStyle('A1:A4')->getFont()->setSize(12);
@@ -2348,11 +2349,11 @@ class Laporan_to_excel extends GMN_Controller {
 		$sheet->getStyle('A7:N7')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$sheet->getStyle('A7:N7')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		
-		$sheet->getColumnDimension('A')->setWidth(20);
+		$sheet->getColumnDimension('A')->setWidth(7);
 		$sheet->getColumnDimension('B')->setWidth(20);
 		$sheet->getColumnDimension('C')->setWidth(20);
 		$sheet->getColumnDimension('D')->setWidth(20);
-		$sheet->getColumnDimension('E')->setWidth(15);
+		$sheet->getColumnDimension('E')->setWidth(20);
 		$sheet->getColumnDimension('F')->setWidth(15);
 		$sheet->getColumnDimension('G')->setWidth(15);
 		$sheet->getColumnDimension('H')->setWidth(15);
@@ -2362,10 +2363,12 @@ class Laporan_to_excel extends GMN_Controller {
 		$sheet->getColumnDimension('L')->setWidth(15);
 		$sheet->getColumnDimension('M')->setWidth(15);
 		$sheet->getColumnDimension('N')->setWidth(15);
+		$sheet->getColumnDimension('O')->setWidth(25);
 
 		$datas = $this->model_laporan->export_list_saldo_anggota($branch_code,$fa_code,$cm_code);
 
 		$ii=8;
+		$no=0;
 		$total_pokok = 0;
 		$total_margin = 0;
 		$total_setoran_lwk = 0;
@@ -2378,7 +2381,7 @@ class Laporan_to_excel extends GMN_Controller {
 		$total_saldo_margin = 0;
 		for ( $i = 0 ; $i < count($datas) ; $i++ )
 		{
-
+			$no +=1;
 			$total_pokok += $datas[$i]['pokok'];
 			$total_margin += $datas[$i]['margin'];
 			$total_setoran_lwk += $datas[$i]['setoran_lwk'];
@@ -2391,45 +2394,46 @@ class Laporan_to_excel extends GMN_Controller {
 			$total_saldo_pokok += $datas[$i]['saldo_pokok'];
 			$total_saldo_margin += $datas[$i]['saldo_margin'];
 
-			$sheet->setCellValue('A'.$ii,' '.$datas[$i]['cif_no']);
-			$sheet->setCellValue('B'.$ii,$datas[$i]['nama']);
-			$sheet->setCellValue('C'.$ii,$datas[$i]['cm_name']);
-			$sheet->setCellValue('D'.$ii,$datas[$i]['desa']);
-			$sheet->setCellValue('E'.$ii,' '.number_format($datas[$i]['setoran_lwk'],0,',','.'));
-			$sheet->setCellValue('F'.$ii,' '.number_format($datas[$i]['tabungan_minggon'],0,',','.'));
-			$sheet->setCellValue('G'.$ii,' '.number_format($datas[$i]['saldo_dtk'],0,',','.'));
-			$sheet->setCellValue('H'.$ii,' '.number_format($datas[$i]['tabungan_sukarela'],0,',','.'));
-			$sheet->setCellValue('I'.$ii,' '.number_format($datas[$i]['saldo_taber'],0,',','.'));
-			$sheet->setCellValue('J'.$ii,' '.number_format($datas[$i]['pokok'],0,',','.'));
-			$sheet->setCellValue('K'.$ii,' '.number_format($datas[$i]['margin'],0,',','.'));
-			$sheet->setCellValue('L'.$ii,' '.number_format($datas[$i]['saldo_pokok'],0,',','.'));
-			$sheet->setCellValue('M'.$ii,' '.number_format($datas[$i]['saldo_margin'],0,',','.'));
-			$sheet->setCellValue('N'.$ii,' '.$datas[$i]['fa_name']);
+			$sheet->setCellValue('A'.$ii,' '.$no);
+			$sheet->setCellValue('B'.$ii,' '.$datas[$i]['cif_no']);
+			$sheet->setCellValue('C'.$ii,$datas[$i]['nama']);
+			$sheet->setCellValue('D'.$ii,$datas[$i]['cm_name']);
+			$sheet->setCellValue('E'.$ii,$datas[$i]['desa']);
+			$sheet->setCellValue('F'.$ii,' '.number_format($datas[$i]['setoran_lwk'],0,',','.'));
+			$sheet->setCellValue('G'.$ii,' '.number_format($datas[$i]['tabungan_minggon'],0,',','.'));
+			$sheet->setCellValue('H'.$ii,' '.number_format($datas[$i]['saldo_dtk'],0,',','.'));
+			$sheet->setCellValue('I'.$ii,' '.number_format($datas[$i]['tabungan_sukarela'],0,',','.'));
+			$sheet->setCellValue('J'.$ii,' '.number_format($datas[$i]['saldo_taber'],0,',','.'));
+			$sheet->setCellValue('K'.$ii,' '.number_format($datas[$i]['pokok'],0,',','.'));
+			$sheet->setCellValue('L'.$ii,' '.number_format($datas[$i]['margin'],0,',','.'));
+			$sheet->setCellValue('M'.$ii,' '.number_format($datas[$i]['saldo_pokok'],0,',','.'));
+			$sheet->setCellValue('N'.$ii,' '.number_format($datas[$i]['saldo_margin'],0,',','.'));
+			$sheet->setCellValue('O'.$ii,' '.$datas[$i]['fa_name']);
 
-			$sheet->getStyle('E'.$ii.':L'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+			$sheet->getStyle('F'.$ii.':M'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 			
-			$sheet->getStyle('E'.$ii.':L'.$ii)->getFont()->setSize(9);
+			$sheet->getStyle('F'.$ii.':M'.$ii)->getFont()->setSize(9);
 
 			
 			$ii++;
 		}
 
-		$sheet->setCellValue('E'.$ii,' '.number_format($total_setoran_lwk,0,',','.'));
-		$sheet->setCellValue('F'.$ii,' '.number_format($total_tabungan_minggon,0,',','.'));
-		$sheet->setCellValue('G'.$ii,' '.number_format($total_tabungan_kelompok,0,',','.'));
-		$sheet->setCellValue('H'.$ii,' '.number_format($total_tabungan_sukarela,0,',','.'));
-		$sheet->setCellValue('I'.$ii,' '.number_format($total_tabungan_berencana,0,',','.'));
-		$sheet->setCellValue('J'.$ii,' '.number_format($total_pokok,0,',','.'));
-		$sheet->setCellValue('K'.$ii,' '.number_format($total_margin,0,',','.'));
-		$sheet->setCellValue('L'.$ii,' '.number_format($total_saldo_pokok,0,',','.'));
-		$sheet->setCellValue('M'.$ii,' '.number_format($total_saldo_margin,0,',','.'));
+		$sheet->setCellValue('F'.$ii,' '.number_format($total_setoran_lwk,0,',','.'));
+		$sheet->setCellValue('G'.$ii,' '.number_format($total_tabungan_minggon,0,',','.'));
+		$sheet->setCellValue('H'.$ii,' '.number_format($total_tabungan_kelompok,0,',','.'));
+		$sheet->setCellValue('I'.$ii,' '.number_format($total_tabungan_sukarela,0,',','.'));
+		$sheet->setCellValue('J'.$ii,' '.number_format($total_tabungan_berencana,0,',','.'));
+		$sheet->setCellValue('K'.$ii,' '.number_format($total_pokok,0,',','.'));
+		$sheet->setCellValue('L'.$ii,' '.number_format($total_margin,0,',','.'));
+		$sheet->setCellValue('M'.$ii,' '.number_format($total_saldo_pokok,0,',','.'));
+		$sheet->setCellValue('N'.$ii,' '.number_format($total_saldo_margin,0,',','.'));
 
 
-		$sheet->getStyle('E'.$ii.':L'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+		$sheet->getStyle('F'.$ii.':M'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 		
-		$sheet->getStyle('A'.$ii.':L'.$ii)->getFont()->setSize(9);
+		$sheet->getStyle('A'.$ii.':M'.$ii)->getFont()->setSize(9);
 
-		$sheet->getStyle('A'.$ii.':L'.$ii)->getFont()->setBold(true);
+		$sheet->getStyle('A'.$ii.':M'.$ii)->getFont()->setBold(true);
 
 	
 		// Redirect output to a client's web browser (Excel2007)
@@ -10230,6 +10234,282 @@ public function export_rekap_jumlah_anggota_petugas()
 	// END REKAP PENCAIRAN BY KREDITUR
 	/****************************************************************************************/
 
+	function grafik_target_realisasi($branch_code,$jenistarget,$tahuntarget){
+		include './assets/plugins/jpgraph/jpgraph.php';
+		include './assets/plugins/jpgraph/jpgraph_line.php';
+
+		$result = $this->model_laporan_to_pdf->export_rekap_target_realisasi($branch_code, $jenistarget, $tahuntarget);
+
+		$graph = new Graph(1100, 400);
+		$graph->SetScale("textlin");
+
+		$theme_class = new UniversalTheme;
+
+		$graph->SetTheme($theme_class);
+		$graph->img->SetAntiAliasing(false);
+		$graph->title->Set('Rekap Target Vs Realisasi');
+		$graph->SetBox(false);
+
+		$graph->img->SetAntiAliasing();
+
+		$graph->yaxis->HideZeroLabel();
+		$graph->yaxis->HideLine(false);
+		$graph->yaxis->HideTicks(false, false);
+
+		$bulan = array();
+
+		for ($i = 1; $i < 13; $i++) {
+			if ($i == 1) {
+				$month = 'Jan';
+			} else if ($i == 2) {
+				$month = 'Feb';
+			} else if ($i == 3) {
+				$month = 'Mar';
+			} else if ($i == 4) {
+				$month = 'Apr';
+			} else if ($i == 5) {
+				$month = 'Mei';
+			} else if ($i == 6) {
+				$month = 'Jun';
+			} else if ($i == 7) {
+				$month = 'Jul';
+			} else if ($i == 8) {
+				$month = 'Agt';
+			} else if ($i == 9) {
+				$month = 'Sep';
+			} else if ($i == 10) {
+				$month = 'Okt';
+			} else if ($i == 11) {
+				$month = 'Nov';
+			} else {
+				$month = 'Des';
+			}
+
+			$bulan[] = $month;
+		}
+
+		$graph->xgrid->Show();
+		$graph->xgrid->SetLineStyle("solid");
+		$graph->xaxis->SetTickLabels($bulan);
+		$graph->xgrid->SetColor('#E3E3E3');
+
+		$arr = array();
+		$datay = array();
+		
+		$j = 0;
+
+		foreach($result as $rsl){
+			$datay[$j] = array($rsl['b1'],$rsl['b2'],$rsl['b3'],$rsl['b4'],$rsl['b5'],$rsl['b6'],$rsl['b7'],$rsl['b8'],$rsl['b9'],$rsl['b10'],$rsl['b11'],$rsl['b12']);
+
+			if ($j == 0) {
+				$p1 = new LinePlot($datay[$j]);
+				$p1->SetColor("#6495ED");
+				$p1->SetLegend($rsl['keterangan']);
+				$graph->Add($p1);
+			} else {
+				$p2 = new LinePlot($datay[$j]);
+				$p2->SetColor("#B22222");
+				$p2->SetLegend($rsl['keterangan']);
+				$graph->Add($p2);
+			}
+
+			$j++;
+		}
+
+		$graph->SetMargin(80, 15, 0, 70);
+		$graph->legend->SetFrameWeight(1);
+		$graph->legend->SetPos(0.5, 0.98, 'center', 'bottom');
+
+		$gdImgHandler = $graph->Stroke(_IMG_HANDLER);
+		$fileName = './assets/img/grafik/grafik_' . $branch_code . '_' . $jenistarget . '_' . $tahuntarget . '.png';
+		$graph->img->Stream($fileName);
+		$graph->img->Headers();
+		$graph->img->Stream();
+	}
+
+	function export_rekap_target_realisasi() {
+		$branch_code  = $this->uri->segment(3);
+        	$jenistarget  = $this->uri->segment(4);
+        	$tahuntarget  = $this->uri->segment(5);
+
+			//$this->grafik_target_realisasi($branch_code,$jenistarget,$tahuntarget);
+			$siteaddressAPI = base_url('grafik/rekap_target_realisasi_line.php?branch_code='.$branch_code.'&jenistarget='.$jenistarget.'&tahuntarget='.$tahuntarget);
+			$data = file_get_contents($siteaddressAPI);
+	       
+	        $datas = $this->model_laporan_to_pdf->export_rekap_target_realisasi($branch_code,$jenistarget,$tahuntarget);
+        	
+        	if ($branch_code !='00000'){
+				$branch_name = $this->model_laporan_to_pdf->get_cabang($branch_code);
+			}  else 
+        		{ $branch_name = "PUSAT"; }
+				
+			// ----------------------------------------------------------
+		    // [BEGIN] EXPORT SCRIPT
+			// ----------------------------------------------------------
+			// Create new PHPExcel object
+			$objPHPExcel = $this->phpexcel;
+
+			$objDrawing = new PHPExcel_Worksheet_Drawing();
+			//$objDrawing->setPath(base_url('grafik/rekap_target_realisasi_line.php?branch_code='.$branch_code.'&jenistarget='.$jenistarget.'&tahuntarget='.$tahuntarget));
+			$objDrawing->setPath('./assets/img/grafik/grafik_' . $branch_code . '_' . $jenistarget . '_' . $tahuntarget . '.png');
+			$objDrawing->setCoordinates('A10');
+			$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+
+			// Set document properties
+			$objPHPExcel->getProperties()->setCreator("MICROFINANCE")
+											 ->setLastModifiedBy("MICROFINANCE")
+											 ->setTitle("Office 2007 XLSX Test Document")
+											 ->setSubject("Office 2007 XLSX Test Document")
+											 ->setDescription("REPORT, generated using PHP classes.")
+											 ->setKeywords("REPORT")
+											 ->setCategory("Test result file");
+
+			$objPHPExcel->setActiveSheetIndex(0); 
+
+			$styleArray = array(
+		       		'borders' => array(
+				             'outline' => array(
+				                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+				                    'color' => array('rgb' => '000000'),
+				             ),
+				       ),);
+
+			$objPHPExcel->getActiveSheet()->mergeCells('A1:N1');
+			$objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A1',strtoupper($this->session->userdata('institution_name')));
+			$objPHPExcel->getActiveSheet()->mergeCells('A2:N2');
+			$objPHPExcel->getActiveSheet()->getStyle('A2:N2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A2',"Cabang : ".$branch_code);
+			$objPHPExcel->getActiveSheet()->mergeCells('A3:N3');
+			$objPHPExcel->getActiveSheet()->getStyle('A3:N3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A3',"Laporan Rekap Target vs Realisasi");
+			$objPHPExcel->getActiveSheet()->mergeCells('A4:N4');
+			$objPHPExcel->getActiveSheet()->getStyle('A4:N4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A4',"Tahun : ".$tahuntarget);
+
+			$objPHPExcel->getActiveSheet()->setCellValue('A6',"Kode");
+			$objPHPExcel->getActiveSheet()->setCellValue('B6',"Keterangan");
+			$objPHPExcel->getActiveSheet()->setCellValue('C6',"Jan");
+			$objPHPExcel->getActiveSheet()->setCellValue('D6',"Feb");
+			$objPHPExcel->getActiveSheet()->setCellValue('E6',"Mar");
+			$objPHPExcel->getActiveSheet()->setCellValue('F6',"Apr");
+			$objPHPExcel->getActiveSheet()->setCellValue('G6',"Mei");
+			$objPHPExcel->getActiveSheet()->setCellValue('H6',"Jun");
+			$objPHPExcel->getActiveSheet()->setCellValue('I6',"Jul");
+			$objPHPExcel->getActiveSheet()->setCellValue('J6',"Agt");
+			$objPHPExcel->getActiveSheet()->setCellValue('K6',"Sep");
+			$objPHPExcel->getActiveSheet()->setCellValue('L6',"Okt");
+			$objPHPExcel->getActiveSheet()->setCellValue('M6',"Nov");
+			$objPHPExcel->getActiveSheet()->setCellValue('N6',"Des");
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:N6')->getFont()->setSize(10);
+			
+			$objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A2')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A3')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A4')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A6')->getFont()->setBold(true);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('B6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('C6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('D6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('E6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('F6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('G6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('H6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('I6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('J6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('K6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('L6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('M6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('N6')->applyFromArray($styleArray);
+
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(15);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:N6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle('A6:N6')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+					
+			$ii = 7;
+
+			for( $i = 0 ; $i < count($datas) ; $i++ ) { 
+				$objPHPExcel->getActiveSheet()->setCellValue('A'.$ii,$datas[$i]['kode']);
+				$objPHPExcel->getActiveSheet()->setCellValue('B'.$ii,$datas[$i]['keterangan']);
+				$objPHPExcel->getActiveSheet()->setCellValue('C'.$ii,$datas[$i]['b1']);
+				$objPHPExcel->getActiveSheet()->setCellValue('D'.$ii,$datas[$i]['b2']);
+				$objPHPExcel->getActiveSheet()->setCellValue('E'.$ii,$datas[$i]['b3']);
+				$objPHPExcel->getActiveSheet()->setCellValue('F'.$ii,$datas[$i]['b4']);
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$ii,$datas[$i]['b5']);
+				$objPHPExcel->getActiveSheet()->setCellValue('H'.$ii,$datas[$i]['b6']);
+				$objPHPExcel->getActiveSheet()->setCellValue('I'.$ii,$datas[$i]['b7']);
+				$objPHPExcel->getActiveSheet()->setCellValue('J'.$ii,$datas[$i]['b8']);
+				$objPHPExcel->getActiveSheet()->setCellValue('K'.$ii,$datas[$i]['b9']);
+				$objPHPExcel->getActiveSheet()->setCellValue('L'.$ii,$datas[$i]['b10']);
+				$objPHPExcel->getActiveSheet()->setCellValue('M'.$ii,$datas[$i]['b11']);
+				$objPHPExcel->getActiveSheet()->setCellValue('N'.$ii,$datas[$i]['b12']);
+
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':A'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':B'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$ii.':C'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('D'.$ii.':D'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('E'.$ii.':E'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('F'.$ii.':F'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('G'.$ii.':G'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('H'.$ii.':H'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('I'.$ii.':I'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('J'.$ii.':J'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('K'.$ii.':K'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('L'.$ii.':L'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('M'.$ii.':M'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('N'.$ii.':N'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':B'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$ii.':N'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':N'.$ii)->getFont()->setSize(10);
+
+				$ii++;
+				
+			}//END FOR
+
+			$iii = count($datas)+8;
+				
+
+			//$objPHPExcel->getActiveSheet()->getStyle('C'.$iii.':C'.$iii)->applyFromArray($styleArray);
+			//$objPHPExcel->getActiveSheet()->getStyle('D'.$iii.':D'.$iii)->applyFromArray($styleArray);
+			//$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':C'.$iii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			//$objPHPExcel->getActiveSheet()->getStyle('D'.$iii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+			//$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':D'.$iii)->getFont()->setSize(10); 
+
+		
+			// Redirect output to a client's web browser (Excel2007)
+			// Save Excel 2007 file
+
+			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			header('Content-Disposition: attachment;filename="REKAP_TARGET_REALISASI.xlsx"');
+			header('Cache-Control: max-age=0');
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+			$objWriter->save('php://output');
+
+			// ----------------------------------------------------------------------
+			// [END] EXPORT SCRIPT
+			// ----------------------------------------------------------------------
+		
+	}
+
 
 	/****************************************************************************************/	
 	// START REKAP PELUNASAN
@@ -17418,6 +17698,204 @@ public function export_rekap_jumlah_anggota_petugas()
 		// ----------------------------------------------------------------------
 	}
 
+	public function export_rekap_saldo_anggota_cabang_lalu() 
+	{
+        $cabang = $this->uri->segment(3);
+        $hari = $this->uri->segment(4);
+        $bulan = $this->uri->segment(5);
+        $tahun = $this->uri->segment(6);
+
+        $tanggal = $tahun . '-' . $bulan . '-' . $hari;
+
+        $datas = $this->model_laporan_to_pdf->export_rekap_saldo_anggota_cabang_lalu($cabang, $tanggal);
+
+        if ($cabang !='00000'){
+            $datacabang = $this->model_laporan_to_pdf->get_cabang($cabang);
+        }else{
+            $datacabang = "Semua Cabang";
+        } 
+			
+			// ----------------------------------------------------------
+	    	// [BEGIN] EXPORT SCRIPT
+			// ----------------------------------------------------------
+
+			// Create new PHPExcel object
+			$objPHPExcel = $this->phpexcel;
+			// Set document properties
+			$objPHPExcel->getProperties()->setCreator("MICROFINANCE")
+										 ->setLastModifiedBy("MICROFINANCE")
+										 ->setTitle("Office 2007 XLSX Test Document")
+										 ->setSubject("Office 2007 XLSX Test Document")
+										 ->setDescription("REPORT, generated using PHP classes.")
+										 ->setKeywords("REPORT")
+										 ->setCategory("Test result file");
+
+			$objPHPExcel->setActiveSheetIndex(0); 
+
+			$styleArray = array(
+	       		'borders' => array(
+			             'outline' => array(
+			                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+			                    'color' => array('rgb' => '000000'),
+			             ),
+			       ),
+			);
+
+			$objPHPExcel->getActiveSheet()->mergeCells('A1:J1');
+			$objPHPExcel->getActiveSheet()->getStyle('A1:J1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A1',strtoupper($this->session->userdata('institution_name')));
+			$objPHPExcel->getActiveSheet()->mergeCells('A2:J2');
+			$objPHPExcel->getActiveSheet()->getStyle('A2:J2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A2',"Cabang : ".$datacabang);
+			$objPHPExcel->getActiveSheet()->mergeCells('A3:J3');
+			$objPHPExcel->getActiveSheet()->getStyle('A3:J3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A3',"Rekap Saldo Anggota Bulan Lalu Berdasarkan Cabang");
+			$objPHPExcel->getActiveSheet()->mergeCells('A4:J4');
+			$objPHPExcel->getActiveSheet()->getStyle('A4:J4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A4',"Tanggal ".$tanggal);
+
+
+			$objPHPExcel->getActiveSheet()->setCellValue('A6',"Kode");
+			$objPHPExcel->getActiveSheet()->setCellValue('B6',"Keterangan");
+			$objPHPExcel->getActiveSheet()->setCellValue('C6',"Jumlah Anggota");
+			$objPHPExcel->getActiveSheet()->setCellValue('D6',"Simpok");
+			// $objPHPExcel->getActiveSheet()->setCellValue('E6',"Investasi");
+			$objPHPExcel->getActiveSheet()->setCellValue('E6',"Simwa");
+			$objPHPExcel->getActiveSheet()->setCellValue('F6',"Kelompok");
+			$objPHPExcel->getActiveSheet()->setCellValue('G6',"Sukarela");
+			$objPHPExcel->getActiveSheet()->setCellValue('H6',"Pokok");
+			$objPHPExcel->getActiveSheet()->setCellValue('I6',"Margin");
+			$objPHPExcel->getActiveSheet()->setCellValue('J6',"Catab");
+
+			$objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A2')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A3')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A4')->getFont()->setBold(true);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getFont()->setSize(10);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('B6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('C6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('D6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('E6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('F6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('G6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('H6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('I6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('J6')->applyFromArray($styleArray);
+
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			
+
+
+					
+			$ii = 7;
+
+            $total_anggota  	 	 = 0;
+            $total_setoran_lwk  	 = 0;
+            $total_simpanan_pokok    = 0;
+            $total_tabungan_minggon  = 0;
+            $total_tabungan_sukarela = 0;
+            $total_tabungan_kelompok = 0;
+            $total_dtk = 0;
+            $total_saldo_pokok = 0;
+            $total_saldo_margin = 0;
+            $total_saldo_catab = 0;
+
+			for( $i = 0 ; $i < count($datas) ; $i++ )
+			{ 
+        		 $total_anggota+=$datas[$i]['jumlah_anggota'];     
+        		 $total_setoran_lwk+=$datas[$i]['setoran_lwk'];     
+       			 $total_simpanan_pokok+=$datas[$i]['simpanan_pokok'];  
+       			 $total_tabungan_minggon+=$datas[$i]['tabungan_minggon'];  
+       			 $total_tabungan_sukarela+=$datas[$i]['tabungan_sukarela'];  
+       			 $total_tabungan_kelompok+=$datas[$i]['tabungan_kelompok'];  
+       			 $total_dtk+=$datas[$i]['dtk'];  
+       			 $total_saldo_pokok+=$datas[$i]['saldo_pokok'];  
+       			 $total_saldo_margin+=$datas[$i]['saldo_margin'];  
+       			 $total_saldo_catab+=$datas[$i]['saldo_catab'];  
+
+				$objPHPExcel->getActiveSheet()->setCellValue('A'.$ii,($i+1));
+				$objPHPExcel->getActiveSheet()->setCellValue('B'.$ii,$datas[$i]['branch_name']);
+				$objPHPExcel->getActiveSheet()->setCellValue('C'.$ii,$datas[$i]['jumlah_anggota']);
+				$objPHPExcel->getActiveSheet()->setCellValue('D'.$ii," ".number_format($datas[$i]['setoran_lwk'],0,',','.'));
+				// $objPHPExcel->getActiveSheet()->setCellValue('D'.$ii," ".number_format($datas[$i]['simpanan_pokok'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('E'.$ii," ".number_format($datas[$i]['tabungan_minggon'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('F'.$ii," ".number_format($datas[$i]['dtk'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$ii," ".number_format($datas[$i]['tabungan_sukarela'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('H'.$ii," ".number_format($datas[$i]['saldo_pokok'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('I'.$ii," ".number_format($datas[$i]['saldo_margin'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('J'.$ii," ".number_format($datas[$i]['saldo_catab'],0,',','.'));
+				
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':A'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':B'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$ii.':C'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('D'.$ii.':D'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('E'.$ii.':E'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('F'.$ii.':F'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('G'.$ii.':G'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('H'.$ii.':H'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('I'.$ii.':I'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('J'.$ii.':J'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getFont()->setSize(10);
+
+				$ii++;
+			
+			}//END FOR
+
+			$iii = count($datas)+8;
+				$objPHPExcel->getActiveSheet()->setCellValue('C'.$iii," ".number_format($total_anggota,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('D'.$iii," ".number_format($total_setoran_lwk,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('E'.$iii," ".number_format($total_tabungan_minggon,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('F'.$iii," ".number_format($total_dtk,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$iii," ".number_format($total_tabungan_sukarela,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('H'.$iii," ".number_format($total_saldo_pokok,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('I'.$iii," ".number_format($total_saldo_margin,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('J'.$iii," ".number_format($total_saldo_catab,0,',','.'));
+
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$iii.':C'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('D'.$iii.':D'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('E'.$iii.':E'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('F'.$iii.':F'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('G'.$iii.':G'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('H'.$iii.':H'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('I'.$iii.':I'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('J'.$iii.':J'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getFont()->setSize(10);
+	
+		// Redirect output to a client's web browser (Excel2007)
+		// Save Excel 2007 file
+
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="REKAP SALDO ANGGOTA BULAN LALU BY CABANG.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+
+		// ----------------------------------------------------------------------
+		// [END] EXPORT SCRIPT
+		// ----------------------------------------------------------------------
+	}
+
 	public function export_rekap_saldo_anggota_rembug()
 	{
         $cabang         = $this->uri->segment(3);     
@@ -17611,6 +18089,205 @@ public function export_rekap_jumlah_anggota_petugas()
 		// ----------------------------------------------------------------------
 	}
 
+
+	public function export_rekap_saldo_anggota_rembug_lalu()
+	{
+        $cabang = $this->uri->segment(3);
+        $hari = $this->uri->segment(4);
+        $bulan = $this->uri->segment(5);
+        $tahun = $this->uri->segment(6);
+
+        $tanggal = $tahun . '-' . $bulan . '-' . $hari;
+
+        $datas = $this->model_laporan_to_pdf->export_rekap_saldo_anggota_rembug_lalu($cabang, $tanggal); 
+
+        if ($cabang !='00000'){
+            $datacabang = $this->model_laporan_to_pdf->get_cabang($cabang);
+        }else{
+            $datacabang = "Semua Cabang";
+        }
+			
+			// ----------------------------------------------------------
+	    	// [BEGIN] EXPORT SCRIPT
+			// ----------------------------------------------------------
+
+			// Create new PHPExcel object
+			$objPHPExcel = $this->phpexcel;
+			// Set document properties
+			$objPHPExcel->getProperties()->setCreator("MICROFINANCE")
+										 ->setLastModifiedBy("MICROFINANCE")
+										 ->setTitle("Office 2007 XLSX Test Document")
+										 ->setSubject("Office 2007 XLSX Test Document")
+										 ->setDescription("REPORT, generated using PHP classes.")
+										 ->setKeywords("REPORT")
+										 ->setCategory("Test result file");
+
+			$objPHPExcel->setActiveSheetIndex(0); 
+
+			$styleArray = array(
+	       		'borders' => array(
+			             'outline' => array(
+			                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+			                    'color' => array('rgb' => '000000'),
+			             ),
+			       ),
+			);
+
+			$objPHPExcel->getActiveSheet()->mergeCells('A1:J1');
+			$objPHPExcel->getActiveSheet()->getStyle('A1:J1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A1',strtoupper($this->session->userdata('institution_name')));
+			$objPHPExcel->getActiveSheet()->mergeCells('A2:J2');
+			$objPHPExcel->getActiveSheet()->getStyle('A2:J2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A2',"Cabang : ".$datacabang);
+			$objPHPExcel->getActiveSheet()->mergeCells('A3:J3');
+			$objPHPExcel->getActiveSheet()->getStyle('A3:J3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A3',"Rekap Saldo Anggota Bulan Lalu Berdasarkan Rembug");
+			$objPHPExcel->getActiveSheet()->mergeCells('A4:J4');
+			$objPHPExcel->getActiveSheet()->getStyle('A4:J4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A4',"Tanggal ".$tanggal);
+
+
+			$objPHPExcel->getActiveSheet()->setCellValue('A6',"Kode");
+			$objPHPExcel->getActiveSheet()->setCellValue('B6',"Keterangan");
+			$objPHPExcel->getActiveSheet()->setCellValue('C6',"Jumlah Anggota");
+			$objPHPExcel->getActiveSheet()->setCellValue('D6',"LWK"); 
+			$objPHPExcel->getActiveSheet()->setCellValue('E6',"Wajib");
+			$objPHPExcel->getActiveSheet()->setCellValue('F6',"Kelompok");
+			$objPHPExcel->getActiveSheet()->setCellValue('G6',"Sukarela");
+			$objPHPExcel->getActiveSheet()->setCellValue('H6',"Pokok");
+			$objPHPExcel->getActiveSheet()->setCellValue('I6',"Margin");
+			$objPHPExcel->getActiveSheet()->setCellValue('J6',"Catab");
+
+			$objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A2')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A3')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A4')->getFont()->setBold(true);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getFont()->setSize(10);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('B6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('C6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('D6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('E6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('F6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('G6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('H6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('I6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('J6')->applyFromArray($styleArray);
+
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			
+
+
+					
+			$ii = 7;
+
+            $total_anggota  	 	 = 0;
+            $total_setoran_lwk  	 = 0;
+            $total_simpanan_pokok    = 0;
+            $total_tabungan_minggon  = 0;
+            $total_tabungan_sukarela = 0;
+            $total_tabungan_kelompok = 0; 
+            $total_dtk = 0;
+            $total_saldo_pokok = 0;
+            $total_saldo_margin = 0;
+            $total_saldo_catab = 0;
+
+			for( $i = 0 ; $i < count($datas) ; $i++ )
+			{ 
+        		 $total_anggota+=$datas[$i]['jumlah_anggota'];     
+        		 $total_setoran_lwk+=$datas[$i]['setoran_lwk'];     
+       			 $total_simpanan_pokok+=$datas[$i]['simpanan_pokok'];  
+       			 $total_tabungan_minggon+=$datas[$i]['tabungan_minggon'];  
+       			 $total_tabungan_sukarela+=$datas[$i]['tabungan_sukarela'];  
+       			 $total_tabungan_kelompok+=$datas[$i]['tabungan_kelompok'];   
+       			 $total_dtk+=$datas[$i]['dtk'];  
+       			 $total_saldo_pokok+=$datas[$i]['saldo_pokok'];  
+       			 $total_saldo_margin+=$datas[$i]['saldo_margin'];  
+       			 $total_saldo_catab+=$datas[$i]['saldo_catab'];  
+
+
+				$objPHPExcel->getActiveSheet()->setCellValue('A'.$ii,($i+1));
+				$objPHPExcel->getActiveSheet()->setCellValue('B'.$ii,$datas[$i]['cm_name']);
+				$objPHPExcel->getActiveSheet()->setCellValue('C'.$ii,$datas[$i]['jumlah_anggota']);
+				$objPHPExcel->getActiveSheet()->setCellValue('D'.$ii," ".number_format($datas[$i]['setoran_lwk'],0,',','.')); 
+				$objPHPExcel->getActiveSheet()->setCellValue('E'.$ii," ".number_format($datas[$i]['tabungan_minggon'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('F'.$ii," ".number_format($datas[$i]['dtk'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$ii," ".number_format($datas[$i]['tabungan_sukarela'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('H'.$ii," ".number_format($datas[$i]['saldo_pokok'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('I'.$ii," ".number_format($datas[$i]['saldo_margin'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('J'.$ii," ".number_format($datas[$i]['saldo_catab'],0,',','.'));
+
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':A'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':B'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$ii.':C'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('D'.$ii.':D'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('E'.$ii.':E'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('F'.$ii.':F'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('G'.$ii.':G'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('H'.$ii.':H'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('I'.$ii.':I'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('J'.$ii.':J'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getFont()->setSize(10);
+
+				$ii++;
+			
+			}//END FOR
+
+			$iii = count($datas)+8;
+				$objPHPExcel->getActiveSheet()->setCellValue('C'.$iii," ".number_format($total_anggota,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('D'.$iii," ".number_format($total_setoran_lwk,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('E'.$iii," ".number_format($total_tabungan_minggon,0,',','.'));				
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$iii," ".number_format($total_dtk,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('F'.$iii," ".number_format($total_tabungan_sukarela,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('H'.$iii," ".number_format($total_saldo_pokok,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('I'.$iii," ".number_format($total_saldo_margin,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('J'.$iii," ".number_format($total_saldo_catab,0,',','.'));
+
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$iii.':C'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('D'.$iii.':D'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('E'.$iii.':E'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('F'.$iii.':F'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('G'.$iii.':G'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('H'.$iii.':H'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('I'.$iii.':I'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('J'.$iii.':J'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getFont()->setSize(10);
+
+	
+		// Redirect output to a client's web browser (Excel2007)
+		// Save Excel 2007 file
+
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="REKAP SALDO ANGGOTA BULAN LALU BY REMBUG.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+
+		// ----------------------------------------------------------------------
+		// [END] EXPORT SCRIPT
+		// ----------------------------------------------------------------------
+	}
+
+
 	public function export_rekap_saldo_anggota_petugas()
 	{
         $cabang         = $this->uri->segment(3);     
@@ -17799,6 +18476,201 @@ public function export_rekap_jumlah_anggota_petugas()
 		// [END] EXPORT SCRIPT
 		// ----------------------------------------------------------------------
 	}
+
+
+	public function export_rekap_saldo_anggota_petugas_lalu()
+	{
+        $cabang = $this->uri->segment(3);
+        $hari = $this->uri->segment(4);
+        $bulan = $this->uri->segment(5);
+        $tahun = $this->uri->segment(6);
+
+        $tanggal = $tahun . '-' . $bulan . '-' . $hari;
+
+        $datas = $this->model_laporan_to_pdf->export_rekap_saldo_anggota_petugas_lalu($cabang, $tanggal); 
+
+        if ($cabang !='00000'){
+            $datacabang = $this->model_laporan_to_pdf->get_cabang($cabang);
+        }else{
+            $datacabang = "Semua Cabang";
+        }
+			
+			// ----------------------------------------------------------
+	    	// [BEGIN] EXPORT SCRIPT
+			// ----------------------------------------------------------
+
+			// Create new PHPExcel object
+			$objPHPExcel = $this->phpexcel;
+			// Set document properties
+			$objPHPExcel->getProperties()->setCreator("MICROFINANCE")
+										 ->setLastModifiedBy("MICROFINANCE")
+										 ->setTitle("Office 2007 XLSX Test Document")
+										 ->setSubject("Office 2007 XLSX Test Document")
+										 ->setDescription("REPORT, generated using PHP classes.")
+										 ->setKeywords("REPORT")
+										 ->setCategory("Test result file");
+
+			$objPHPExcel->setActiveSheetIndex(0); 
+
+			$styleArray = array(
+	       		'borders' => array(
+			             'outline' => array(
+			                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+			                    'color' => array('rgb' => '000000'),
+			             ),
+			       ),
+			);
+
+			$objPHPExcel->getActiveSheet()->mergeCells('A1:J1');
+			$objPHPExcel->getActiveSheet()->getStyle('A1:J1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A1',strtoupper($this->session->userdata('institution_name')));
+			$objPHPExcel->getActiveSheet()->mergeCells('A2:J2');
+			$objPHPExcel->getActiveSheet()->getStyle('A2:J2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A2',"Cabang : ".$datacabang);
+			$objPHPExcel->getActiveSheet()->mergeCells('A3:J3');
+			$objPHPExcel->getActiveSheet()->getStyle('A3:J3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A3',"Rekap Saldo Anggota Bulan Lalu Berdasarkan Petugas");
+			$objPHPExcel->getActiveSheet()->mergeCells('A4:J4');
+			$objPHPExcel->getActiveSheet()->getStyle('A4:J4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->setCellValue('A4',"Tanggal ".$tanggal);
+
+
+			$objPHPExcel->getActiveSheet()->setCellValue('A6',"Kode");
+			$objPHPExcel->getActiveSheet()->setCellValue('B6',"Keterangan");
+			$objPHPExcel->getActiveSheet()->setCellValue('C6',"Jumlah Anggota");
+			$objPHPExcel->getActiveSheet()->setCellValue('D6',"LWK"); 
+			$objPHPExcel->getActiveSheet()->setCellValue('E6',"Wajib");
+			$objPHPExcel->getActiveSheet()->setCellValue('F6',"Kelompok");
+			$objPHPExcel->getActiveSheet()->setCellValue('G6',"Sukarela");
+			$objPHPExcel->getActiveSheet()->setCellValue('H6',"Pokok");
+			$objPHPExcel->getActiveSheet()->setCellValue('I6',"Margin");
+			$objPHPExcel->getActiveSheet()->setCellValue('J6',"Catab");
+
+			$objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A2')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A3')->getFont()->setBold(true);
+			$objPHPExcel->getActiveSheet()->getStyle('A4')->getFont()->setBold(true);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getFont()->setSize(10);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('B6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('C6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('D6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('E6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('F6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('G6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('H6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('I6')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('J6')->applyFromArray($styleArray);
+
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			
+			$ii = 7;
+
+            $total_anggota  	 = 0;
+            $total_setoran_lwk  	 = 0;
+            $total_simpanan_pokok    = 0;
+            $total_tabungan_minggon  = 0;
+            $total_tabungan_sukarela = 0;
+            $total_tabungan_kelompok = 0;
+            $total_dtk = 0;
+            $total_saldo_pokok = 0;
+            $total_saldo_margin = 0;
+            $total_saldo_catab = 0;
+
+			for( $i = 0 ; $i < count($datas) ; $i++ )
+			{ 
+        		 $total_anggota+=$datas[$i]['jumlah_anggota'];     
+        		 $total_setoran_lwk+=$datas[$i]['setoran_lwk'];     
+       			 $total_simpanan_pokok+=$datas[$i]['simpanan_pokok'];  
+       			 $total_tabungan_minggon+=$datas[$i]['tabungan_minggon'];  
+       			 $total_tabungan_sukarela+=$datas[$i]['tabungan_sukarela'];  
+       			 $total_tabungan_kelompok+=$datas[$i]['tabungan_kelompok']; 
+       			 $total_dtk+=$datas[$i]['dtk']; 
+       			 $total_saldo_pokok+=$datas[$i]['saldo_pokok'];  
+       			 $total_saldo_margin+=$datas[$i]['saldo_margin'];  
+       			 $total_saldo_catab+=$datas[$i]['saldo_catab'];  
+
+				$objPHPExcel->getActiveSheet()->setCellValue('A'.$ii,($i+1));
+				$objPHPExcel->getActiveSheet()->setCellValue('B'.$ii,$datas[$i]['fa_name']);
+				$objPHPExcel->getActiveSheet()->setCellValue('C'.$ii,$datas[$i]['jumlah_anggota']);
+				$objPHPExcel->getActiveSheet()->setCellValue('D'.$ii," ".number_format($datas[$i]['setoran_lwk'],0,',','.')); 
+				$objPHPExcel->getActiveSheet()->setCellValue('E'.$ii," ".number_format($datas[$i]['tabungan_minggon'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('F'.$ii," ".number_format($datas[$i]['dtk'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$ii," ".number_format($datas[$i]['tabungan_sukarela'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('H'.$ii," ".number_format($datas[$i]['saldo_pokok'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('I'.$ii," ".number_format($datas[$i]['saldo_margin'],0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('J'.$ii," ".number_format($datas[$i]['saldo_catab'],0,',','.'));
+
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':A'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('B'.$ii.':B'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$ii.':C'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('D'.$ii.':D'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('E'.$ii.':E'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('F'.$ii.':F'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('G'.$ii.':G'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('H'.$ii.':H'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('I'.$ii.':I'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('J'.$ii.':J'.$ii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$ii.':J'.$ii)->getFont()->setSize(10);
+
+				$ii++;
+			
+			}//END FOR
+
+			$iii = count($datas)+8;
+				$objPHPExcel->getActiveSheet()->setCellValue('C'.$iii," ".number_format($total_anggota,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('D'.$iii," ".number_format($total_setoran_lwk,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('E'.$iii," ".number_format($total_tabungan_minggon,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('F'.$iii," ".number_format($total_dtk,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$iii," ".number_format($total_tabungan_sukarela,0,',','.'));				
+				$objPHPExcel->getActiveSheet()->setCellValue('H'.$iii," ".number_format($total_saldo_pokok,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('I'.$iii," ".number_format($total_saldo_margin,0,',','.'));
+				$objPHPExcel->getActiveSheet()->setCellValue('J'.$iii," ".number_format($total_saldo_catab,0,',','.'));
+
+				$objPHPExcel->getActiveSheet()->getStyle('C'.$iii.':C'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('D'.$iii.':D'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('E'.$iii.':E'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('F'.$iii.':F'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('G'.$iii.':G'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('H'.$iii.':H'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('I'.$iii.':I'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('J'.$iii.':J'.$iii)->applyFromArray($styleArray);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$iii.':J'.$iii)->getFont()->setSize(10);
+
+	
+		// Redirect output to a client's web browser (Excel2007)
+		// Save Excel 2007 file
+
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="REKAP SALDO ANGGOTA BULAN LALU BY PETUGAS.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+
+		// ----------------------------------------------------------------------
+		// [END] EXPORT SCRIPT
+		// ----------------------------------------------------------------------
+	}
+
 	//EXPORT LAPORAN REKAP SALDO ANGGOTA
 	
 
@@ -26082,17 +26954,19 @@ public function export_rekap_jumlah_anggota_petugas()
 		// $sheet->setCellValue('Q8','Angsuran Margin');
 		$sheet->mergeCells('O9:O10');
 		$sheet->setCellValue('O9','Kas Petugas');
+		$sheet->mergeCells('P9:P10');
+		$sheet->setCellValue('P9','Sumber Dana');
 
 			
 
 		$sheet->getStyle('B2:B7')->getFont()->setBold(true);
-		$sheet->getStyle('B9:O9')->getFont()->setBold(true);
-		$sheet->getStyle('B10:O10')->getFont()->setBold(true);
+		$sheet->getStyle('B9:P9')->getFont()->setBold(true);
+		$sheet->getStyle('B10:P10')->getFont()->setBold(true);
 		// $sheet->getStyle('R9')->getFont()->setBold(true);
 
 		$sheet->getStyle('B2:B7')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$sheet->getStyle('B9:O9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$sheet->getStyle('B9:O9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$sheet->getStyle('B9:P9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$sheet->getStyle('B9:P9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 		$sheet->getStyle('D10:E10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$sheet->getStyle('H10:N10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -26131,6 +27005,8 @@ public function export_rekap_jumlah_anggota_petugas()
 		$sheet->getStyle('N10')->applyFromArray($styleArray);
 		$sheet->getStyle('O9')->applyFromArray($styleArray);
 		$sheet->getStyle('O10')->applyFromArray($styleArray);
+		$sheet->getStyle('P9')->applyFromArray($styleArray);
+		$sheet->getStyle('P10')->applyFromArray($styleArray);
 		
 		
 		$sheet->getColumnDimension('B')->setWidth(10);
@@ -26148,6 +27024,7 @@ public function export_rekap_jumlah_anggota_petugas()
 		$sheet->getColumnDimension('N')->setWidth(15);
 		$sheet->getColumnDimension('N')->setWidth(15);
 		$sheet->getColumnDimension('O')->setWidth(40);
+		$sheet->getColumnDimension('P')->setWidth(25);
 		
 
 		$ii = 11;
@@ -26157,7 +27034,7 @@ public function export_rekap_jumlah_anggota_petugas()
 	    $total_margin = 0;
 	    $total_bayar = 0;
 	    $total_plafon = 0;
-	    $total_margin = 0;
+	    $total_angsuran_margin = 0;
 	    $total_catab = 0;
 
 		for($i = 0; $i < count($datas); $i++){
@@ -26175,6 +27052,8 @@ public function export_rekap_jumlah_anggota_petugas()
 			$angsuran_margin 		= $datas[$i]['angsuran_margin'];
 			$angsuran_catab 		= $datas[$i]['angsuran_catab'];
 			$kas_petugas 			= $datas[$i]['account_cash_name'];
+			$kreditur 				= $datas[$i]['krd'];
+
 			// $saldo_pokok 			= $datas[$i]['saldo_pokok'];
 			// $saldo_margin 			= $datas[$i]['saldo_margin'];
 			// $saldo_catab 			= $datas[$i]['saldo_catab'];
@@ -26186,7 +27065,7 @@ public function export_rekap_jumlah_anggota_petugas()
 		    $total_margin += $margin;
 		    $total_bayar += $jml_bayar;
 		    $total_plafon += $angsuran_pokok;
-		    $total_margin += $angsuran_margin;
+		    $total_angsuran_margin += $angsuran_margin;
 		    $total_catab += $angsuran_catab;
 
 			$sheet->setCellValue('B'.$ii,($i+1));
@@ -26203,6 +27082,7 @@ public function export_rekap_jumlah_anggota_petugas()
 			$sheet->setCellValue('M'.$ii,$angsuran_catab);
 			$sheet->setCellValue('N'.$ii,$jml_bayar);
 			$sheet->setCellValue('O'.$ii,$kas_petugas);
+			$sheet->setCellValue('P'.$ii,$kreditur);
 
 			$sheet->getStyle('B'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('C'.$ii)->applyFromArray($styleArray);
@@ -26218,12 +27098,14 @@ public function export_rekap_jumlah_anggota_petugas()
 			$sheet->getStyle('M'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('N'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('O'.$ii)->applyFromArray($styleArray);
+			$sheet->getStyle('P'.$ii)->applyFromArray($styleArray);
 
 			$sheet->getStyle('A'.$ii.':G'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			$sheet->getStyle('H'.$ii.':I'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 			$sheet->getStyle('J'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			$sheet->getStyle('K'.$ii.':N'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 			$sheet->getStyle('O'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$sheet->getStyle('P'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 			$ii++;
 		}
@@ -26246,7 +27128,7 @@ public function export_rekap_jumlah_anggota_petugas()
 		$sheet->getStyle('L'.$row_total)->applyFromArray($styleArray);
 		$sheet->getStyle('L'.$row_total)->getFont()->setBold(true);
 		$sheet->getStyle('L'.$row_total)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		$sheet->setCellValue('L'.$row_total,$total_margin);
+		$sheet->setCellValue('L'.$row_total,$total_angsuran_margin);
 
 		$sheet->getStyle('M'.$row_total)->applyFromArray($styleArray);
 		$sheet->getStyle('M'.$row_total)->getFont()->setBold(true);
@@ -26344,17 +27226,19 @@ public function export_rekap_jumlah_anggota_petugas()
 		
 		$sheet->mergeCells('O9:O10');
 		$sheet->setCellValue('O9','Kas Petugas');
+		$sheet->mergeCells('P9:P10');
+		$sheet->setCellValue('P9','Sumber Dana');
 
 			
 
 		$sheet->getStyle('B2:B7')->getFont()->setBold(true);
-		$sheet->getStyle('B9:O9')->getFont()->setBold(true);
-		$sheet->getStyle('B10:O10')->getFont()->setBold(true);
+		$sheet->getStyle('B9:P9')->getFont()->setBold(true);
+		$sheet->getStyle('B10:P10')->getFont()->setBold(true);
 		// $sheet->getStyle('R9')->getFont()->setBold(true);
 
 		$sheet->getStyle('B2:B7')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$sheet->getStyle('B9:O9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$sheet->getStyle('B9:O9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$sheet->getStyle('B9:P9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$sheet->getStyle('B9:P9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 		$sheet->getStyle('D10:E10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		$sheet->getStyle('H10:N10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -26388,6 +27272,8 @@ public function export_rekap_jumlah_anggota_petugas()
 		$sheet->getStyle('N10')->applyFromArray($styleArray);
 		$sheet->getStyle('O9')->applyFromArray($styleArray);
 		$sheet->getStyle('O10')->applyFromArray($styleArray);
+		$sheet->getStyle('P9')->applyFromArray($styleArray);
+		$sheet->getStyle('P10')->applyFromArray($styleArray);
 		// $sheet->getStyle('P8')->applyFromArray($styleArray);
 		// $sheet->getStyle('P9')->applyFromArray($styleArray);
 		// $sheet->getStyle('Q8')->applyFromArray($styleArray);
@@ -26410,7 +27296,7 @@ public function export_rekap_jumlah_anggota_petugas()
 		$sheet->getColumnDimension('M')->setWidth(15);
 		$sheet->getColumnDimension('N')->setWidth(15);
 		$sheet->getColumnDimension('O')->setWidth(40);
-		// $sheet->getColumnDimension('P')->setWidth(15);
+		$sheet->getColumnDimension('P')->setWidth(25);
 		// $sheet->getColumnDimension('Q')->setWidth(15);
 		// $sheet->getColumnDimension('R')->setWidth(20);
 		// $sheet->getColumnDimension('S')->setWidth(20);
@@ -26422,7 +27308,7 @@ public function export_rekap_jumlah_anggota_petugas()
 	    $total_margin = 0;
 	    $total_bayar = 0;
 	    $total_plafon = 0;
-	    $total_margin = 0;
+	    $total_angsuran_margin = 0;
 	    $total_catab = 0;
 
 		for($i = 0; $i < count($datas); $i++){
@@ -26444,12 +27330,13 @@ public function export_rekap_jumlah_anggota_petugas()
 			// $jtempo_angsuran_last 	= $datas[$i]['jtempo_angsuran_last'];
 			$angsuran_catab 		= $datas[$i]['bayar_catab'];
 			$kas_petugas 			= $datas[$i]['account_cash_name'];
+			$kreditur 				= $datas[$i]['krd'];
 
 			$total_pokok += $pokok;
 		    $total_margin += $margin;
 		    $total_bayar += $jml_bayar;
 		    $total_plafon += $angsuran_pokok;
-		    $total_margin += $angsuran_margin;
+		    $total_angsuran_margin += $angsuran_margin;
 		    $total_catab += $angsuran_catab;
 
 			$sheet->setCellValue('B'.$ii,($i+1));
@@ -26470,6 +27357,7 @@ public function export_rekap_jumlah_anggota_petugas()
 			$sheet->setCellValue('M'.$ii,$angsuran_catab);
 			$sheet->setCellValue('N'.$ii,$jml_bayar);
 			$sheet->setCellValue('O'.$ii,$kas_petugas);
+			$sheet->setCellValue('P'.$ii,$kreditur);
 
 			$sheet->getStyle('B'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('C'.$ii)->applyFromArray($styleArray);
@@ -26485,7 +27373,7 @@ public function export_rekap_jumlah_anggota_petugas()
 			$sheet->getStyle('M'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('N'.$ii)->applyFromArray($styleArray);
 			$sheet->getStyle('O'.$ii)->applyFromArray($styleArray);
-			// $sheet->getStyle('P'.$ii)->applyFromArray($styleArray);
+			$sheet->getStyle('P'.$ii)->applyFromArray($styleArray);
 			// $sheet->getStyle('Q'.$ii)->applyFromArray($styleArray);
 			// $sheet->getStyle('R'.$ii)->applyFromArray($styleArray);
 			// $sheet->getStyle('S'.$ii)->applyFromArray($styleArray);
@@ -26495,6 +27383,7 @@ public function export_rekap_jumlah_anggota_petugas()
 			$sheet->getStyle('J'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			$sheet->getStyle('K'.$ii.':N'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 			$sheet->getStyle('O'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$sheet->getStyle('P'.$ii)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 			$ii++;
 		}

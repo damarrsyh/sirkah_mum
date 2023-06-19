@@ -1,6 +1,6 @@
 <?php
 
-Class Model_transaction extends CI_Model 
+class Model_transaction extends CI_Model
 {
 	/* BEGIN REGISTRASI REKENING TABUNGAN *******************************************************/
 	public function get_all_product_tabungan()
@@ -11,7 +11,7 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	public function datatable_rekening_tabungan_setup($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_rekening_tabungan_setup($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$param = array();
 		$branch_code = $this->session->userdata('branch_code');
@@ -35,34 +35,32 @@ Class Model_transaction extends CI_Model
 							mfi_cm ON mfi_cm.cm_code = mfi_cif.cm_code
 				";
 
-		if ( $sWhere != "" ){
+		if ($sWhere != "") {
 			$sql .= "$sWhere ";
 
-			if ($flag_all_branch==0) {
+			if ($flag_all_branch == 0) {
 				$sql .= " AND mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?) AND mfi_account_saving.status_rekening=0 ";
 				$param[] = $branch_code;
 			} else {
 				$sql .= " WHERE mfi_account_saving.status_rekening=0 ";
 			}
+		} else {
 
-		}else{
-
-			if ($flag_all_branch==0) {
+			if ($flag_all_branch == 0) {
 				$sql .= " WHERE mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?) AND mfi_account_saving.status_rekening=0 ";
 				$param[] = $branch_code;
 			} else {
 				$sql .= " WHERE mfi_account_saving.status_rekening=0 ";
 			}
-
 		}
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
@@ -98,12 +96,13 @@ Class Model_transaction extends CI_Model
 				FROM mfi_cif , mfi_cm, mfi_account_default_balance
         		where mfi_cif.cif_no = ? AND mfi_cif.cm_code=mfi_cm.cm_code
         		AND mfi_cif.cif_no = mfi_account_default_balance.cif_no";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
 
-	function ajax_get_value_from_cif_no_saleh($cif_no){
+	function ajax_get_value_from_cif_no_saleh($cif_no)
+	{
 		$sql = "SELECT
 		mc.branch_code,
 		mc.nama,
@@ -118,12 +117,13 @@ Class Model_transaction extends CI_Model
 
 		$param = array($cif_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function ajax_get_tabungan($cif_no){
+	function ajax_get_tabungan($cif_no)
+	{
 		$sql = "SELECT
 		madb.tabungan_wajib,
 		madb.tabungan_sukarela,
@@ -135,7 +135,7 @@ Class Model_transaction extends CI_Model
 
 		$param = array($cif_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
@@ -173,7 +173,7 @@ Class Model_transaction extends CI_Model
 				mfi_cif
 				INNER JOIN mfi_account_saving ON mfi_account_saving.cif_no = mfi_cif.cif_no
         		where mfi_cif.cif_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
@@ -187,31 +187,32 @@ Class Model_transaction extends CI_Model
 				mfi_cif
 				INNER JOIN mfi_account_saving ON mfi_account_saving.cif_no = mfi_cif.cif_no
 				where mfi_account_saving.account_saving_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
-	
+
 	public function count_cif_by_product_code($product_code)
 	{
 		$sql = "SELECT max(substr(account_saving_no,19)) AS jumlah from mfi_account_saving where product_code = ?";
-		$query = $this->db->query($sql,array($product_code));
+		$query = $this->db->query($sql, array($product_code));
 
 		return $query->row_array();
 	}
-	
+
 	public function add_rekening_tabungan($data)
 	{
-		$this->db->insert('mfi_account_saving',$data);
+		$this->db->insert('mfi_account_saving', $data);
 	}
-	
+
 	public function delete_rekening_tabungan($param)
 	{
-		$this->db->delete('mfi_account_saving',$param);
+		$this->db->delete('mfi_account_saving', $param);
 	}
-	
-	function delete_perpanjangan_tabber($param){
-		$this->db->delete('mfi_account_saving_schedulle',$param);
+
+	function delete_perpanjangan_tabber($param)
+	{
+		$this->db->delete('mfi_account_saving_schedulle', $param);
 	}
 
 	public function get_account_saving_by_account_saving_id($account_saving_id)
@@ -256,22 +257,23 @@ Class Model_transaction extends CI_Model
 					mfi_product_saving ON mfi_account_saving.product_code = mfi_product_saving.product_code
 				WHERE 
 					account_saving_id = ? ";
-		$query = $this->db->query($sql,array($account_saving_id));
+		$query = $this->db->query($sql, array($account_saving_id));
 
 		return $query->row_array();
 	}
-	
-	public function edit_rekening_tabungan($data,$param)
+
+	public function edit_rekening_tabungan($data, $param)
 	{
-		$this->db->update('mfi_account_saving',$data,$param);
+		$this->db->update('mfi_account_saving', $data, $param);
 	}
 
-	function update_trx_deposito($data,$param){
-		$this->db->update('mfi_trx_account_deposit',$data,$param);
+	function update_trx_deposito($data, $param)
+	{
+		$this->db->update('mfi_trx_account_deposit', $data, $param);
 	}
 	/* END REGISTRASI REKENING TABUNGAN *******************************************************/
 
-	public function datatable_deposito_setup($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_deposito_setup($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				mfi_account_deposit.account_deposit_no,
@@ -286,13 +288,13 @@ Class Model_transaction extends CI_Model
 				where mfi_account_deposit.status_rekening = '0'
 				";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
@@ -324,18 +326,18 @@ Class Model_transaction extends CI_Model
 			mfi_cif
 			LEFT JOIN mfi_account_saving ON mfi_cif.cif_no = mfi_account_saving.cif_no
 			WHERE mfi_cif.cif_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
-	
-	
+
+
 	public function add_deposito($data)
 	{
-		$this->db->insert('mfi_account_deposit',$data);
+		$this->db->insert('mfi_account_deposit', $data);
 	}
 
-	
+
 	public function get_all_product()
 	{
 		$sql = "SELECT product_code, product_name from mfi_product_deposit ";
@@ -351,12 +353,12 @@ Class Model_transaction extends CI_Model
 
 		return $query->result_array();
 	}
-	
+
 	public function delete_deposit($param)
 	{
-		$this->db->delete('mfi_account_deposit',$param);
+		$this->db->delete('mfi_account_deposit', $param);
 	}
-	
+
 	public function get_deposit_by_id($account_deposit_id)
 	{
 		$sql = "SELECT
@@ -392,44 +394,46 @@ Class Model_transaction extends CI_Model
 			INNER JOIN mfi_cif ON mfi_account_deposit.cif_no = mfi_cif.cif_no
 			-- INNER JOIN mfi_account_saving ON mfi_account_saving.cif_no = mfi_cif.cif_no
 			WHERE mfi_account_deposit.account_deposit_id = ?";
-		$query = $this->db->query($sql,array($account_deposit_id));
+		$query = $this->db->query($sql, array($account_deposit_id));
 
 		return $query->row_array();
 	}
 
-	public function edit_deposit($data,$param)
+	public function edit_deposit($data, $param)
 	{
-		$this->db->update('mfi_account_deposit',$data,$param);
+		$this->db->update('mfi_account_deposit', $data, $param);
 	}
-	
+
 	public function cif_count_product_code($product_code)
 	{
 		$sql = "select max(substr(account_deposit_no,19)) AS jumlah from mfi_account_deposit where product_code = ?";
-		$query = $this->db->query($sql,array($product_code));
+		$query = $this->db->query($sql, array($product_code));
 
 		return $query->row_array();
 	}
 
-	function fn_jurnal_pembukaan_deposito($account_deposit_no){
+	function fn_jurnal_pembukaan_deposito($account_deposit_no)
+	{
 		$sql = "SELECT fn_jurnal_pembukaan_deposito(?)";
 
 		$param = array($account_deposit_no);
 
-		$this->db->query($sql,$param);
+		$this->db->query($sql, $param);
 	}
 
-	function fn_jurnal_pencairan_deposito($account_deposit_no){
+	function fn_jurnal_pencairan_deposito($account_deposit_no)
+	{
 		$sql = "SELECT fn_jurnal_pencairan_deposito(?)";
 
 		$param = array($account_deposit_no);
 
-		$this->db->query($sql,$param);
+		$this->db->query($sql, $param);
 	}
 
 	public function cif_count_jangka_waktu($product_code)
 	{
 		$sql = "select jangka_waktu AS jw from mfi_product_deposit_nisbah where product_code = ?";
-		$query = $this->db->query($sql,array($product_code));
+		$query = $this->db->query($sql, array($product_code));
 
 		return $query->row_array();
 	}
@@ -437,12 +441,12 @@ Class Model_transaction extends CI_Model
 	public function cif_count_nisbah_bagihasil($product_code)
 	{
 		$sql 	= "select nisbah_bagihasil AS nb from mfi_product_deposit_nisbah where product_code = ?";
-		$query  = $this->db->query($sql,array($product_code));
+		$query  = $this->db->query($sql, array($product_code));
 
 		return $query->row_array();
 	}
 
-	/* BEGIN REGISTRASI REKENING PEMBIAYAAN *******************************************************/	
+	/* BEGIN REGISTRASI REKENING PEMBIAYAAN *******************************************************/
 	public function get_product_financing()
 	{
 		$sql = "SELECT
@@ -459,7 +463,7 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	public function datatable_setor_tunai_tabungan($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_setor_tunai_tabungan($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				a.trx_date,
@@ -485,21 +489,21 @@ Class Model_transaction extends CI_Model
 				AND a.created_by = ?
 		       ";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,array($this->session->userdata('user_id')));
+		$query = $this->db->query($sql, array($this->session->userdata('user_id')));
 
 		return $query->result_array();
 	}
 
-	public function datatable_pembukaan_deposito($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_pembukaan_deposito($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				b.cif_no,
@@ -513,21 +517,21 @@ Class Model_transaction extends CI_Model
 				WHERE a.trx_deposit_type = '0' AND a.trx_status = '0'
 		       ";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,array($this->session->userdata('user_id')));
+		$query = $this->db->query($sql, array($this->session->userdata('user_id')));
 
 		return $query->result_array();
 	}
 
-	public function datatable_pencairan_deposito($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_pencairan_deposito($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				b.cif_no,
@@ -541,21 +545,21 @@ Class Model_transaction extends CI_Model
 				WHERE a.trx_deposit_type = '2' AND a.trx_status = '0'
 		       ";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,array($this->session->userdata('user_id')));
+		$query = $this->db->query($sql, array($this->session->userdata('user_id')));
 
 		return $query->result_array();
 	}
 
-	public function datatable_penarikan_tunai_tabungan($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_penarikan_tunai_tabungan($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				a.trx_date,
@@ -581,37 +585,37 @@ Class Model_transaction extends CI_Model
 				AND a.created_by=?
 		       ";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,array($this->session->userdata('user_id')));
+		$query = $this->db->query($sql, array($this->session->userdata('user_id')));
 		return $query->result_array();
 	}
 
 	public function count_cif_by_product_code_financing($product_code)
 	{
 		$sql = "select max(substr(account_financing_no,19)) AS jumlah from mfi_account_financing where product_code = ?";
-		$query = $this->db->query($sql,array($product_code));
+		$query = $this->db->query($sql, array($product_code));
 
 		return $query->row_array();
 	}
 
-	
+
 	public function count_cif_by_cif_no_financing($cif_no)
 	{
 		$sql = "select max(substr(account_financing_no,19)) AS jumlah from mfi_account_financing where cif_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
 
-	
+
 	public function get_ajax_akad($product_code)
 	{
 		$sql = "SELECT
@@ -624,12 +628,12 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_akad ON mfi_akad.akad_code = mfi_product_akad.akad_code
 
 				WHERE mfi_product_financing.product_code  = ?";
-		$query = $this->db->query($sql,array($product_code));
+		$query = $this->db->query($sql, array($product_code));
 
 		return $query->row_array();
 	}
 
-	
+
 	public function get_ajax_jenis_keuntungan($akad)
 	{
 		$sql = "SELECT
@@ -639,7 +643,7 @@ Class Model_transaction extends CI_Model
 				FROM
 				mfi_akad
 				WHERE akad_code  = ?";
-		$query = $this->db->query($sql,array($akad));
+		$query = $this->db->query($sql, array($akad));
 
 		return $query->row_array();
 	}
@@ -682,7 +686,7 @@ Class Model_transaction extends CI_Model
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
-	} 
+	}
 
 	public function get_pekerjaan()
 	{
@@ -699,20 +703,30 @@ Class Model_transaction extends CI_Model
 
 		return $query->result_array();
 	}
-	
+
+	public function get_kreditur()
+	{
+		$sql = "SELECT code_group, code_value, display_text 
+				FROM mfi_list_code_detail
+				where code_group='kreditur' ORDER BY code_value";
+		$query = $this->db->query($sql);
+
+		return $query->result_array();
+	}
+
 	public function add_rekening_pembiayaan($data)
 	{
-		$this->db->insert('mfi_account_financing',$data);
+		$this->db->insert('mfi_account_financing', $data);
 	}
-	
+
 	public function add_rekening_pembiayaan_array($array_data)
 	{
-		$this->db->insert_batch('mfi_account_financing_schedulle',$array_data);
+		$this->db->insert_batch('mfi_account_financing_schedulle', $array_data);
 	}
-	
+
 	public function delete_rekening_pembiayaan($param)
 	{
-		$this->db->delete('mfi_account_financing',$param);
+		$this->db->delete('mfi_account_financing', $param);
 	}
 
 	public function get_account_financing_by_cif_no($cif_no)
@@ -736,7 +750,7 @@ Class Model_transaction extends CI_Model
 					mfi_account_financing 
 				where 
 					cif_no = ? and status_rekening = 1";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
@@ -762,12 +776,12 @@ Class Model_transaction extends CI_Model
 		
 		from mfi_account_financing
 		where account_financing_no = ?";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		return $query->row_array();
 	}
-	
-	public function get_account_financing_by_account_financing_no_baru($account_financing_no,$cif_no)
+
+	public function get_account_financing_by_account_financing_no_baru($account_financing_no, $cif_no)
 	{
 		$sql = "select 
 		cif_no,
@@ -788,7 +802,7 @@ Class Model_transaction extends CI_Model
 		
 		from mfi_account_financing
 		where account_financing_no = ? and cif_no = ?";
-		$query = $this->db->query($sql,array($account_financing_no,$cif_no));
+		$query = $this->db->query($sql, array($account_financing_no, $cif_no));
 
 		return $query->row_array();
 	}
@@ -866,11 +880,11 @@ Class Model_transaction extends CI_Model
 				LEFT JOIN mfi_akad ON mfi_akad.akad_code = mfi_account_financing.akad_code
 				LEFT JOIN mfi_account_financing_reg ON mfi_account_financing_reg.cif_no = mfi_account_financing.cif_no
 				WHERE mfi_account_financing.account_financing_id = ? ";
-		$query = $this->db->query($sql,array($account_financing_id));
+		$query = $this->db->query($sql, array($account_financing_id));
 
 		return $query->row_array();
 	}
-	
+
 	public function get_account_financing_schedulle_by_no_account($account_financing_no)
 	{
 		$sql = "SELECT
@@ -884,22 +898,22 @@ Class Model_transaction extends CI_Model
 				mfi_account_financing
 				LEFT JOIN mfi_account_financing_schedulle ON mfi_account_financing.account_financing_no = mfi_account_financing_schedulle.account_no_financing
 				";
-		if($account_financing_no==true)
-			$sql .="WHERE mfi_account_financing_schedulle.account_no_financing = ? ";
+		if ($account_financing_no == true)
+			$sql .= "WHERE mfi_account_financing_schedulle.account_no_financing = ? ";
 
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		return $query->result_array();
 	}
-	
-	public function cek_eksistensi_tanggal_jatuh_tempo($account_financing_no,$tglakhir_angsuran)
+
+	public function cek_eksistensi_tanggal_jatuh_tempo($account_financing_no, $tglakhir_angsuran)
 	{
 		$sql = "select count(*) as num from mfi_account_financing_schedulle where account_no_financing = ? AND tangga_jtempo = ?";
-		$query = $this->db->query($sql,array($account_financing_no,$tglakhir_angsuran));
+		$query = $this->db->query($sql, array($account_financing_no, $tglakhir_angsuran));
 		$row = $query->row_array();
-		if(count($row)>0){
+		if (count($row) > 0) {
 			return $row['num'];
-		}else{
+		} else {
 			return 0;
 		}
 		// return $query->result_array();
@@ -919,46 +933,46 @@ Class Model_transaction extends CI_Model
 
 		return $query->result_array();
 	}
-	
-	public function edit_rekening_pembiayaan($data,$param)
+
+	public function edit_rekening_pembiayaan($data, $param)
 	{
-		$this->db->update('mfi_account_financing',$data,$param);
+		$this->db->update('mfi_account_financing', $data, $param);
 	}
-	
-	public function edit_rekening_pembiayaan_array($array_data,$param2)
+
+	public function edit_rekening_pembiayaan_array($array_data, $param2)
 	{
-		$this->db->update('mfi_account_financing_schedulle',$array_data,$param2);
+		$this->db->update('mfi_account_financing_schedulle', $array_data, $param2);
 	}
-	
+
 	public function delete_rekening_pembiayaan_array($param2)
 	{
-		$this->db->delete('mfi_account_financing_schedulle',$param2);
+		$this->db->delete('mfi_account_financing_schedulle', $param2);
 	}
 
 	public function insert_rekening_pembiayaan_array($array_data)
 	{
-		$this->db->insert_batch('mfi_account_financing_schedulle',$array_data);
+		$this->db->insert_batch('mfi_account_financing_schedulle', $array_data);
 	}
 
-	public function get_ajax_biaya_administrasi($product,$biaya_administrasi,$tahun)
+	public function get_ajax_biaya_administrasi($product, $biaya_administrasi, $tahun)
 	{
 		$sql = "select fn_get_biaya_adm_pembiayaan(?,?,?) as biaya_adm";
 
-		$query = $this->db->query($sql,array($product,$biaya_administrasi,$tahun));
+		$query = $this->db->query($sql, array($product, $biaya_administrasi, $tahun));
 		$row = $query->row_array();
 
-		return (!isset($row['biaya_adm']))?0:$row['biaya_adm'];
+		return (!isset($row['biaya_adm'])) ? 0 : $row['biaya_adm'];
 	}
 
 
-	public function get_ajax_biaya_premi_asuransi_jiwa($product,$manfaat,$year,$month,$years,$months)
+	public function get_ajax_biaya_premi_asuransi_jiwa($product, $manfaat, $year, $month, $years, $months)
 	{
 		$sql = "select fn_get_premi_asuransi(?,?,?,?,?,?) as biaya_premi";
 
-		$query = $this->db->query($sql,array($product,$manfaat,$year,$month,$years,$months));
+		$query = $this->db->query($sql, array($product, $manfaat, $year, $month, $years, $months));
 		$row = $query->row_array();
 		// print_r($this->db);
-		return (!isset($row['biaya_premi']))?0:$row['biaya_premi'];
+		return (!isset($row['biaya_premi'])) ? 0 : $row['biaya_premi'];
 	}
 
 	public function get_ajax_value_from_cif_no($cif_no)
@@ -988,7 +1002,7 @@ Class Model_transaction extends CI_Model
 				mfi_cif
 				LEFT JOIN mfi_cm ON mfi_cif.cm_code=mfi_cm.cm_code
         		where mfi_cif.cif_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
@@ -996,7 +1010,8 @@ Class Model_transaction extends CI_Model
 	//END REKENING PEMBIAYAAN
 
 	// BEGIN PERSEDIAAN MBA
-	function datatable_persediaan_mba_setup($sWhere='',$sOrder='',$sLimit='',$branch_code=''){
+	function datatable_persediaan_mba_setup($sWhere = '', $sOrder = '', $sLimit = '', $branch_code = '')
+	{
 
 		$param = array();
 
@@ -1008,35 +1023,35 @@ Class Model_transaction extends CI_Model
 		FROM mfi_account_financing AS maf
 		LEFT JOIN mfi_cif AS mc ON mc.cif_no = maf.cif_no";
 
-		if($sWhere != ""){
+		if ($sWhere != "") {
 			$sql .= "$sWhere";
-			if($branch_code!="00000"){
+			if ($branch_code != "00000") {
 				$sql .= " AND mc.branch_code IN(SELECT branch_code
 				FROM mfi_branch_member WHERE branch_induk = ?)";
 				$param[] = $branch_code;
 			}
 		} else {
-			if($branch_code!="00000"){
+			if ($branch_code != "00000") {
 				$sql .= " WHERE mc.branch_code IN(SELECT branch_code
 				FROM mfi_branch_member WHERE branch_induk = ?)";
 				$param[] = $branch_code;
 			}
 		}
 
-		if($sOrder != ""){
+		if ($sOrder != "") {
 			$sql .= " $sOrder ";
 		}
 
-		if ($sLimit != ""){
+		if ($sLimit != "") {
 			$sql .= " $sLimit";
 		}
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
 	//BEGIN VERIFIKASI PEMBIAYAAN
-	public function datatable_rekening_ver_pembiayaan_setup($sWhere='',$sOrder='',$sLimit='',$tgl_akad='',$branch_code='')
+	public function datatable_rekening_ver_pembiayaan_setup($sWhere = '', $sOrder = '', $sLimit = '', $tgl_akad = '', $branch_code = '')
 	{
 		$param = array();
 		$sql = "SELECT
@@ -1059,46 +1074,46 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_cm ON mfi_cm.cm_code = mfi_cif.cm_code
 		LEFT JOIN mfi_list_code_detail AS mlcd ON mlcd.code_value = mfi_account_financing.kreditur_code";
 
-		if ( $sWhere != "" ){
+		if ($sWhere != "") {
 			$sql .= "$sWhere ";
 			$sql .= " AND mfi_account_financing.tanggal_akad = ? ";
-			$tgl_akad = substr($tgl_akad,4,4).'-'.substr($tgl_akad,2,2).'-'.substr($tgl_akad,0,2);
+			$tgl_akad = substr($tgl_akad, 4, 4) . '-' . substr($tgl_akad, 2, 2) . '-' . substr($tgl_akad, 0, 2);
 			$param[] = $tgl_akad;
-		}else{
+		} else {
 			$sql .= " WHERE mfi_account_financing.tanggal_akad = ? ";
-			$tgl_akad = substr($tgl_akad,4,4).'-'.substr($tgl_akad,2,2).'-'.substr($tgl_akad,0,2);
+			$tgl_akad = substr($tgl_akad, 4, 4) . '-' . substr($tgl_akad, 2, 2) . '-' . substr($tgl_akad, 0, 2);
 			$param[] = $tgl_akad;
 		}
 
-		if ($branch_code!="00000") {
+		if ($branch_code != "00000") {
 			$sql .= " AND mfi_cif.branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
 			$param[] = $branch_code;
 		}
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		// print_r($this->db);
 		// die();
 		return $query->result_array();
 	}
 
-	public function verifikasi_rekening_pembiayaan($data,$param)
+	public function verifikasi_rekening_pembiayaan($data, $param)
 	{
-		$this->db->update('mfi_account_financing',$data,$param);
+		$this->db->update('mfi_account_financing', $data, $param);
 	}
 
-	public function update_status_financing_reg($data2,$param2)
+	public function update_status_financing_reg($data2, $param2)
 	{
-		$this->db->update('mfi_account_financing_reg',$data2,$param2);
+		$this->db->update('mfi_account_financing_reg', $data2, $param2);
 	}
 
 	//END VERIFIKASI PEMBIAYAAN
-	
+
 
 	/* BEGIN INSURANCE *******************************************************/
 	public function get_all_insurance()
@@ -1137,7 +1152,7 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	public function datatable_insurance_setup($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_insurance_setup($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 						mfi_cif.nama,
@@ -1156,31 +1171,31 @@ Class Model_transaction extends CI_Model
 							mfi_cm ON mfi_cm.cm_code = mfi_cif.cm_code
 				";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
 	}
-	
-	
+
+
 	public function add_insurance($data)
 	{
-		$this->db->insert('mfi_account_insurance',$data);
+		$this->db->insert('mfi_account_insurance', $data);
 	}
-	
+
 	public function delete_insurance($param)
 	{
-		$this->db->delete('mfi_account_insurance',$param);
+		$this->db->delete('mfi_account_insurance', $param);
 	}
-	
+
 	public function get_account_insurance_by_account_insurance_id($account_insurance_id)
 	{
 		$sql = "SELECT
@@ -1222,20 +1237,20 @@ Class Model_transaction extends CI_Model
 
 				WHERE 
 							account_insurance_id = ? ";
-		$query = $this->db->query($sql,array($account_insurance_id));
+		$query = $this->db->query($sql, array($account_insurance_id));
 
 		return $query->row_array();
 	}
-	
-	public function edit_insurance($data,$param)
+
+	public function edit_insurance($data, $param)
 	{
-		$this->db->update('mfi_account_insurance',$data,$param);
+		$this->db->update('mfi_account_insurance', $data, $param);
 	}
 
 	public function count_account_no_by_product_code($product_code)
 	{
 		$sql = "select max(right(account_insurance_no,3)) AS jumlah from mfi_account_insurance where product_code = ?";
-		$query = $this->db->query($sql,array($product_code));
+		$query = $this->db->query($sql, array($product_code));
 
 		return $query->row_array();
 	}
@@ -1243,15 +1258,15 @@ Class Model_transaction extends CI_Model
 	public function count_premi_rate_0($rate_type)
 	{
 		$sql = "select rate_tunggal as rate from mfi_product_insurance where rate_type = ?";
-		$query = $this->db->query($sql,array($rate_type));
+		$query = $this->db->query($sql, array($rate_type));
 
 		return $query->row_array();
 	}
 
-	public function count_premi_rate_1($rate_code,$usia,$kontrak)
+	public function count_premi_rate_1($rate_code, $usia, $kontrak)
 	{
 		$sql = "select rate_value as rate from mfi_product_insurance_rate where rate_code = ? AND usia = ? AND kontrak = ? ";
-		$query = $this->db->query($sql,array($rate_code,$usia,$kontrak));
+		$query = $this->db->query($sql, array($rate_code, $usia, $kontrak));
 
 		return $query->row_array();
 	}
@@ -1259,7 +1274,7 @@ Class Model_transaction extends CI_Model
 	public function count_premi_rate_2($plan_code)
 	{
 		$sql = "select premium_value AS rate from mfi_product_insurance_plan where plan_code = ?";
-		$query = $this->db->query($sql,array($plan_code));
+		$query = $this->db->query($sql, array($plan_code));
 
 		return $query->row_array();
 	}
@@ -1267,7 +1282,7 @@ Class Model_transaction extends CI_Model
 
 	/* PENARIKAN TUNAI TABUNGAN *******************************************************/
 	// search account saving number
-	public function search_account_saving_no($keyword='',$cif_type='',$cm_code='')
+	public function search_account_saving_no($keyword = '', $cif_type = '', $cm_code = '')
 	{
 		$sql = "SELECT
 				mfi_cif.nama,
@@ -1284,23 +1299,24 @@ Class Model_transaction extends CI_Model
 				AND mfi_product_saving.product_code = '0007'
 				";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($cif_type!=""){
+		if ($cif_type != "") {
 			$sql .= " and cif_type = ? ";
 			$param[] = $cif_type;
 		}
 
-		if($cm_code!=""){
+		if ($cm_code != "") {
 			$sql .= " and cm_code = ? ";
 			$param[] = $cm_code;
 		}
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
-	function account_saving_no_individu($keyword,$cm_code,$branch_code){
+	function account_saving_no_individu($keyword, $cm_code, $branch_code)
+	{
 		$sql = "SELECT
 		mc.nama,
 		mas.cif_no,
@@ -1318,26 +1334,27 @@ Class Model_transaction extends CI_Model
 		WHERE (UPPER(nama) like ? or mas.account_saving_no like ?)
 		AND maf.financing_type = '1' and maf.status_rekening = '1' ";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($cm_code!=""){
+		if ($cm_code != "") {
 			$sql .= "AND cm_code = ? ";
 			$param[] = $cm_code;
 		}
 
-		if($branch_code!='00000'){
+		if ($branch_code != '00000') {
 			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "GROUP BY 1,2,3,4,5,6,7";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
-	function search_account_saving_no_baru($keyword,$branch_code){
+	function search_account_saving_no_baru($keyword, $branch_code)
+	{
 		$sql = "SELECT
 				mas.status_rekening, mas.account_saving_no, mas.cif_no AS reference_no, mc.nama, mps.product_name, mcm.cm_name
 		FROM mfi_account_saving AS mas 
@@ -1345,27 +1362,28 @@ Class Model_transaction extends CI_Model
 		JOIN mfi_cif AS mc ON mc.cif_no = mas.cif_no
 		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code 
 		WHERE (UPPER(mc.nama) LIKE ? OR mas.account_saving_no LIKE ? OR mc.cif_no LIKE ?) AND mas.status_rekening = '1' 
-		AND (mps.jenis_tabungan = '0' or (mps.jenis_tabungan = '1' and mc.cif_type='1' )) "; 
+		AND (mps.jenis_tabungan = '0' or (mps.jenis_tabungan = '1' and mc.cif_type='1' )) ";
 
 		$param = array();
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($branch_code != '00000'){
+		if ($branch_code != '00000') {
 			$sql .= "AND mc.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "ORDER BY 4,5,6";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function get_deposito_verified($keyword,$branch_code){
+	function get_deposito_verified($keyword, $branch_code)
+	{
 		$sql = "SELECT a.account_deposit_no, b.nama, c.product_name, d.cm_name, b.cif_no
 				FROM 
 				mfi_account_deposit AS a JOIN mfi_cif AS b ON(a.cif_no = b.cif_no) 
@@ -1375,23 +1393,24 @@ Class Model_transaction extends CI_Model
 
 		$param = array();
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($branch_code != '00000'){
+		if ($branch_code != '00000') {
 			$sql .= "AND mc.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "ORDER BY 1";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function get_pencairan_verified($keyword,$branch_code){
+	function get_pencairan_verified($keyword, $branch_code)
+	{
 		$sql = "SELECT a.account_deposit_no, b.nama, c.product_name, d.cm_name, b.cif_no
 				FROM 
 				mfi_account_deposit AS a JOIN mfi_cif AS b ON(a.cif_no = b.cif_no) 
@@ -1401,23 +1420,23 @@ Class Model_transaction extends CI_Model
 
 		$param = array();
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($branch_code != '00000'){
+		if ($branch_code != '00000') {
 			$sql .= "AND mc.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "ORDER BY 1";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	public function search_account_saving_no_active($keyword='')
+	public function search_account_saving_no_active($keyword = '')
 	{
 
 		$branch_code = $this->session->userdata('branch_code');
@@ -1443,18 +1462,19 @@ Class Model_transaction extends CI_Model
 				AND mfi_cif.cif_type=0
 				";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if ($flag_all_branch==0) {
+		if ($flag_all_branch == 0) {
 			$sql .= " AND mfi_branch.branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
 			$param[] = $branch_code;
 		}
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
-	function search_rekening_tabungan_pencairan($keyword){
+	function search_rekening_tabungan_pencairan($keyword)
+	{
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
 
@@ -1475,15 +1495,15 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_branch AS mb ON mb.branch_id = mcm.branch_id
 		WHERE (UPPER(mc.nama) LIKE ? OR mas.account_saving_no LIKE ?) AND mas.status_rekening = '1' AND mc.cif_type = '0' AND mps.jenis_tabungan = '1' AND mps.product_code <> '0099' ";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($flag_all_branch == '0'){
+		if ($flag_all_branch == '0') {
 			$sql .= "AND mb.branch_code IN (SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $branch_code;
 		}
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
@@ -1507,8 +1527,8 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_branch ON mfi_account_saving.branch_code = mfi_branch.branch_code
 				WHERE mfi_account_saving.account_saving_no = ?
 				";
-		$query = $this->db->query($sql,array($no_rekening));
-		
+		$query = $this->db->query($sql, array($no_rekening));
+
 		return $query->row_array();
 	}
 
@@ -1523,8 +1543,8 @@ Class Model_transaction extends CI_Model
 				left join mfi_trx_account_saving on mfi_trx_account_saving.account_saving_no = mfi_account_saving.account_saving_no
 				where mfi_account_saving.account_saving_no = ?
 				";
-		$query = $this->db->query($sql,array($no_rekening));
-		
+		$query = $this->db->query($sql, array($no_rekening));
+
 		return $query->row_array();
 	}
 
@@ -1539,64 +1559,64 @@ Class Model_transaction extends CI_Model
 				left join mfi_trx_account_saving on mfi_trx_account_saving.account_saving_no = mfi_account_saving.account_saving_no
 				where mfi_account_saving.account_saving_no = ? AND status_rekening = '3' AND mfi_cif.cif_type=0
 				";
-		$query = $this->db->query($sql,array($no_rekening));
-		
+		$query = $this->db->query($sql, array($no_rekening));
+
 		return $query->row_array();
 	}
 
-	public function get_rekening_tabungan_berencana_tujuan($cif_no,$account_financing_no)
+	public function get_rekening_tabungan_berencana_tujuan($cif_no, $account_financing_no)
 	{
 		$sql = "select * from mfi_account_saving where cif_no = ? and account_financing_no <> ? and status_rekening = 1";
-		$query = $this->db->query($sql,array($cif_no,$account_saving_no));
+		$query = $this->db->query($sql, array($cif_no, $account_saving_no));
 		return $query->result_array();
 	}
 
-	public function update_account_saving_penarikan($data_account_saving,$param_account_saving)
+	public function update_account_saving_penarikan($data_account_saving, $param_account_saving)
 	{
-		$this->db->update('mfi_account_saving',$data_account_saving,$param_account_saving);
+		$this->db->update('mfi_account_saving', $data_account_saving, $param_account_saving);
 	}
 
 	public function insert_trx_account_saving_penarikan($data_trx_account_saving)
 	{
-		$this->db->insert('mfi_trx_account_saving',$data_trx_account_saving);
+		$this->db->insert('mfi_trx_account_saving', $data_trx_account_saving);
 	}
 
 	public function insert_trx_detail_penarikan($data_trx_detail)
 	{
-		$this->db->insert('mfi_trx_detail',$data_trx_detail);
+		$this->db->insert('mfi_trx_detail', $data_trx_detail);
 	}
 
-	public function update_trx_account_saving_penarikan($data_trx_account_saving,$param)
+	public function update_trx_account_saving_penarikan($data_trx_account_saving, $param)
 	{
-		$this->db->update('mfi_trx_account_saving',$data_trx_account_saving,$param);
+		$this->db->update('mfi_trx_account_saving', $data_trx_account_saving, $param);
 	}
 
-	public function update_trx_detail_penarikan($data_trx_detail,$param)
+	public function update_trx_detail_penarikan($data_trx_detail, $param)
 	{
-		$this->db->update('mfi_trx_detail',$data_trx_detail,$param);
+		$this->db->update('mfi_trx_detail', $data_trx_detail, $param);
 	}
-	
+
 	public function check_no_referensi($no_referensi)
 	{
 		$sql = "select count(*) as num from mfi_trx_account_saving where reference_no = ?";
-		$query = $this->db->query($sql,array($no_referensi));
+		$query = $this->db->query($sql, array($no_referensi));
 
 		$row = $query->row_array();
-		if($row['num']>0){
+		if ($row['num'] > 0) {
 			return false;
-		}else{
+		} else {
 			return true;
 		}
 	}
 
-	
+
 	/**************************************************************************************/
 	// BEGIN SETORAN TUNAI TABUNGAN 
 	/**************************************************************************************/
-	
+
 
 	// search cif number
-	public function search_cif_by_account_saving($keyword='',$type='',$cm_code='')
+	public function search_cif_by_account_saving($keyword = '', $type = '', $cm_code = '')
 	{
 		$sql = "SELECT
 		mfi_account_saving.account_saving_no,
@@ -1611,21 +1631,21 @@ Class Model_transaction extends CI_Model
 		WHERE (upper(mfi_cif.nama) LIKE ? OR mfi_cif.cif_no LIKE ? OR mfi_account_saving.account_saving_no LIKE ?)
 		AND mfi_account_saving.status_rekening !=2 AND mfi_product_saving.product_code = '0007'";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($type!=""){
+		if ($type != "") {
 			$sql .= ' and cif_type = ?';
 			$param[] = $type;
 		}
 
-		if($cm_code!=""){
+		if ($cm_code != "") {
 			$sql .= ' and cm_code = ?';
 			$param[] = $cm_code;
-		} 
+		}
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
@@ -1647,9 +1667,9 @@ Class Model_transaction extends CI_Model
 		INNER JOIN mfi_product_saving ON mfi_account_saving.product_code = mfi_product_saving.product_code
 		INNER JOIN mfi_branch ON mfi_account_saving.branch_code = mfi_branch.branch_code
 		WHERE mfi_account_saving.account_saving_no = ?";
-		
 
-		$query = $this->db->query($sql,array($account_saving_no));
+
+		$query = $this->db->query($sql, array($account_saving_no));
 
 		return $query->row_array();
 	}
@@ -1672,38 +1692,38 @@ Class Model_transaction extends CI_Model
 		INNER JOIN mfi_product_saving ON mfi_account_saving.product_code = mfi_product_saving.product_code
 		INNER JOIN mfi_branch ON mfi_account_saving.branch_code = mfi_branch.branch_code
 		WHERE mfi_account_saving.account_saving_no = ?";
-		
 
-		$query = $this->db->query($sql,array($account_saving_no));
+
+		$query = $this->db->query($sql, array($account_saving_no));
 
 		return $query->row_array();
 	}
 
 	public function add_setoran_tunai_detail($data)
 	{
-		$this->db->insert('mfi_trx_detail',$data);
+		$this->db->insert('mfi_trx_detail', $data);
 	}
 
 	public function add_setoran_tunai_account_saving($data)
 	{
-		$this->db->insert('mfi_trx_account_saving',$data);
+		$this->db->insert('mfi_trx_account_saving', $data);
 	}
 
-	public function update_setoran_tunai_detail($data,$param)
+	public function update_setoran_tunai_detail($data, $param)
 	{
-		$this->db->update('mfi_trx_detail',$data,$param);
+		$this->db->update('mfi_trx_detail', $data, $param);
 	}
 
-	public function update_setoran_tunai_trx_account_saving($data,$param)
+	public function update_setoran_tunai_trx_account_saving($data, $param)
 	{
-		$this->db->update('mfi_trx_account_saving',$data,$param);
+		$this->db->update('mfi_trx_account_saving', $data, $param);
 	}
 
-	public function update_setoran_tunai_account_saving($data_account_saving,$param_account_saving)
+	public function update_setoran_tunai_account_saving($data_account_saving, $param_account_saving)
 	{
-		$this->db->update('mfi_account_saving',$data_account_saving,$param_account_saving);
+		$this->db->update('mfi_account_saving', $data_account_saving, $param_account_saving);
 	}
-	
+
 
 	/**************************************************************************************/
 	// END SETORAN TUNAI TABUNGAN 
@@ -1713,7 +1733,7 @@ Class Model_transaction extends CI_Model
 
 	/* BEGIN PINBUK ************************************************************/
 
-	public function get_no_rekening_pinbuk_sumber($keyword,$no_rekening_tujuan)
+	public function get_no_rekening_pinbuk_sumber($keyword, $no_rekening_tujuan)
 	{
 		$sql = "select 
 				mfi_account_saving.account_saving_no,
@@ -1727,12 +1747,12 @@ Class Model_transaction extends CI_Model
 				where (mfi_account_saving.account_saving_no like ? or upper(mfi_cif.nama) like ?)
 				and mfi_cif.cif_type = 1 and mfi_account_saving.account_saving_no<>?
 			";
-		$query = $this->db->query($sql,array('%'.$keyword.'%','%'.strtoupper(strtolower($keyword)).'%',$no_rekening_tujuan));
+		$query = $this->db->query($sql, array('%' . $keyword . '%', '%' . strtoupper(strtolower($keyword)) . '%', $no_rekening_tujuan));
 
 		return $query->result_array();
 	}
 
-	public function get_no_rekening_pinbuk_tujuan($keyword,$no_rekening_sumber)
+	public function get_no_rekening_pinbuk_tujuan($keyword, $no_rekening_sumber)
 	{
 		$sql = "select 
 				mfi_account_saving.account_saving_no,
@@ -1746,7 +1766,7 @@ Class Model_transaction extends CI_Model
 				where (mfi_account_saving.account_saving_no like ? or upper(mfi_cif.nama) like ?)
 				and mfi_cif.cif_type = 1 and mfi_account_saving.account_saving_no<>?
 			";
-		$query = $this->db->query($sql,array('%'.$keyword.'%','%'.strtoupper(strtolower($keyword)).'%',$no_rekening_sumber));
+		$query = $this->db->query($sql, array('%' . $keyword . '%', '%' . strtoupper(strtolower($keyword)) . '%', $no_rekening_sumber));
 
 		return $query->result_array();
 	}
@@ -1754,31 +1774,31 @@ Class Model_transaction extends CI_Model
 	public function get_account_saving_by_account_saving_no($account_saving_no)
 	{
 		$sql = "select * from mfi_account_saving where account_saving_no = ?";
-		$query = $this->db->query($sql,array($account_saving_no));
+		$query = $this->db->query($sql, array($account_saving_no));
 
 		return $query->row_array();
 	}
 
-	public function update_account_saving($data,$param)
+	public function update_account_saving($data, $param)
 	{
-		$this->db->update('mfi_account_saving',$data,$param);
+		$this->db->update('mfi_account_saving', $data, $param);
 	}
 
 	public function insert_trx_account_saving($data)
 	{
-		$this->db->insert('mfi_trx_account_saving',$data);
+		$this->db->insert('mfi_trx_account_saving', $data);
 	}
 
 	public function insert_trx_detail($data)
 	{
-		$this->db->insert('mfi_trx_detail',$data);
+		$this->db->insert('mfi_trx_detail', $data);
 	}
 
 	/* END PINBUK ************************************************************/
 
 
 
-	/****************************************************************************************/	
+	/****************************************************************************************/
 	// BEGIN REGISTRASI PENCAIRAN DEPOSITO
 	/****************************************************************************************/
 
@@ -1799,8 +1819,8 @@ Class Model_transaction extends CI_Model
 				WHERE (upper(nama) like ? or account_saving_no like ?)
 				";
 
-			$query = $this->db->query($sql,array('%'.strtoupper(strtolower($keyword)).'%','%'.$keyword.'%'));
-		
+		$query = $this->db->query($sql, array('%' . strtoupper(strtolower($keyword)) . '%', '%' . $keyword . '%'));
+
 		// print_r($this->db);
 
 		return $query->result_array();
@@ -1816,9 +1836,9 @@ Class Model_transaction extends CI_Model
 				JOIN mfi_product_deposit AS c ON(a.product_code = c.product_code)
 				JOIN mfi_cm AS d ON b.cm_code = d.cm_code
 				WHERE a.account_deposit_no = ? ::varchar";
-		
 
-		$query = $this->db->query($sql,array($account_deposit_no));
+
+		$query = $this->db->query($sql, array($account_deposit_no));
 
 		return $query->row_array();
 	}
@@ -1841,9 +1861,9 @@ Class Model_transaction extends CI_Model
 
 
 				WHERE (mfi_account_saving.account_saving_no = ?)";
-		
 
-		$query = $this->db->query($sql,array($account_saving_no));
+
+		$query = $this->db->query($sql, array($account_saving_no));
 
 		return $query->row_array();
 	}
@@ -1859,26 +1879,27 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_account_saving ON mfi_account_saving.cif_no = mfi_cif.cif_no
 				WHERE mfi_account_saving.account_saving_no = ?";
 
-		$query = $this->db->query($sql,array($account_saving_no));
+		$query = $this->db->query($sql, array($account_saving_no));
 
 		return $query->result_array();
 	}
 
-	public function update_pencairan_deposito($data_pencairan_deposito,$param_pencairan_deposito)
+	public function update_pencairan_deposito($data_pencairan_deposito, $param_pencairan_deposito)
 	{
-		$this->db->update('mfi_account_deposit',$data_pencairan_deposito,$param_pencairan_deposito);
+		$this->db->update('mfi_account_deposit', $data_pencairan_deposito, $param_pencairan_deposito);
 	}
 
 	public function insert_deposito_break($data_deposito_break)
 	{
-		$this->db->insert('mfi_account_deposit_break',$data_deposito_break);
+		$this->db->insert('mfi_account_deposit_break', $data_deposito_break);
 	}
-	
-	/****************************************************************************************/	
+
+	/****************************************************************************************/
 	// END REGISTRASI PENCAIRAN DEPOSITO
 	/****************************************************************************************/
 
-	function datatable_rekening_ver_deposito_setup_new($sWhere,$sOrder,$sLimit,$branch_code){
+	function datatable_rekening_ver_deposito_setup_new($sWhere, $sOrder, $sLimit, $branch_code)
+	{
 		$sql = "SELECT
 		mc.nama,
 		mc.cif_no,
@@ -1895,33 +1916,33 @@ Class Model_transaction extends CI_Model
 
 		$param = array();
 
-		if($sWhere != ''){
+		if ($sWhere != '') {
 			$sql .= $sWhere;
 
-			if($branch_code != ' 00000'){
+			if ($branch_code != ' 00000') {
 				$sql .= "AND mad.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 				$param[] = $branch_code;
 			}
 		} else {
-			if($branch_code != ' 00000'){
+			if ($branch_code != ' 00000') {
 				$sql .= "AND mad.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 				$param[] = $branch_code;
 			}
 		}
 
-		if($sOrder != ''){
+		if ($sOrder != '') {
 			$sql .= $sOrder;
 		}
 
-		if($sLimit != ''){
+		if ($sLimit != '') {
 			$sql .= $sLimit;
 		}
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
-	public function datatable_rekening_ver_deposito_setup($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_rekening_ver_deposito_setup($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				mfi_cif.nama,
@@ -1937,13 +1958,13 @@ Class Model_transaction extends CI_Model
 				LEFT JOIN mfi_cm ON mfi_cm.cm_code = mfi_cif.cm_code
 				";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
@@ -1951,19 +1972,19 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	public function verifikasi_rekening_deposito($data,$param)
+	public function verifikasi_rekening_deposito($data, $param)
 	{
-		$this->db->update('mfi_account_deposit',$data,$param);
+		$this->db->update('mfi_account_deposit', $data, $param);
 	}
 
-	public function verifikasi_rek_deposito($data,$param)
+	public function verifikasi_rek_deposito($data, $param)
 	{
-		$this->db->update('mfi_account_deposit',$data,$param);
+		$this->db->update('mfi_account_deposit', $data, $param);
 	}
-	
+
 	public function delete_rekening_deposito($param)
 	{
-		$this->db->delete('mfi_account_deposit',$param);
+		$this->db->delete('mfi_account_deposit', $param);
 	}
 
 	public function get_product_deposito()
@@ -1974,24 +1995,24 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	public function update_saldo_memo_from_account_saving($data2,$param2)
+	public function update_saldo_memo_from_account_saving($data2, $param2)
 	{
-		$this->db->update('mfi_account_saving',$data2,$param2);
+		$this->db->update('mfi_account_saving', $data2, $param2);
 	}
 
 	public function insert_mfi_trx_detail($data_trx_detail)
 	{
-		$this->db->insert('mfi_trx_detail',$data_trx_detail);
+		$this->db->insert('mfi_trx_detail', $data_trx_detail);
 	}
 
 	public function insert_mfi_trx_account_deposit($data_trx_account_deposit)
 	{
-		$this->db->insert('mfi_trx_account_deposit',$data_trx_account_deposit);
+		$this->db->insert('mfi_trx_account_deposit', $data_trx_account_deposit);
 	}
 
 	public function insert_mfi_trx_account_saving($data_trx_account_saving)
 	{
-		$this->db->insert('mfi_trx_account_saving',$data_trx_account_saving);
+		$this->db->insert('mfi_trx_account_saving', $data_trx_account_saving);
 	}
 
 	public function get_date_current()
@@ -2008,7 +2029,7 @@ Class Model_transaction extends CI_Model
 	/**************************************************************************************/
 	// BEGIN VERIFIKASI PENCAIRAN DEPOSITO 
 	/**************************************************************************************/
-	public function datatable_pencairan_deposito_setup_new($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_pencairan_deposito_setup_new($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				mfi_cif.nama,
@@ -2028,13 +2049,13 @@ Class Model_transaction extends CI_Model
 				LEFT OUTER JOIN mfi_branch ON mfi_branch.branch_code = mfi_cif.branch_code
 				";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
@@ -2042,7 +2063,7 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	public function datatable_pencairan_deposito_setup($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_pencairan_deposito_setup($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				mfi_cif.nama,
@@ -2061,13 +2082,13 @@ Class Model_transaction extends CI_Model
 				LEFT JOIN mfi_cm ON mfi_cm.cm_code = mfi_cif.cm_code
 				";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
@@ -2106,31 +2127,31 @@ Class Model_transaction extends CI_Model
 
 
 				WHERE (mfi_account_deposit_break.account_deposit_break_id = ?)";
-		
 
-		$query = $this->db->query($sql,array($account_deposit_break_id));
+
+		$query = $this->db->query($sql, array($account_deposit_break_id));
 
 		return $query->row_array();
 	}
 
-	public function update_account_deposit($data,$param)
+	public function update_account_deposit($data, $param)
 	{
-		$this->db->update('mfi_account_deposit',$data,$param);
+		$this->db->update('mfi_account_deposit', $data, $param);
 	}
 
-	public function update_account_deposit_break($data,$param)
+	public function update_account_deposit_break($data, $param)
 	{
-		$this->db->update('mfi_account_deposit_break',$data,$param);
+		$this->db->update('mfi_account_deposit_break', $data, $param);
 	}
 
 	public function delete_account_deposit_break($param)
 	{
-		$this->db->delete('mfi_account_deposit_break',$param);
+		$this->db->delete('mfi_account_deposit_break', $param);
 	}
 
 	function delete_trx_account_deposit($param_account_deposit_no)
 	{
-		$this->db->delete('mfi_trx_account_deposit',$param_account_deposit_no);
+		$this->db->delete('mfi_trx_account_deposit', $param_account_deposit_no);
 	}
 
 	function update_status_deposito($update_status_deposito, $no_rekening)
@@ -2140,7 +2161,7 @@ Class Model_transaction extends CI_Model
 
 	function add_pembukaan_deposito($data_trx_deposit)
 	{
-		$this->db->insert('mfi_trx_account_deposit',$data_trx_deposit);
+		$this->db->insert('mfi_trx_account_deposit', $data_trx_deposit);
 	}
 
 	function get_transaksi_by_norek($account_deposit_no)
@@ -2159,7 +2180,7 @@ Class Model_transaction extends CI_Model
 	/**************************************************************************************/
 
 	//BEGIN VERIFIKASI ASURANSI
-	public function datatable_verifikasi_insurance_setup($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_verifikasi_insurance_setup($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT
 				mfi_account_insurance.account_insurance_no,
@@ -2181,13 +2202,13 @@ Class Model_transaction extends CI_Model
 				LEFT JOIN mfi_cm ON mfi_cm.cm_code = mfi_cif.cm_code
 				";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
@@ -2239,7 +2260,7 @@ Class Model_transaction extends CI_Model
 
 				WHERE 
 							account_insurance_id = ? ";
-		$query = $this->db->query($sql,array($account_insurance_id));
+		$query = $this->db->query($sql, array($account_insurance_id));
 
 		return $query->row_array();
 	}
@@ -2253,44 +2274,44 @@ Class Model_transaction extends CI_Model
 						mfi_cif
 				INNER JOIN mfi_account_saving ON mfi_cif.cif_no = mfi_account_saving.cif_no
 				where mfi_account_saving.account_saving_no = ?";
-		$query = $this->db->query($sql,array($pemegang_rekening));
+		$query = $this->db->query($sql, array($pemegang_rekening));
 
 		return $query->row_array();
 	}
 
-	public function update_saldo_memo($update_saldo_memo,$account_saving_no)
+	public function update_saldo_memo($update_saldo_memo, $account_saving_no)
 	{
-		$this->db->update('mfi_account_saving',$update_saldo_memo,$account_saving_no);
+		$this->db->update('mfi_account_saving', $update_saldo_memo, $account_saving_no);
 	}
 
 	public function insert_mfi_trx_detail_on_verifikasi_insurance($data)
 	{
-		$this->db->insert('mfi_trx_detail',$data);
+		$this->db->insert('mfi_trx_detail', $data);
 	}
 
 	public function insert_mfi_trx_account_insurance_on_verifikasi_insurance($data)
 	{
-		$this->db->insert('mfi_trx_account_insurance',$data);
+		$this->db->insert('mfi_trx_account_insurance', $data);
 	}
-	
+
 	public function insert_mfi_trx_account_saving_on_verifikasi_insurance($data)
 	{
-		$this->db->insert('mfi_trx_account_saving',$data);
+		$this->db->insert('mfi_trx_account_saving', $data);
 	}
 
-	public function verifikasi_rekening_asuransi($data,$param)
+	public function verifikasi_rekening_asuransi($data, $param)
 	{
-		$this->db->update('mfi_account_insurance',$data,$param);
+		$this->db->update('mfi_account_insurance', $data, $param);
 	}
 
-	public function verifikasi_rek_asuransi($data,$param)
+	public function verifikasi_rek_asuransi($data, $param)
 	{
-		$this->db->update('mfi_account_insurance',$data,$param);
+		$this->db->update('mfi_account_insurance', $data, $param);
 	}
-	
+
 	public function delete_rekening_asuransi($param)
 	{
-		$this->db->delete('mfi_account_insurance',$param);
+		$this->db->delete('mfi_account_insurance', $param);
 	}
 
 	public function get_product_asuransi()
@@ -2301,7 +2322,7 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	public function get_trx_rembug_data_wakalah($cm_code,$tanggal)
+	public function get_trx_rembug_data_wakalah($cm_code, $tanggal)
 	{
 		$sql = "SELECT 
 		cif.cif_id,
@@ -2378,14 +2399,14 @@ Class Model_transaction extends CI_Model
 		GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,38,39,40,41
 		ORDER BY cif.kelompok::integer asc;
 		";
-		$query = $this->db->query($sql,array($tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$cm_code));
+		$query = $this->db->query($sql, array($tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $cm_code));
 		// echo "<pre>";
 		// print_r($this->db);
 		// die();
 		return $query->result_array();
 	}
 
-	public function get_trx_rembug_data($cm_code,$tanggal)
+	public function get_trx_rembug_data($cm_code, $tanggal)
 	{
 		$simwa = $this->session->userdata('simpanan_wajib');
 
@@ -2413,11 +2434,11 @@ Class Model_transaction extends CI_Model
 		(CASE WHEN droping.status_droping = 1
 		THEN balance.angsuran ELSE 0 END) AS angsuran,
 		(CASE WHEN droping.status_droping = 1
-		THEN balance.pokok_pembiayaan ELSE 0 END) AS pokok_pembiayaan,
+		THEN pembiayaan.pokok ELSE 0 END) AS pokok_pembiayaan,
 		(CASE WHEN droping.status_droping = 1
-		THEN balance.margin_pembiayaan ELSE 0 END) AS margin_pembiayaan,
+		THEN pembiayaan.margin ELSE 0 END) AS margin_pembiayaan,
 		(CASE WHEN droping.status_droping = 1
-		THEN balance.catab_pembiayaan ELSE 0 END) AS catab_pembiayaan,
+		THEN pembiayaan.saldo_catab ELSE 0 END) AS catab_pembiayaan,
 		balance.tabungan_kelompok,
 		(CASE WHEN droping.status_droping = 1
 		THEN pembiayaan.saldo_pokok ELSE 0 END) AS saldo_pokok,
@@ -2474,7 +2495,7 @@ Class Model_transaction extends CI_Model
 		GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,39,40,41,42
 		ORDER BY cif.kelompok::integer asc;
 		";
-		$query = $this->db->query($sql,array($tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$tanggal,$cm_code));
+		$query = $this->db->query($sql, array($tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $tanggal, $cm_code));
 		// echo "<pre>";
 		// print_r($this->db);
 		// die();
@@ -2483,38 +2504,40 @@ Class Model_transaction extends CI_Model
 
 	//END VERIFIKASI ASURANSI
 
-	function get_akad_code($rekening){
+	function get_akad_code($rekening)
+	{
 		$sql = "SELECT akad_code FROM mfi_account_financing WHERE account_financing_no = ?";
 		$param = array($rekening);
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
 	/* BEGIN TRANSAKSI REMBUG **********************************************************/
 
-	public function update_account_default_balance($data,$param)
+	public function update_account_default_balance($data, $param)
 	{
-		$this->db->update('mfi_account_default_balance',$data,$param);
+		$this->db->update('mfi_account_default_balance', $data, $param);
 	}
 
-	function insert_trx_log_trx_rembug($data){
-		$this->db->insert('mfi_log_histroy_trx_rembug',$data);
+	function insert_trx_log_trx_rembug($data)
+	{
+		$this->db->insert('mfi_log_histroy_trx_rembug', $data);
 	}
 
 	public function insert_trx_cm($data)
 	{
-		$this->db->insert('mfi_trx_cm',$data);
+		$this->db->insert('mfi_trx_cm', $data);
 	}
 
 	public function insert_trx_cm_detail($data)
 	{
-		$this->db->insert('mfi_trx_cm_detail',$data);
+		$this->db->insert('mfi_trx_cm_detail', $data);
 	}
 
 	public function insert_trx_cm_detail2($data)
 	{
-		$this->db->insert('mfi_trx_cm_detail',$data);
+		$this->db->insert('mfi_trx_cm_detail', $data);
 	}
 
 	public function get_gl_account($branch_code)
@@ -2530,9 +2553,9 @@ Class Model_transaction extends CI_Model
 			$sql .= " WHERE flag_akses != ? ";
 			$param[] = 'P';
 		}
-		$sql.=" order by account_code,account_name asc";
+		$sql .= " order by account_code,account_name asc";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
@@ -2544,12 +2567,12 @@ Class Model_transaction extends CI_Model
 
 	public function insert_trx_gl($data)
 	{
-		$this->db->insert("mfi_trx_gl",$data);
+		$this->db->insert("mfi_trx_gl", $data);
 	}
 
 	public function insert_trx_gl_detail($data)
 	{
-		$this->db->insert_batch("mfi_trx_gl_detail",$data);
+		$this->db->insert_batch("mfi_trx_gl_detail", $data);
 	}
 
 	/* END TRANSAKSI JURNAL **********************************************************/
@@ -2569,43 +2592,46 @@ Class Model_transaction extends CI_Model
 				from mfi_gl_account_cash
 				left join mfi_fa on mfi_fa.fa_code = mfi_gl_account_cash.fa_code
 				";
-		
+
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
 	}
 
-	function insert_trx_gl_cash($data){
-		$this->db->insert('mfi_trx_gl_cash',$data);
+	function insert_trx_gl_cash($data)
+	{
+		$this->db->insert('mfi_trx_gl_cash', $data);
 	}
 
 	public function insert_trx_gl_cash_detail($data)
 	{
-		$this->db->insert_batch('mfi_trx_gl_cash_detail',$data);
+		$this->db->insert_batch('mfi_trx_gl_cash_detail', $data);
 	}
 
-	function insert_batch_gl_detail($data){
-		$this->db->insert_batch('mfi_trx_gl_detail',$data);
-	}
-
-	public function update_gl_account_cash($data,$param)
+	function insert_batch_gl_detail($data)
 	{
-		$this->db->update('mfi_gl_account_cash',$data,$param);
+		$this->db->insert_batch('mfi_trx_gl_detail', $data);
 	}
 
-	function update_log_trx_rembug($data,$param){
-		$this->db->update('mfi_log_histroy_trx_rembug',$data,$param);
+	public function update_gl_account_cash($data, $param)
+	{
+		$this->db->update('mfi_gl_account_cash', $data, $param);
+	}
+
+	function update_log_trx_rembug($data, $param)
+	{
+		$this->db->update('mfi_log_histroy_trx_rembug', $data, $param);
 	}
 
 	public function get_gl_account_cash_by_account_cash_id($account_cash_id)
 	{
 		$sql = "select * from mfi_gl_account_cash where account_cash_id = ?";
-		$query = $this->db->query($sql,array($account_cash_id));
+		$query = $this->db->query($sql, array($account_cash_id));
 
 		return $query->row_array();
 	}
 
-	public function ajax_get_gl_account_cash_by_keyword($keyword,$branch_code='',$account_cash_type='')
+	public function ajax_get_gl_account_cash_by_keyword($keyword, $branch_code = '', $account_cash_type = '')
 	{
 		$sql = "select 
 				mfi_gl_account_cash.*
@@ -2618,43 +2644,45 @@ Class Model_transaction extends CI_Model
 				left join mfi_branch on mfi_branch.branch_code=mfi_fa.branch_code
 				where ((mfi_gl_account_cash.account_cash_code like ? or upper(mfi_gl_account_cash.account_cash_name) like ? or mfi_fa.fa_code like ? or upper(mfi_fa.fa_name) like ?))
 			";
-		$param[]='%'.$keyword.'%';
-		$param[]='%'.strtoupper(strtolower($keyword)).'%';
-		$param[]='%'.$keyword.'%';
-		$param[]='%'.strtoupper(strtolower($keyword)).'%';
-		if($branch_code!="00000"){
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		if ($branch_code != "00000") {
 			$sql .= " and mfi_fa.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[]=$branch_code;
+			$param[] = $branch_code;
 		}
 
-		if($account_cash_type!=""){
+		if ($account_cash_type != "") {
 			$sql .= " and mfi_gl_account_cash.account_cash_type = ?";
-			$param[]=$account_cash_type;
+			$param[] = $account_cash_type;
 		}
 
-		$sql.=" order by mfi_fa.branch_code,fa_code asc";
+		$sql .= " order by mfi_fa.branch_code,fa_code asc";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		// print_r($this->db);
 		return $query->result_array();
 	}
 
-	function gl_wakalah_code($product_code){
+	function gl_wakalah_code($product_code)
+	{
 		$sql = "SELECT
 		mpfg.gl_titipan_wakalah
 		FROM mfi_product_financing_gl AS mpfg
 		JOIN mfi_product_financing AS mpf ON mpf.product_financing_gl_code = mpfg.product_financing_gl_code
 		WHERE mpf.product_code = ?";
 		$param = array($product_code);
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function gl_cash_code($kas){
+	function gl_cash_code($kas)
+	{
 		$sql = "SELECT gl_account_code FROM mfi_gl_account_cash WHERE account_cash_code = ?";
 		$param = array($kas);
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
@@ -2662,20 +2690,21 @@ Class Model_transaction extends CI_Model
 	public function ajax_get_cm_by_fa_code($fa_code)
 	{
 		$sql = "select * from mfi_cm where fa_code = ?";
-		$query = $this->db->query($sql,array($fa_code));
+		$query = $this->db->query($sql, array($fa_code));
 
 		return $query->result_array();
 	}
 
 	public function insert_trx_gl_cash_detail_cm($data)
 	{
-		$this->db->insert_batch('mfi_trx_gl_cash_detail_cm',$data);
+		$this->db->insert_batch('mfi_trx_gl_cash_detail_cm', $data);
 	}
 
 	/* END GL ACCOUNT CASH **********************************************************/
 
-	function insert_wakalah($data){
-		$this->db->insert('mfi_account_financing_wakalah',$data);
+	function insert_wakalah($data)
+	{
+		$this->db->insert('mfi_account_financing_wakalah', $data);
 	}
 
 
@@ -2683,12 +2712,12 @@ Class Model_transaction extends CI_Model
 
 	public function insert_trx_account_deposit($data)
 	{
-		$this->db->insert('mfi_trx_account_deposit',$data);
+		$this->db->insert('mfi_trx_account_deposit', $data);
 	}
 
 	/* END VERIFICATION TRANSACTION **********************************************************/
 
-	
+
 
 	/* BEGIN PENDEBETAN ANGSURAN PEMBIAYAAN **********************************************************/
 
@@ -2703,12 +2732,13 @@ Class Model_transaction extends CI_Model
 		and a.product_code=d.product_code and d.jenis_pembiayaan=0
 		and date_part('month', age(date(?), a.jtempo_angsuran_next) ) > 0
 		";
-		$query = $this->db->query($sql,array($tanggal_jto,$tanggal_jto));
+		$query = $this->db->query($sql, array($tanggal_jto, $tanggal_jto));
 
 		return $query->result_array();
 	}
 
-	function get_account_financing_by_account_financing_no($account_financing_no){
+	function get_account_financing_by_account_financing_no($account_financing_no)
+	{
 		$sql = "SELECT
 		mc.cif_id,
 		mc.cif_no,
@@ -2800,56 +2830,57 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_fa AS mf ON mf.fa_code = maf.fa_code
 		WHERE maf.account_financing_no = ?";
 
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		return $query->row_array();
 	}
 
-	public function update_account_financing($data,$param)
+	public function update_account_financing($data, $param)
 	{
-		$this->db->update("mfi_account_financing",$data,$param);
+		$this->db->update("mfi_account_financing", $data, $param);
 	}
 
 	public function insert_trx_account_financing($data)
 	{
-		$this->db->insert("mfi_trx_account_financing",$data);
+		$this->db->insert("mfi_trx_account_financing", $data);
 	}
 
-	public function fn_get_saldoawal_kaspetugas($account_cash_code,$date,$type=0)
+	public function fn_get_saldoawal_kaspetugas($account_cash_code, $date, $type = 0)
 	{
 		$sql = "select fn_get_saldoawal_kaspetugas(?,?,?) as val";
-		$query = $this->db->query($sql,array($account_cash_code,$date,$type));
+		$query = $this->db->query($sql, array($account_cash_code, $date, $type));
 		$row = $query->row_array();
 		return $row['val'];
 	}
 
-	public function delete_account_financing_schedulle($param2){
-		$this->db->delete('mfi_account_financing_schedulle',$param2);
+	public function delete_account_financing_schedulle($param2)
+	{
+		$this->db->delete('mfi_account_financing_schedulle', $param2);
 	}
 
 	/* END PENDEBETAN ANGSURAN PEMBIAYAAN **********************************************************/
 
 	public function insert_trx_cm_detail_droping($data)
 	{
-		$this->db->insert('mfi_trx_cm_detail_droping',$data);
+		$this->db->insert('mfi_trx_cm_detail_droping', $data);
 	}
 
 
-	/****************************************************************************************/	
+	/****************************************************************************************/
 	// BEGIN KAS PETUGAS
 	/****************************************************************************************/
 
 	function get_all_branch()
-    {
-        $sql = "SELECT * FROM  mfi_branch ";
+	{
+		$sql = "SELECT * FROM  mfi_branch ";
 
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
-    }
+	}
 
 
-	public function datatable_transaksi_kas_petugas($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_transaksi_kas_petugas($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$branch_code = $this->session->userdata('branch_code');
 		$sql = "SELECT
@@ -2882,29 +2913,29 @@ Class Model_transaction extends CI_Model
 
 		$param = array();
 
-		if ( $sWhere != "" ){
+		if ($sWhere != "") {
 			$sql .= "$sWhere AND mfi_trx_gl_cash.status=0";
-		}else{
+		} else {
 			$sql .= "WHERE mfi_trx_gl_cash.status=0";
 		}
 
-		if ($branch_code!="00000") {
+		if ($branch_code != "00000") {
 			$sql .= " AND mfi_fa.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	public function datatable_verifikasi_transaksi_kas_petugas($sWhere='',$sOrder='',$sLimit='',$from_date='',$thru_date='',$branch_code='')
+	public function datatable_verifikasi_transaksi_kas_petugas($sWhere = '', $sOrder = '', $sLimit = '', $from_date = '', $thru_date = '', $branch_code = '')
 	{
 		$sql = "SELECT
 						 mfi_trx_gl_cash.trx_gl_cash_id
@@ -2932,30 +2963,30 @@ Class Model_transaction extends CI_Model
 						LEFT JOIN mfi_fa c ON c.fa_code=b.fa_code
 						";
 
-		if ( $sWhere != "" ){
+		if ($sWhere != "") {
 			$sql .= "$sWhere AND mfi_trx_gl_cash.status=0";
-		}else{
+		} else {
 			$sql .= "WHERE mfi_trx_gl_cash.status=0";
 		}
 
 		$param = array();
-		if($from_date!="--" && $thru_date!="--"){
-			$sql.=" AND mfi_trx_gl_cash.trx_date between ? and ? ";
+		if ($from_date != "--" && $thru_date != "--") {
+			$sql .= " AND mfi_trx_gl_cash.trx_date between ? and ? ";
 			$param[] = $from_date;
 			$param[] = $thru_date;
 		}
 
-		if($branch_code!="00000"){
-			$sql.=" AND c.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[]=$branch_code;
+		if ($branch_code != "00000") {
+			$sql .= " AND c.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
+			$param[] = $branch_code;
 		}
 
-		$sql.=" ORDER BY mfi_trx_gl_cash.trx_date ASC ";
+		$sql .= " ORDER BY mfi_trx_gl_cash.trx_date ASC ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 	public function get_trx_by_trx_gl_cash_id($trx_gl_cash_id)
@@ -2968,17 +2999,17 @@ Class Model_transaction extends CI_Model
 				left join mfi_gl_account_cash e on e.account_cash_code=a.account_teller_code
 				left join mfi_fa f on f.fa_code=e.fa_code
 				where a.trx_gl_cash_id=?
-				"; 
+				";
 
-		$query = $this->db->query($sql,array($trx_gl_cash_id));
+		$query = $this->db->query($sql, array($trx_gl_cash_id));
 
 		return $query->row_array();
 	}
 
 
-   	function get_fa_by_branch_code($branch_code)
-    {
-        $sql = "SELECT 
+	function get_fa_by_branch_code($branch_code)
+	{
+		$sql = "SELECT 
         					mfi_fa.fa_code
         					,mfi_fa.fa_name
         					,mfi_fa.branch_code
@@ -2990,15 +3021,15 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_gl_account_cash ON mfi_fa.fa_code = mfi_gl_account_cash.fa_code
         		WHERE mfi_fa.branch_code = ? AND account_cash_type='0' order by mfi_fa.fa_name asc ";
 
-		$query = $this->db->query($sql,array($branch_code));
+		$query = $this->db->query($sql, array($branch_code));
 
 		return $query->result_array();
-    }
+	}
 
 
-   	function get_account_cash_code_by_branch_code($branch_code)
-    {
-        $sql = "SELECT 
+	function get_account_cash_code_by_branch_code($branch_code)
+	{
+		$sql = "SELECT 
         					mfi_fa.fa_code
         					,mfi_fa.fa_name
         					,mfi_fa.branch_code
@@ -3010,14 +3041,14 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_gl_account_cash ON mfi_fa.fa_code = mfi_gl_account_cash.fa_code
         		WHERE mfi_fa.branch_code = ? AND account_cash_type='1' order by mfi_fa.fa_name asc";
 
-		$query = $this->db->query($sql,array($branch_code));
+		$query = $this->db->query($sql, array($branch_code));
 
 		return $query->result_array();
-    }	
+	}
 
-    function get_account_cash_code_fa()
-    {
-    	$sql = "SELECT 
+	function get_account_cash_code_fa()
+	{
+		$sql = "SELECT 
         					mfi_fa.fa_code
         					,mfi_fa.fa_name
         					,mfi_fa.branch_code
@@ -3032,11 +3063,11 @@ Class Model_transaction extends CI_Model
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
-    }
+	}
 
-    function get_account_cash_code_teller()
-    {
-    	$sql = "SELECT 
+	function get_account_cash_code_teller()
+	{
+		$sql = "SELECT 
         					mfi_fa.fa_code
         					,mfi_fa.fa_name
         					,mfi_fa.branch_code
@@ -3051,43 +3082,43 @@ Class Model_transaction extends CI_Model
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
-    }
+	}
 
 	public function add_kas_petugas($data)
 	{
-		$this->db->insert('mfi_trx_gl_cash',$data);
+		$this->db->insert('mfi_trx_gl_cash', $data);
 	}
-	
-	public function edit_kas_petugas($data,$param)
+
+	public function edit_kas_petugas($data, $param)
 	{
-		$this->db->update('mfi_trx_gl_cash',$data,$param);
+		$this->db->update('mfi_trx_gl_cash', $data, $param);
 	}
 
 	public function delete_kas_petugas($param)
 	{
-		$this->db->delete('mfi_trx_gl_cash',$param);
-	}	
+		$this->db->delete('mfi_trx_gl_cash', $param);
+	}
 
-	public function update_status_gl_cash($data2,$param)
+	public function update_status_gl_cash($data2, $param)
 	{
-		$this->db->update('mfi_trx_gl_cash',$data2,$param);
+		$this->db->update('mfi_trx_gl_cash', $data2, $param);
 	}
 
 	public function insert_mfi_trx_gl($data)
 	{
-		$this->db->insert('mfi_trx_gl',$data);
+		$this->db->insert('mfi_trx_gl', $data);
 	}
 
 	public function insert_mfi_trx_gl_detail($data3)
 	{
-		$this->db->insert('mfi_trx_gl_detail',$data3);
+		$this->db->insert('mfi_trx_gl_detail', $data3);
 	}
 
-	/****************************************************************************************/	
+	/****************************************************************************************/
 	// END KAS PETUGAS
 	/****************************************************************************************/
 
-	/****************************************************************************************/	
+	/****************************************************************************************/
 	// BEGIN TABUNGAN BERENCANA
 	/****************************************************************************************/
 
@@ -3108,11 +3139,11 @@ Class Model_transaction extends CI_Model
 					and mfi_account_saving.status_rekening = 1
 					and mfi_cif.status = 1
 			   ";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->result_array();
 	}
-	public function get_tabungan_berencana_by_cif_no2($cif_no,$account_financing_no)
+	public function get_tabungan_berencana_by_cif_no2($cif_no, $account_financing_no)
 	{
 		$sql = "select 
 					mfi_account_saving.account_saving_id
@@ -3152,7 +3183,7 @@ Class Model_transaction extends CI_Model
 					and mfi_account_saving.status_rekening = 1
 					and mfi_account_financing_droping.status_droping = 1
 			   ";
-		$query = $this->db->query($sql,array($account_financing_no,$cif_no));
+		$query = $this->db->query($sql, array($account_financing_no, $cif_no));
 
 		return $query->result_array();
 	}
@@ -3174,21 +3205,21 @@ Class Model_transaction extends CI_Model
 					and mfi_cif.status = 1
 					and mfi_account_saving.product_code <> '0006'
 			   ";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->result_array();
 	}
 
 	/**
-	* untuk mencari data tabungan berdasarkan cif_no
-	* jumlah record yg di return = 1 record
-	* @param cif_no
-	*/
+	 * untuk mencari data tabungan berdasarkan cif_no
+	 * jumlah record yg di return = 1 record
+	 * @param cif_no
+	 */
 
 	public function get_account_saving_by_cif_no($cif_no)
 	{
 		$sql = "select * from mfi_account_saving where cif_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
@@ -3237,16 +3268,16 @@ Class Model_transaction extends CI_Model
 
 		return $query->result_array();
 	}
-	
+
 	public function check_account_financing_no($account_financing_no)
 	{
 		$sql = "select count(*) as num from mfi_account_financing where account_financing_no = ? AND status_rekening='1'";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		$row = $query->row_array();
-		if($row['num']>0){
+		if ($row['num'] > 0) {
 			return false;
-		}else{
+		} else {
 			return true;
 		}
 	}
@@ -3278,7 +3309,8 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	function set_saving_by_saving_no($account_saving_no){
+	function set_saving_by_saving_no($account_saving_no)
+	{
 		$sql = "SELECT
 		mps.product_name
 		FROM mfi_account_saving AS mas
@@ -3287,12 +3319,13 @@ Class Model_transaction extends CI_Model
 
 		$param = array($account_saving_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function get_ajax_produk_by_product_code($product_code){
+	function get_ajax_produk_by_product_code($product_code)
+	{
 		$sql = "SELECT
 				mfi_product_financing.product_code,
 				mfi_product_financing.product_name,
@@ -3306,7 +3339,7 @@ Class Model_transaction extends CI_Model
 
 		$param = array($product_code);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
@@ -3330,9 +3363,9 @@ Class Model_transaction extends CI_Model
 	}
 
 	//Fungsi Mencari No Registrasi Pembiayaan pada tabel mfi_account_financing_reg
-	public function search_no_reg($keyword,$type,$cm_code)
+	public function search_no_reg($keyword, $type, $cm_code)
 	{
-		$branch_code=$this->session->userdata('branch_code');
+		$branch_code = $this->session->userdata('branch_code');
 		$sql = "select 
 				mfi_account_financing_reg.registration_no,
 				mfi_cif.nama, 
@@ -3346,33 +3379,33 @@ Class Model_transaction extends CI_Model
 				left join mfi_fa ON mfi_fa.fa_code = mfi_cm.fa_code
 				where (upper(mfi_cif.nama) like ? or mfi_account_financing_reg.cif_no like ?)";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		
-		if($type!="") {
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+
+		if ($type != "") {
 
 			$sql 	.= ' and mfi_cif.cif_type = ?';
 			$param[] = $type;
-
 		}
 
-		if($cm_code!="" && $type=="0") {
+		if ($cm_code != "" && $type == "0") {
 			$sql .= ' and mfi_cif.cm_code = ?';
 			$param[] = $cm_code;
 		}
 
-		if($branch_code!="00000"){
+		if ($branch_code != "00000") {
 			$sql .= " and mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?) ";
-			$param[]=$branch_code;
+			$param[] = $branch_code;
 		}
 
 		// print_r($this->db);
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function get_ajax_value_from_no_reg($no_reg){
+	function get_ajax_value_from_no_reg($no_reg)
+	{
 		$sql = "SELECT
 		mc.cif_id,
 		mc.cif_no,
@@ -3409,28 +3442,28 @@ Class Model_transaction extends CI_Model
 
 		$param = array($no_reg);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	public function update_status_pengajuan_pembiayaan($data_reg,$param_reg)
+	public function update_status_pengajuan_pembiayaan($data_reg, $param_reg)
 	{
-		$this->db->update('mfi_account_financing_reg',$data_reg,$param_reg);
+		$this->db->update('mfi_account_financing_reg', $data_reg, $param_reg);
 	}
 
-	public function update_no_hp($datasa,$param)
+	public function update_no_hp($datasa, $param)
 	{
-		$this->db->update('mfi_cif',$datasa,$param);
+		$this->db->update('mfi_cif', $datasa, $param);
 	}
-	public function update_p_no_hp($datasas,$param)
+	public function update_p_no_hp($datasas, $param)
 	{
-		$this->db->update('mfi_cif_kelompok',$datasas,$param);
+		$this->db->update('mfi_cif_kelompok', $datasas, $param);
 	}
 
 	//Fungsi Untuk memanggil status rekening pembiayaan
 
-	
+
 	public function get_status_rekening_from_account_financing($account_financing_no)
 	{
 		$sql = "SELECT
@@ -3438,12 +3471,12 @@ Class Model_transaction extends CI_Model
 				FROM
 				mfi_account_financing
 				WHERE account_financing_no = ? ";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		return $query->row_array();
 	}
 
-	public function datatable_verifikasi_trx_rembug($sWhere='',$sOrder='',$sLimit='',$branch_id='',$branch_code='',$trx_date='')
+	public function datatable_verifikasi_trx_rembug($sWhere = '', $sOrder = '', $sLimit = '', $branch_id = '', $branch_code = '', $trx_date = '')
 	{
 
 		$sql = "SELECT 
@@ -3468,30 +3501,29 @@ Class Model_transaction extends CI_Model
 		";
 
 		$param = array();
-		if ( $sWhere != "" ){
+		if ($sWhere != "") {
 			$sql .= "$sWhere ";
 
-			if($branch_code!="00000"){
+			if ($branch_code != "00000") {
 				$sql .= " AND mfi_branch.branch_code in(select branch_code from mfi_branch_member where branch_induk=?) ";
 				$param[] = $branch_code;
 			}
 
-			if($trx_date!=""){
+			if ($trx_date != "") {
 				$sql .= " AND mfi_trx_cm_save.trx_date = ? ";
 				$param[] = $trx_date;
 			}
+		} else {
 
-		}else{
-
-			if($branch_code!="00000"){
+			if ($branch_code != "00000") {
 				$sql .= " WHERE mfi_branch.branch_code in(select branch_code from mfi_branch_member where branch_induk=?) ";
 				$param[] = $branch_code;
 			}
 
-			if($trx_date!=""){
-				if($branch_code!="00000"){
+			if ($trx_date != "") {
+				if ($branch_code != "00000") {
 					$sql .= " AND ";
-				}else{
+				} else {
 					$sql .= " WHERE ";
 				}
 				$sql .= "  mfi_trx_cm_save.trx_date = ? ";
@@ -3500,13 +3532,13 @@ Class Model_transaction extends CI_Model
 		}
 
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "order by fa_name,cm_name,mfi_trx_cm_save.created_date asc";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		// print_r($this->db);
 		// die();
 		return $query->result_array();
@@ -3514,35 +3546,35 @@ Class Model_transaction extends CI_Model
 
 	public function search_branch_by_keyword($keyword)
 	{
-		$branch_code=$this->session->userdata('branch_code');
+		$branch_code = $this->session->userdata('branch_code');
 		$sql = "select * from mfi_branch where (UPPER(branch_name) like ? or branch_code like ?)";
-		$param[]='%'.strtoupper(strtolower($keyword)).'%';
-		$param[]='%'.$keyword.'%';
-		if($branch_code!="00000"){
-			$sql.=" and branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[]=$branch_code;
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		if ($branch_code != "00000") {
+			$sql .= " and branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
+			$param[] = $branch_code;
 		}
-		$sql.=" order by branch_code asc";
-		$query = $this->db->query($sql,$param);
+		$sql .= " order by branch_code asc";
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
 	public function insert_trx_cm_save($data)
 	{
-		$this->db->insert('mfi_trx_cm_save',$data);
+		$this->db->insert('mfi_trx_cm_save', $data);
 	}
 
 	public function insert_trx_cm_save_detail($data)
 	{
-		$this->db->insert_batch('mfi_trx_cm_save_detail',$data);
+		$this->db->insert_batch('mfi_trx_cm_save_detail', $data);
 	}
 
 	public function insert_trx_cm_save_berencana($data)
 	{
-		$this->db->insert_batch('mfi_trx_cm_save_berencana',$data);
+		$this->db->insert_batch('mfi_trx_cm_save_berencana', $data);
 	}
 
-	public function get_trx_cm_save_detail($trx_cm_save_id,$cm_code)
+	public function get_trx_cm_save_detail($trx_cm_save_id, $cm_code)
 	{
 		/*$sql = "select 
 					mfi_trx_cm_save_detail.* 
@@ -3584,31 +3616,31 @@ Class Model_transaction extends CI_Model
 		WHERE a.cm_code=? AND a.cif_type=0 AND a.status in (1,3)
 		AND (CASE WHEN (SELECT count(*) FROM mfi_account_financing WHERE a.cif_no=mfi_account_financing.cif_no AND mfi_account_financing.status_rekening=1 AND mfi_account_financing.financing_type = '0') > 1 THEN droping.status_droping=1 ELSE 1=1 END)
 		order by a.kelompok::integer asc";
-		$query = $this->db->query($sql,array($trx_cm_save_id,$cm_code));
+		$query = $this->db->query($sql, array($trx_cm_save_id, $cm_code));
 		return $query->result_array();
 	}
 
 	public function get_trx_cm_save_berencana($trx_cm_save_detail_id)
 	{
 		$sql = "select trx_cm_save_berencana_id,trx_cm_save_detail_id,account_saving_no,amount,frekuensi from mfi_trx_cm_save_berencana where trx_cm_save_detail_id = ?";
-		$query = $this->db->query($sql,array($trx_cm_save_detail_id));
+		$query = $this->db->query($sql, array($trx_cm_save_detail_id));
 
 		return $query->result_array();
 	}
 
 	public function delete_trx_cm_save($param)
 	{
-		$this->db->delete('mfi_trx_cm_save',$param);
+		$this->db->delete('mfi_trx_cm_save', $param);
 	}
 
 	public function delete_trx_cm_save_berencana($param)
 	{
-		$this->db->delete('mfi_trx_cm_save_berencana',$param);
+		$this->db->delete('mfi_trx_cm_save_berencana', $param);
 	}
 
 	public function delete_trx_cm_save_detail($param)
 	{
-		$this->db->delete('mfi_trx_cm_save_detail',$param);
+		$this->db->delete('mfi_trx_cm_save_detail', $param);
 	}
 
 	public function get_trx_cm_save_by_param($param)
@@ -3619,7 +3651,7 @@ Class Model_transaction extends CI_Model
 				trx_date = ? and 
 				account_cash_code = ?
 		";
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
@@ -3627,36 +3659,36 @@ Class Model_transaction extends CI_Model
 	public function get_saldo_tab_sukarela($cif_no)
 	{
 		$sql = "select tabungan_sukarela from mfi_account_default_balance where cif_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
 
-	public function update_account_financing_droping($data,$param)
+	public function update_account_financing_droping($data, $param)
 	{
-		$this->db->update('mfi_account_financing_droping',$data,$param);
+		$this->db->update('mfi_account_financing_droping', $data, $param);
 	}
 
 	public function get_account_financing_droping($account_financing_no)
 	{
 		$sql = "select * from mfi_account_financing_droping where account_financing_no = ?";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		return $query->row_array();
 	}
 
 	/**
-	* PROSES JURNAL OTOMATIS
-	*/
-	public function proses_jurnal_otomatis($from_date,$thru_date)
+	 * PROSES JURNAL OTOMATIS
+	 */
+	public function proses_jurnal_otomatis($from_date, $thru_date)
 	{
 		$sql = "select fn_proses_jurnal_trx(?, ?)";
-		$query = $this->db->query($sql,array($from_date,$thru_date));
+		$query = $this->db->query($sql, array($from_date, $thru_date));
 	}
 
 	/**
-	* PROSES CLOSING
-	*/
+	 * PROSES CLOSING
+	 */
 	public function proses_closing()
 	{
 		/* do proses closing function */
@@ -3674,12 +3706,12 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_cif ON mfi_account_saving.cif_no = mfi_cif.cif_no
 				WHERE mfi_cif.cif_no like ?
 				";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
 
-	public function search_account_deposit_no($keyword='',$cif_type='',$cm_code='')
+	public function search_account_deposit_no($keyword = '', $cif_type = '', $cm_code = '')
 	{
 		$sql = "SELECT
 				mfi_cif.nama,
@@ -3695,31 +3727,32 @@ Class Model_transaction extends CI_Model
 				WHERE (UPPER(nama) like ? or account_deposit_no like ?)
 				";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
 
-		if($cif_type!=""){
+		if ($cif_type != "") {
 			$sql .= " and cif_type = ? ";
 			$param[] = $cif_type;
 		}
 
-		if($cm_code!=""){
+		if ($cm_code != "") {
 			$sql .= " and cm_code = ? ";
 			$param[] = $cm_code;
 		}
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
 	public function get_account_deposit($cif_no)
 	{
 		$sql = "SELECT account_deposit_no, account_deposit_id FROM mfi_account_deposit WHERE cif_no = ?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->result_array();
 	}
 
-	function get_account_saving($cif_no){
+	function get_account_saving($cif_no)
+	{
 		$sql = "SELECT
 		mps.product_name,
 		mas.account_saving_no,
@@ -3730,12 +3763,13 @@ Class Model_transaction extends CI_Model
 
 		$param = array($cif_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function get_account_saving_individu($cif_no){
+	function get_account_saving_individu($cif_no)
+	{
 		$sql = "SELECT
 		mps.product_name,
 		mas.account_saving_no,
@@ -3746,7 +3780,7 @@ Class Model_transaction extends CI_Model
 
 		$param = array($cif_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
@@ -3763,13 +3797,14 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_cif ON mfi_account_deposit.cif_no = mfi_cif.cif_no
 				where mfi_cif.cif_no like ?
 				";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
 
 	//BEGIN PEMBAYARAN ANGSURAN
-	function get_cif_for_pembayaran_angsuran($account_financing_no){
+	function get_cif_for_pembayaran_angsuran($account_financing_no)
+	{
 		$sql = "SELECT
 		mc.nama,
 		maf.account_financing_id,
@@ -3803,12 +3838,13 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_account_saving AS mas ON mas.account_saving_no = maf.account_saving_no
 		LEFT JOIN mfi_branch ON mfi_branch.branch_code = maf.branch_code
 		WHERE maf.account_financing_no = ?";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		return $query->row_array();
 	}
 
-	function get_cif_for_pembayaran_angsuran_non_reguler($account_financing_no){
+	function get_cif_for_pembayaran_angsuran_non_reguler($account_financing_no)
+	{
 		$sql = "SELECT
 		c.nama, 
 		a.account_financing_id, 
@@ -3844,69 +3880,72 @@ Class Model_transaction extends CI_Model
 		and b.status_angsuran=0 and a.flag_jadwal_angsuran=0 and a.account_financing_no = ?
 		order by b.tangga_jtempo asc limit 1
 			   ";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 
 		return $query->row_array();
 	}
 
 	public function get_flag_jadwal_angsuran($account_financing_no)
 	{
-		$sql ="select flag_jadwal_angsuran from mfi_account_financing where account_financing_no = ?";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$sql = "select flag_jadwal_angsuran from mfi_account_financing where account_financing_no = ?";
+		$query = $this->db->query($sql, array($account_financing_no));
 		return $query->row_array();
 	}
 
 	public function get_flag_jadwal($account_financing_id)
 	{
-		$sql ="select flag_jadwal_angsuran from mfi_account_financing where account_financing_id = ?";
-		$query = $this->db->query($sql,array($account_financing_id));
+		$sql = "select flag_jadwal_angsuran from mfi_account_financing where account_financing_id = ?";
+		$query = $this->db->query($sql, array($account_financing_id));
 		$row = $query->row_array();
 		return $row['flag_jadwal_angsuran'];
 	}
-	
+
 	public function insert_mfi_trx_account_financing($data1)
 	{
-		$this->db->insert('mfi_trx_account_financing',$data1);
-	}
-	
-	public function update_mfi_account_financing($data2,$param2)
-	{
-		$this->db->update('mfi_account_financing',$data2,$param2);
-	}
-	
-	function update_mfi_account_financing_wakalah($data,$param){
-		$this->db->update('mfi_account_financing_wakalah',$data,$param);
+		$this->db->insert('mfi_trx_account_financing', $data1);
 	}
 
-	function update_mfi_account_saving($data3,$param3){
-		$this->db->update('mfi_account_saving',$data3,$param3);
+	public function update_mfi_account_financing($data2, $param2)
+	{
+		$this->db->update('mfi_account_financing', $data2, $param2);
 	}
-	
+
+	function update_mfi_account_financing_wakalah($data, $param)
+	{
+		$this->db->update('mfi_account_financing_wakalah', $data, $param);
+	}
+
+	function update_mfi_account_saving($data3, $param3)
+	{
+		$this->db->update('mfi_account_saving', $data3, $param3);
+	}
+
 	public function insert_mfi_trx_account_tabungan($data4)
 	{
-		$this->db->insert('mfi_trx_account_saving',$data4);
+		$this->db->insert('mfi_trx_account_saving', $data4);
 	}
-	
+
 	public function insert_on_mfi_trx_detail($data5)
 	{
-		$this->db->insert('mfi_trx_detail',$data5);
+		$this->db->insert('mfi_trx_detail', $data5);
 	}
-	
-	public function update_on_financing_schedulle($data6,$param6)
+
+	public function update_on_financing_schedulle($data6, $param6)
 	{
-		$this->db->update('mfi_account_financing_schedulle',$data6,$param6);
+		$this->db->update('mfi_account_financing_schedulle', $data6, $param6);
 	}
 
 	public function get_trx_sequence($no_rekening)
 	{
 		$sql = "select max(trx_sequence) as sequence from mfi_trx_detail where account_no = ?";
-		$query = $this->db->query($sql,array($no_rekening));
+		$query = $this->db->query($sql, array($no_rekening));
 		$row = $query->row_array();
 		return $row['sequence'];
 	}
 
 	//Verifikasi Transaksi
-	function grid_verifikasi_transaksi($sidx='',$sord='',$limit_rows='',$start='',$no_rekening=''){
+	function grid_verifikasi_transaksi($sidx = '', $sord = '', $limit_rows = '', $start = '', $no_rekening = '')
+	{
 		$order = '';
 		$limit = '';
 		$param = array();
@@ -3914,8 +3953,8 @@ Class Model_transaction extends CI_Model
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 		// TABUNGAN
 		$sql = "SELECT 
@@ -3937,9 +3976,9 @@ Class Model_transaction extends CI_Model
 				LEFT JOIN mfi_gl_account_cash AS mgac ON mgac.account_cash_code = mfi_trx_account_saving.account_cash_code
 				WHERE mfi_trx_account_saving.account_saving_no LIKE ? AND mfi_trx_account_saving.trx_status !='1'
 				AND mfi_trx_account_saving.trx_saving_type IN('1','2')";
-		$param[] = "%".$no_rekening."%";
+		$param[] = "%" . $no_rekening . "%";
 
-		if($flag_all_branch!='1'){ // tidak punya akses seluruh cabang
+		if ($flag_all_branch != '1') { // tidak punya akses seluruh cabang
 			$sql .= " AND mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
@@ -3965,9 +4004,9 @@ Class Model_transaction extends CI_Model
 			WHERE mfi_trx_account_financing.account_financing_no LIKE ?
 			AND mfi_trx_account_financing.trx_status = '0'
 			AND mfi_trx_account_financing.trx_financing_type = '1'";
-		$param[] = "%".$no_rekening."%";
+		$param[] = "%" . $no_rekening . "%";
 
-		if($flag_all_branch!='1'){ // tidak punya akses seluruh cabang
+		if ($flag_all_branch != '1') { // tidak punya akses seluruh cabang
 			$sql .= " AND mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
@@ -3994,9 +4033,9 @@ Class Model_transaction extends CI_Model
 			AND mfi_smk.status = '1'
 			WHERE mfi_smk.sertifikat_no LIKE ? AND mfi_trx_smk.trx_status !='1'
 			";
-		$param[] = "%".$no_rekening."%";
+		$param[] = "%" . $no_rekening . "%";
 
-		if($flag_all_branch!='1'){ // tidak punya akses seluruh cabang
+		if ($flag_all_branch != '1') { // tidak punya akses seluruh cabang
 			$sql .= " AND mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
@@ -4020,22 +4059,22 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_gl_account_cash AS mgac ON mgac.account_cash_code = mtad.account_cash_code
 		WHERE mtad.account_deposit_no LIKE ? AND mtad.trx_status = '0' AND mtad.trx_deposit_type IN('0','2')";
 
-		$param[] = "%".$no_rekening."%";
+		$param[] = "%" . $no_rekening . "%";
 
-		if($flag_all_branch!='1'){ // tidak punya akses seluruh cabang
+		if ($flag_all_branch != '1') { // tidak punya akses seluruh cabang
 			$sql .= " AND mc.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "$order $limit";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		// print_r($this->db);
 		// die();
 		return $query->result_array();
 	}
 
-	public function grid_verifikasi_transaksi_tabungan($sidx='',$sord='',$limit_rows='',$start='',$no_rekening='')
+	public function grid_verifikasi_transaksi_tabungan($sidx = '', $sord = '', $limit_rows = '', $start = '', $no_rekening = '')
 	{
 		$order = '';
 		$limit = '';
@@ -4044,8 +4083,8 @@ Class Model_transaction extends CI_Model
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 		$sql = "SELECT 
 				mfi_trx_account_saving.trx_account_saving_id AS id_transaksi,
@@ -4066,22 +4105,22 @@ Class Model_transaction extends CI_Model
 				LEFT JOIN mfi_gl_account_cash AS mgac ON mgac.account_cash_code = mfi_trx_account_saving.account_cash_code
 				WHERE mfi_trx_account_saving.account_saving_no LIKE ? AND mfi_trx_account_saving.trx_status !='1'
 				AND mfi_trx_account_saving.trx_saving_type IN('1','2')";
-		$param[] = "%".$no_rekening."%";
+		$param[] = "%" . $no_rekening . "%";
 
-		if($flag_all_branch!='1'){ // tidak punya akses seluruh cabang
+		if ($flag_all_branch != '1') { // tidak punya akses seluruh cabang
 			$sql .= " AND mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "$order $limit";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		// print_r($this->db);
 		// die();
 		return $query->result_array();
 	}
 
-	public function grid_verifikasi_transaksi_pembiayaan($sidx='',$sord='',$limit_rows='',$start='',$no_rekening='')
+	public function grid_verifikasi_transaksi_pembiayaan($sidx = '', $sord = '', $limit_rows = '', $start = '', $no_rekening = '')
 	{
 		$order = '';
 		$limit = '';
@@ -4090,8 +4129,8 @@ Class Model_transaction extends CI_Model
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 		$sql = "SELECT 
 				mfi_trx_account_financing.trx_account_financing_id AS id_transaksi,
@@ -4113,22 +4152,23 @@ Class Model_transaction extends CI_Model
 				WHERE mfi_trx_account_financing.account_financing_no LIKE ?
 				AND mfi_trx_account_financing.trx_status = '0'
 				AND mfi_trx_account_financing.trx_financing_type = '1'";
-		$param[] = "%".$no_rekening."%";
+		$param[] = "%" . $no_rekening . "%";
 
-		if($flag_all_branch!='1'){ // tidak punya akses seluruh cabang
+		if ($flag_all_branch != '1') { // tidak punya akses seluruh cabang
 			$sql .= " AND mfi_cif.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "$order $limit";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		// print_r($this->db);
 		// die();
 		return $query->result_array();
 	}
 
-	function grid_verifikasi_transaksi_deposito($sidx='',$sord='',$limit_rows='',$start='',$no_rekening=''){
+	function grid_verifikasi_transaksi_deposito($sidx = '', $sord = '', $limit_rows = '', $start = '', $no_rekening = '')
+	{
 		$order = '';
 		$limit = '';
 		$param = array();
@@ -4136,8 +4176,8 @@ Class Model_transaction extends CI_Model
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord ";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start ";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord ";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start ";
 
 		$sql = "SELECT 
 		mtad.trx_account_deposit_id AS id_transaksi,
@@ -4159,21 +4199,22 @@ Class Model_transaction extends CI_Model
 		AND mtad.trx_status = '0'
 		AND mtad.trx_deposit_type IN('0','2') ";
 
-		$param[] = "%".$no_rekening."%";
+		$param[] = "%" . $no_rekening . "%";
 
-		if($flag_all_branch != '1'){
+		if ($flag_all_branch != '1') {
 			$sql .= "AND mc.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $branch_code;
 		}
 
 		$sql .= "$order $limit";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function get_no_rekening($keyword){
+	function get_no_rekening($keyword)
+	{
 		$sql = "SELECT
 		maf.account_financing_no AS no_rekening,
 		mc.nama AS nama_cif,
@@ -4213,32 +4254,32 @@ Class Model_transaction extends CI_Model
 		WHERE (UPPER(mc.nama) LIKE ? OR mad.account_deposit_no LIKE ?)
 		";
 
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
-		$param[] = '%'.strtoupper(strtolower($keyword)).'%';
-		$param[] = '%'.$keyword.'%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
+		$param[] = '%' . strtoupper(strtolower($keyword)) . '%';
+		$param[] = '%' . $keyword . '%';
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 
-	public function aktivasi_transaksi_saving($data,$param)
+	public function aktivasi_transaksi_saving($data, $param)
 	{
-		$this->db->update('mfi_trx_account_saving',$data,$param);
+		$this->db->update('mfi_trx_account_saving', $data, $param);
 	}
-	
-	public function aktivasi_transaksi_financing($data,$param)
+
+	public function aktivasi_transaksi_financing($data, $param)
 	{
-		$this->db->update('mfi_trx_account_financing',$data,$param);
+		$this->db->update('mfi_trx_account_financing', $data, $param);
 	}
-	
-	public function aktivasi_transaksi_smk($data,$param)
+
+	public function aktivasi_transaksi_smk($data, $param)
 	{
-		$this->db->update('mfi_trx_smk',$data,$param);
+		$this->db->update('mfi_trx_smk', $data, $param);
 	}
 
 	public function detail_transaksi_tabungan($id)
@@ -4260,7 +4301,7 @@ Class Model_transaction extends CI_Model
 				WHERE mfi_trx_account_saving.trx_account_saving_id  = ?
 				";
 
-		$query = $this->db->query($sql,array($id));
+		$query = $this->db->query($sql, array($id));
 		return $query->row_array();
 	}
 
@@ -4289,7 +4330,7 @@ Class Model_transaction extends CI_Model
 				WHERE mfi_trx_account_financing.trx_account_financing_id  = ?
 				";
 
-		$query = $this->db->query($sql,array($id));
+		$query = $this->db->query($sql, array($id));
 		return $query->row_array();
 	}
 
@@ -4315,7 +4356,7 @@ Class Model_transaction extends CI_Model
 				WHERE mfi_trx_smk.trx_smk_id  = ?
 				";
 
-		$query = $this->db->query($sql,array($id));
+		$query = $this->db->query($sql, array($id));
 		return $query->row_array();
 	}
 
@@ -4330,13 +4371,13 @@ Class Model_transaction extends CI_Model
 				INNER JOIN mfi_cif ON mfi_account_saving.cif_no = mfi_cif.cif_no
 				WHERE mfi_account_saving.account_saving_no like ?
 				";
-		$query = $this->db->query($sql,array($account_saving_no));
+		$query = $this->db->query($sql, array($account_saving_no));
 
 		return $query->row_array();
 	}
 
 	//TRANSAKSI SETORAN POKOK
-	public function datatable_trx_setoran_pokok_setup($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_trx_setoran_pokok_setup($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "SELECT 
 				mfi_cif.cif_no,
@@ -4354,13 +4395,13 @@ Class Model_transaction extends CI_Model
 				LEFT JOIN mfi_cm ON mfi_cm.cm_code = mfi_cif.cm_code
 				";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
@@ -4368,7 +4409,8 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	function datatable_r_verif_anggota($sWhere='',$sOrder='',$sLimit='',$branch,$cm){
+	function datatable_r_verif_anggota($sWhere = '', $sOrder = '', $sLimit = '', $branch, $cm)
+	{
 		$sql = "SELECT 
 				mtsp.*,mc.nama
 				FROM mfi_cif AS mc
@@ -4376,25 +4418,25 @@ Class Model_transaction extends CI_Model
 
 		$param = array();
 
-		if ($sWhere != ""){
+		if ($sWhere != "") {
 			$sql .= "$sWhere ";
 
-			if($branch != '00000'){
+			if ($branch != '00000') {
 				$sql .= " AND mc.branch_code in(select branch_code from mfi_branch_member where branch_induk= ? ) ";
 				$param[] = $branch;
 			}
 
-			if($cm != ''){
+			if ($cm != '') {
 				$sql .= " AND mc.cm_code  = ? ";
 				$param[] = $cm;
 			}
 		} else {
-			if($branch != '00000'){
+			if ($branch != '00000') {
 				$sql .= " WHERE mc.branch_code in(select branch_code from mfi_branch_member where branch_induk= ? ) ";
 				$param[] = $branch;
 			}
 
-			if($cm != ''){
+			if ($cm != '') {
 				$sql .= " AND mc.cm_code  = ? ";
 				$param[] = $cm;
 			}
@@ -4402,52 +4444,57 @@ Class Model_transaction extends CI_Model
 
 		$sql .= "AND mtsp.trx_status = '0' ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function cek_verif($id){
+	function cek_verif($id)
+	{
 		$sql = "SELECT trx_status FROM mfi_trx_setoran_pokok WHERE trx_id = ?";
 
 		$param = array($id);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function update_status_verif_pokok($id,$data){
-		$this->db->where('trx_id',$id);
-		$this->db->update('mfi_trx_setoran_pokok',$data);
+	function update_status_verif_pokok($id, $data)
+	{
+		$this->db->where('trx_id', $id);
+		$this->db->update('mfi_trx_setoran_pokok', $data);
 	}
 
 	public function add_transaksi_setoran_pokok($data)
 	{
-		$this->db->insert('mfi_trx_setoran_pokok',$data);
+		$this->db->insert('mfi_trx_setoran_pokok', $data);
 	}
 
-	function update_saldo_balance($cif_no,$data){
-		$this->db->where('cif_no',$cif_no);
-		$this->db->update('mfi_account_default_balance',$data);
+	function update_saldo_balance($cif_no, $data)
+	{
+		$this->db->where('cif_no', $cif_no);
+		$this->db->update('mfi_account_default_balance', $data);
 	}
 
-	function add_transaksi_setoran_wajib($data){
-		$this->db->insert('mfi_trx_smk',$data);
+	function add_transaksi_setoran_wajib($data)
+	{
+		$this->db->insert('mfi_trx_smk', $data);
 	}
-	
+
 	public function delete_trx_setoran_pokok($param)
 	{
-		$this->db->delete('mfi_trx_setoran_pokok',$param);
+		$this->db->delete('mfi_trx_setoran_pokok', $param);
 	}
 
-	function check_simpanan_pokok(){
+	function check_simpanan_pokok()
+	{
 		$sql = "SELECT
 		simpanan_pokok
 		FROM mfi_institution";
@@ -4457,9 +4504,9 @@ Class Model_transaction extends CI_Model
 		return $query->row_array();
 	}
 
-    public function check_valid_cif_no($cif_no)
-    {
-        $sql = "SELECT
+	public function check_valid_cif_no($cif_no)
+	{
+		$sql = "SELECT
         mc.nama,
         mtsp.cif_no,
         mtsp.trx_date,
@@ -4468,76 +4515,83 @@ Class Model_transaction extends CI_Model
         LEFT JOIN mfi_cif AS mc ON (mc.cif_no = mtsp.cif_no)
         WHERE mtsp.cif_no = ?
         GROUP BY 1,2,3";
-        $query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
-        return $query->row_array();
-    }
+		return $query->row_array();
+	}
 
-    function check_valid_cif_no_saleh($cif_no){
-        $sql = "SELECT
+	function check_valid_cif_no_saleh($cif_no)
+	{
+		$sql = "SELECT
         SUM(mtsp.total_setoran) AS total_setoran
         FROM mfi_trx_setoran_pokok AS mtsp
         LEFT JOIN mfi_cif AS mc ON (mc.cif_no = mtsp.cif_no)
         WHERE mtsp.cif_no = ?";
-        $query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
-        return $query->row_array();
-    }
+		return $query->row_array();
+	}
 
-    function update_simpanan_pokok($cif_no,$data){
-    	$this->db->where('cif_no',$cif_no);
-    	$this->db->update('mfi_account_default_balance',$data);
-    }
+	function update_simpanan_pokok($cif_no, $data)
+	{
+		$this->db->where('cif_no', $cif_no);
+		$this->db->update('mfi_account_default_balance', $data);
+	}
 	//TRANSAKSI SETORAN POKOK
 
-    function cek_trx_kontrol_periode($tanggal)
-    {
-    	$sql = "select count(*) as num from mfi_trx_kontrol_periode where status = 1 and ? between periode_awal and periode_akhir";
-    	$query = $this->db->query($sql,array($tanggal));
+	function cek_trx_kontrol_periode($tanggal)
+	{
+		$sql = "select count(*) as num from mfi_trx_kontrol_periode where status = 1 and ? between periode_awal and periode_akhir";
+		$query = $this->db->query($sql, array($tanggal));
 
-    	$row = $query->row_array();
-    	if($row['num']>0){
-    		return true;
-    	}else{
-    		return false;
-    	}
-    }
-
-    public function insert_trx_cm_lwk($data)
-    {
-    	$this->db->insert('mfi_trx_cm_lwk',$data);
-    }
-	
-	public function delete_trx_cm_lwk($param){
-		$this->db->delete('mfi_trx_cm_lwk',$param);
-	}
-	
-    function insert_trx_cm_wajib($data){
-    	$this->db->insert('mfi_trx_cm_wajib',$data);
-    }
-
-	public function proses_del_pelunasan_pembayaran($param){
-		$this->db->delete('mfi_account_financing_lunas',$param);
+		$row = $query->row_array();
+		if ($row['num'] > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-
-	public function proses_del_pinbuk_catab($param){
-		$this->db->delete('mfi_trx_tab_sukarela',$param);
+	public function insert_trx_cm_lwk($data)
+	{
+		$this->db->insert('mfi_trx_cm_lwk', $data);
 	}
 
-	public function del_pinbuk_taber($param){
-		$this->db->delete('mfi_trx_tab_sukarela',$param);
+	public function delete_trx_cm_lwk($param)
+	{
+		$this->db->delete('mfi_trx_cm_lwk', $param);
 	}
 
-	public function get_review_transaksi($sidx='',$sord='',$limit_rows='',$start='',$from_date='',$thru_date='',$branch_code='')
+	function insert_trx_cm_wajib($data)
+	{
+		$this->db->insert('mfi_trx_cm_wajib', $data);
+	}
+
+	public function proses_del_pelunasan_pembayaran($param)
+	{
+		$this->db->delete('mfi_account_financing_lunas', $param);
+	}
+
+
+	public function proses_del_pinbuk_catab($param)
+	{
+		$this->db->delete('mfi_trx_tab_sukarela', $param);
+	}
+
+	public function del_pinbuk_taber($param)
+	{
+		$this->db->delete('mfi_trx_tab_sukarela', $param);
+	}
+
+	public function get_review_transaksi($sidx = '', $sord = '', $limit_rows = '', $start = '', $from_date = '', $thru_date = '', $branch_code = '')
 	{
 		$CI = get_instance();
 		$order = '';
 		$limit = '';
 		$param = array();
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 		$sql = "select 
 				mfi_trx_gl.trx_gl_id,
@@ -4555,20 +4609,20 @@ Class Model_transaction extends CI_Model
 				left join mfi_branch on mfi_branch.branch_code=mfi_trx_gl.branch_code
 				";
 		// if($from_date!="" && $thru_date!=""){
-			$sql .= " where mfi_trx_gl.voucher_date between ? and ? 
+		$sql .= " where mfi_trx_gl.voucher_date between ? and ? 
 					--and (mfi_trx_gl.description not like 'TRX REMBUG%' AND mfi_trx_gl.description not like 'PELUNASAN TRX REMBUG%' AND mfi_trx_gl.description not like 'ANGGOTA KELUAR TRX REMBUG%') 
 					and mfi_trx_gl.jurnal_trx_id is null
 					";
-			$param[] = $CI->datepicker_convert(true,$from_date,'/');
-			$param[] = $CI->datepicker_convert(true,$thru_date,'/');
+		$param[] = $CI->datepicker_convert(true, $from_date, '/');
+		$param[] = $CI->datepicker_convert(true, $thru_date, '/');
 		// }
-		if($branch_code!="00000"){
-			$sql.=" and mfi_trx_gl.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
+		if ($branch_code != "00000") {
+			$sql .= " and mfi_trx_gl.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
 			$param[] = $branch_code;
 		}
 		$sql .= " order by mfi_trx_gl.jurnal_trx_id,mfi_trx_gl.created_date desc $limit";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		// print_r($this->db);
 		// die();
 		return $query->result_array();
@@ -4577,18 +4631,18 @@ Class Model_transaction extends CI_Model
 	public function get_trx_gl_detail($trx_gl_id)
 	{
 		$sql = "select * from mfi_trx_gl_detail where trx_gl_id = ? order by flag_debit_credit DESC";
-		$query = $this->db->query($sql,array($trx_gl_id));
+		$query = $this->db->query($sql, array($trx_gl_id));
 
 		return $query->result_array();
 	}
 
-	public function get_detail_review_transaksi($sidx='',$sord='',$limit_rows='',$start='',$trx_gl_id='')
+	public function get_detail_review_transaksi($sidx = '', $sord = '', $limit_rows = '', $start = '', $trx_gl_id = '')
 	{
 		$order = '';
 		$limit = '';
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 		$sql = "select 
 				mfi_trx_gl_detail.trx_gl_detail_id
@@ -4605,63 +4659,63 @@ Class Model_transaction extends CI_Model
 
 		$sql .= "$order $limit";
 
-		$query = $this->db->query($sql,array($trx_gl_id));
+		$query = $this->db->query($sql, array($trx_gl_id));
 
 		return $query->result_array();
 	}
 
 	public function delete_trx_gl_detail($param)
 	{
-		$this->db->delete('mfi_trx_gl_detail',$param);
+		$this->db->delete('mfi_trx_gl_detail', $param);
 	}
 
 	public function delete_trx_gl($param)
 	{
-		$this->db->delete('mfi_trx_gl',$param);
+		$this->db->delete('mfi_trx_gl', $param);
 	}
 
-	public function update_trx_gl($data,$param)
+	public function update_trx_gl($data, $param)
 	{
-		$this->db->update('mfi_trx_gl',$data,$param);
+		$this->db->update('mfi_trx_gl', $data, $param);
 	}
 
 	public function get_trx_gl_detail_sequence($trx_gl_id)
 	{
 		$sql = "select (coalesce(trx_sequence,0)+1) as seq from mfi_trx_gl_detail where trx_gl_id = ? order by trx_sequence desc";
-		$query = $this->db->query($sql,array($trx_gl_id));
+		$query = $this->db->query($sql, array($trx_gl_id));
 		$row = $query->row_array();
 
 		return $row['seq'];
 	}
 
-	public function update_trx_gl_detail($data,$param)
+	public function update_trx_gl_detail($data, $param)
 	{
-		$this->db->update('mfi_trx_gl_detail',$data,$param);
+		$this->db->update('mfi_trx_gl_detail', $data, $param);
 	}
 
-	public function validate_double_transaction($cm_code,$trx_date)
+	public function validate_double_transaction($cm_code, $trx_date)
 	{
 		$sql = "select count(*) as num from mfi_trx_cm where cm_code = ? and trx_date = ?";
-		$query = $this->db->query($sql,array($cm_code,$trx_date));
+		$query = $this->db->query($sql, array($cm_code, $trx_date));
 		$row = $query->row_array();
-		if($row['num']==0){
+		if ($row['num'] == 0) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
 
 	public function insert_trx_cm_detail_savingplan($data)
 	{
-		$this->db->insert('mfi_trx_cm_detail_savingplan',$data);
+		$this->db->insert('mfi_trx_cm_detail_savingplan', $data);
 	}
 
 	public function insert_trx_cm_detail_savingplan_account($data)
 	{
-		$this->db->insert_batch('mfi_trx_cm_detail_savingplan_account',$data);
+		$this->db->insert_batch('mfi_trx_cm_detail_savingplan_account', $data);
 	}
 
-	public function get_mutasi_by_cif_no($cif_no,$tanggal='')
+	public function get_mutasi_by_cif_no($cif_no, $tanggal = '')
 	{
 		$sql = "select a.*,(b.jangka_waktu-b.counter_angsuran) as freq_sisa_angsuran,b.angsuran_pokok
 				,b.angsuran_margin ,b.account_financing_no ,b.jangka_waktu
@@ -4669,19 +4723,19 @@ Class Model_transaction extends CI_Model
 				from mfi_cif_mutasi a
 				left join mfi_account_financing b on a.cif_no=b.cif_no and a.saldo_pembiayaan_pokok=b.saldo_pokok and b.status_rekening = 4
 				where a.cif_no = ? and a.status = 1 and a.tipe_mutasi='1'";
-		$param[]=$cif_no;
-		if($tanggal!=''){
-			$sql.=" and a.tanggal_mutasi <= ?";
-			$param[]=$tanggal;
+		$param[] = $cif_no;
+		if ($tanggal != '') {
+			$sql .= " and a.tanggal_mutasi <= ?";
+			$param[] = $tanggal;
 		}
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->row_array();
 	}
 
 	public function get_account_code_petugas($account_cash_code)
 	{
 		$sql = "select gl_account_code from mfi_gl_account_cash where account_cash_code = ?";
-		$query = $this->db->query($sql,array($account_cash_code));
+		$query = $this->db->query($sql, array($account_cash_code));
 
 		$row = $query->row_array();
 		return $row['gl_account_code'];
@@ -4690,7 +4744,7 @@ Class Model_transaction extends CI_Model
 	public function get_account_code_teller($account_teller_code)
 	{
 		$sql = "select gl_account_code from mfi_gl_account_cash where account_cash_code = ?";
-		$query = $this->db->query($sql,array($account_teller_code));
+		$query = $this->db->query($sql, array($account_teller_code));
 
 		$row = $query->row_array();
 		return $row['gl_account_code'];
@@ -4698,14 +4752,14 @@ Class Model_transaction extends CI_Model
 
 	public function delete_trx_gl_cash($param)
 	{
-		$this->db->delete('mfi_trx_gl_cash',$param);
+		$this->db->delete('mfi_trx_gl_cash', $param);
 	}
 
 	public function fn_create_jurnal_rembug($trx_cm_id)
 	{
 		$sql = "select fn_proses_jurnal_trx_rembug(?)";
 		//$sql = "select fn_proses_jurnal_trx_rembug_mba_wakalah(?)";
-		$query = $this->db->query($sql,array($trx_cm_id));
+		$query = $this->db->query($sql, array($trx_cm_id));
 	}
 
 	public function get_account_financing_by_financing_id($account_financing_id)
@@ -4792,7 +4846,7 @@ Class Model_transaction extends CI_Model
 				WHERE account_financing_id = ?
 				";
 
-		$query = $this->db->query($sql,array($account_financing_id));
+		$query = $this->db->query($sql, array($account_financing_id));
 
 		return $query->row_array();
 	}
@@ -4800,59 +4854,61 @@ Class Model_transaction extends CI_Model
 	public function fn_proses_jurnal_tutuptabunganberencana($trx_account_saving_id)
 	{
 		$sql = "select fn_proses_jurnal_tutuptabunganberencana(?)";
-		$query = $this->db->query($sql,array($trx_account_saving_id));
+		$query = $this->db->query($sql, array($trx_account_saving_id));
 	}
 
 	public function fn_proses_jurnal_kaspetugas($trx_gl_cash_id)
 	{
 		$sql = "select fn_proses_jurnal_kaspetugas(?)";
-		$query = $this->db->query($sql,array($trx_gl_cash_id));
+		$query = $this->db->query($sql, array($trx_gl_cash_id));
 	}
 
 	/**
-	* fungsi untuk menjurnal angsuran pembiayaan individu
-	* @author : sayyid
-	*/
+	 * fungsi untuk menjurnal angsuran pembiayaan individu
+	 * @author : sayyid
+	 */
 	public function fn_proses_jurnal_angsuran_pyd($account_financing_no)
 	{
 		$sql = "select fn_proses_jurnal_angsuran_pyd(?)";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 	}
 
-	function fn_proses_jurnal_angsuran_pyd_cash($account_financing_no){
+	function fn_proses_jurnal_angsuran_pyd_cash($account_financing_no)
+	{
 		$sql = "select fn_proses_jurnal_angsuran_pyd_cash(?)";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 	}
 
-	function fn_proses_jurnal_angsuran_pyd_pinbuk($account_financing_no){
+	function fn_proses_jurnal_angsuran_pyd_pinbuk($account_financing_no)
+	{
 		$sql = "select fn_proses_jurnal_angsuran_pyd_pinbuk(?)";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 	}
 
 	/**
-	* get data majelis
-	* @author : sayyid
-	*/
+	 * get data majelis
+	 * @author : sayyid
+	 */
 	public function get_cm_data_by_code($cm_code)
 	{
 		$sql = "select * from mfi_cm where cm_code=?";
-		$query = $this->db->query($sql,array($cm_code));
+		$query = $this->db->query($sql, array($cm_code));
 		return $query->row_array();
 	}
 
 	/**
-	* get jurnal umum review
-	* @author : sayyid
-	*/
-	public function get_jurnal_umum_rev($sidx='',$sord='',$limit_rows='',$start='',$from_date='',$thru_date='')
+	 * get jurnal umum review
+	 * @author : sayyid
+	 */
+	public function get_jurnal_umum_rev($sidx = '', $sord = '', $limit_rows = '', $start = '', $from_date = '', $thru_date = '')
 	{
 		$CI = get_instance();
 		$order = '';
 		$limit = '';
 		$param = array();
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 		$sql = "select 
 				trx_gl_id,
@@ -4871,12 +4927,12 @@ Class Model_transaction extends CI_Model
 		$param[] = $this->session->userdata('user_id');
 		// if($from_date!="" && $thru_date!=""){
 		$sql .= " and voucher_date between ? and ? ";
-		$param[] = $CI->datepicker_convert(true,$from_date,'/');
-		$param[] = $CI->datepicker_convert(true,$thru_date,'/');
+		$param[] = $CI->datepicker_convert(true, $from_date, '/');
+		$param[] = $CI->datepicker_convert(true, $thru_date, '/');
 		// }
 		$sql .= "$order $limit";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
@@ -4904,7 +4960,7 @@ Class Model_transaction extends CI_Model
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
-	
+
 	public function get_setor_tunai_by_id($trx_account_saving_id)
 	{
 		$sql = "SELECT
@@ -4932,11 +4988,11 @@ Class Model_transaction extends CI_Model
 				AND a.trx_saving_type = 1 AND b.status_rekening = 1 
 				AND d.trx_type = 1 AND a.flag_debit_credit = 'C' AND a.trx_account_saving_id = ?
 			   ";
-		$query = $this->db->query($sql,array($trx_account_saving_id));
+		$query = $this->db->query($sql, array($trx_account_saving_id));
 
 		return $query->row_array();
 	}
-	
+
 	public function get_penarikan_tunai_by_id($trx_account_saving_id)
 	{
 		$sql = "SELECT
@@ -4964,12 +5020,13 @@ Class Model_transaction extends CI_Model
 				AND a.trx_saving_type = 2 AND b.status_rekening = 1 
 				AND d.trx_type = 1 AND a.flag_debit_credit = 'D' AND  a.trx_account_saving_id = ?
 			   ";
-		$query = $this->db->query($sql,array($trx_account_saving_id));
+		$query = $this->db->query($sql, array($trx_account_saving_id));
 
 		return $query->row_array();
 	}
 
-	function datatable_rekening_pembiayaan_setup($sWhere='',$sOrder='',$sLimit=''){
+	function datatable_rekening_pembiayaan_setup($sWhere = '', $sOrder = '', $sLimit = '')
+	{
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
 
@@ -4987,29 +5044,30 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
 		";
 
-		if ( $sWhere != "" ){
+		if ($sWhere != "") {
 			$sql .= "$sWhere ";
-			if($flag_all_branch==0){
-				$sql.="AND mc.branch_code='".$branch_code."'";
+			if ($flag_all_branch == 0) {
+				$sql .= "AND mc.branch_code='" . $branch_code . "'";
 			}
-		}else{
-			if($flag_all_branch==0){
-				$sql.="WHERE mc.branch_code='".$branch_code."'";
+		} else {
+			if ($flag_all_branch == 0) {
+				$sql .= "WHERE mc.branch_code='" . $branch_code . "'";
 			}
 		}
 
-		if ( $sOrder != "" )
-		$sql .= "$sOrder ";
+		if ($sOrder != "")
+			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
-		$sql .= "$sLimit ";
+		if ($sLimit != "")
+			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
 	}
 
-	function datatable_rak_setup($sWhere='',$sOrder='',$sLimit=''){
+	function datatable_rak_setup($sWhere = '', $sOrder = '', $sLimit = '')
+	{
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
 
@@ -5024,40 +5082,42 @@ Class Model_transaction extends CI_Model
 		JOIN mfi_branch AS mb ON mb.branch_code = mtr.branch_kirim
 		JOIN mfi_branch AS mbr ON mbr.branch_code = mtr.branch_terima ";
 
-		if ( $sWhere != "" ){
+		if ($sWhere != "") {
 			$sql .= "$sWhere AND mtr.status = '0'";
-			if($flag_all_branch==0){
-				$sql.="AND mtr.status = '0' AND mtr.branch_kirim='".$branch_code."'";
+			if ($flag_all_branch == 0) {
+				$sql .= "AND mtr.status = '0' AND mtr.branch_kirim='" . $branch_code . "'";
 			}
-		}else{
+		} else {
 			$sql .= "WHERE mtr.status = '0'";
-			if($flag_all_branch==0){
-				$sql.="AND mtr.status = '0' AND mtr.branch_kirim='".$branch_code."'";
+			if ($flag_all_branch == 0) {
+				$sql .= "AND mtr.status = '0' AND mtr.branch_kirim='" . $branch_code . "'";
 			}
 		}
 
-		if ( $sOrder != "" )
-		$sql .= "$sOrder ";
+		if ($sOrder != "")
+			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
-		$sql .= "$sLimit ";
+		if ($sLimit != "")
+			$sql .= "$sLimit ";
 
 		$query = $this->db->query($sql);
 
 		return $query->result_array();
 	}
 
-	function get_rak_by_trx_rak_id($trx_rak_id){
+	function get_rak_by_trx_rak_id($trx_rak_id)
+	{
 		$sql = "SELECT * FROM mfi_trx_rak WHERE trx_rak_id = ?";
 
 		$param = array($trx_rak_id);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function get_rak($cabang){
+	function get_rak($cabang)
+	{
 		$sql = "SELECT
 		mr.bank_account_code,
 		mga.account_name
@@ -5067,20 +5127,22 @@ Class Model_transaction extends CI_Model
 
 		$param = array($cabang);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function proses_input_trx_rak($data){
-		$this->db->insert('mfi_trx_rak',$data);
+	function proses_input_trx_rak($data)
+	{
+		$this->db->insert('mfi_trx_rak', $data);
 	}
 
-	function proses_edit_trx_rak($data,$param){
-		$this->db->update('mfi_trx_rak',$data,$param);
+	function proses_edit_trx_rak($data, $param)
+	{
+		$this->db->update('mfi_trx_rak', $data, $param);
 	}
 
-	public function datatable_pinbuk_tabungan($sWhere='',$sOrder='',$sLimit='')
+	public function datatable_pinbuk_tabungan($sWhere = '', $sOrder = '', $sLimit = '')
 	{
 		$sql = "select 
 				a.trx_detail_id,
@@ -5097,16 +5159,16 @@ Class Model_transaction extends CI_Model
 				and a.created_by=?
 		       ";
 
-		if ( $sWhere != "" )
+		if ($sWhere != "")
 			$sql .= "$sWhere ";
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,array($this->session->userdata('user_id')));
+		$query = $this->db->query($sql, array($this->session->userdata('user_id')));
 
 		return $query->result_array();
 	}
@@ -5116,75 +5178,84 @@ Class Model_transaction extends CI_Model
 	/* DELETING TRANSACTION SAVING(TABUNGAN) */
 
 	/**
-	* GET DATA TRANSAKSI SAVING(TABUNGAN)
-	* @author : sayyid
-	* date : 25 agustus 2014
-	* @param : trx_detail_id
-	*/
-	public function get_trx_account_saving_by_trx_detail_id($trx_detail_id,$trx_saving_type='')
+	 * GET DATA TRANSAKSI SAVING(TABUNGAN)
+	 * @author : sayyid
+	 * date : 25 agustus 2014
+	 * @param : trx_detail_id
+	 */
+	public function get_trx_account_saving_by_trx_detail_id($trx_detail_id, $trx_saving_type = '')
 	{
 		$sql = "select trx_account_saving_id,branch_id,account_saving_no,trx_saving_type,flag_debit_credit,trx_date,amount from mfi_trx_account_saving where trx_detail_id=?";
-		$param[]=$trx_detail_id;
-		if($trx_saving_type!=''){
-			$sql.=" and trx_saving_type=?";
-			$param[]=$trx_saving_type;
+		$param[] = $trx_detail_id;
+		if ($trx_saving_type != '') {
+			$sql .= " and trx_saving_type=?";
+			$param[] = $trx_saving_type;
 		}
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->result_array();
 	}
 	/**
-	* DELETE TRX ACCOUNT SAVING
-	* @author : sayyid
-	* date : 25 agustus 2014
-	*/
+	 * DELETE TRX ACCOUNT SAVING
+	 * @author : sayyid
+	 * date : 25 agustus 2014
+	 */
 	public function delete_trx_account_saving($param)
 	{
-		$this->db->delete('mfi_trx_account_saving',$param);
+		$this->db->delete('mfi_trx_account_saving', $param);
 	}
 	/**
-	* DELETE TRX DETAIL
-	* @author : sayyid
-	* date : 25 agustus 2014
-	*/
+	 * DELETE TRX DETAIL
+	 * @author : sayyid
+	 * date : 25 agustus 2014
+	 */
 	public function delete_trx_detail($param)
 	{
-		$this->db->delete('mfi_trx_detail',$param);
+		$this->db->delete('mfi_trx_detail', $param);
 	}
 
 	public function get_product_financing_data_by_code($product_code)
 	{
-		$sql="select * from mfi_product_financing where product_code=?";
-		$query=$this->db->query($sql,array($product_code));
+		$sql = "select * from mfi_product_financing where product_code=?";
+		$query = $this->db->query($sql, array($product_code));
 		return $query->row_array();
 	}
-	
+
 
 	/**
-	* GET SEQUENCE NUMBER OF ACCOUNT SAVING NO
-	* @author sayyid nurkilah
-	* @param product_code
-	* @param cif_no
-	*/
-	public function get_seq_account_saving_no($product_code,$cif_no)
+	 * GET SEQUENCE NUMBER OF ACCOUNT SAVING NO
+	 * @author sayyid nurkilah
+	 * @param product_code
+	 * @param cif_no
+	 */
+	public function get_seq_account_saving_no($product_code, $cif_no)
 	{
 		$sql = "SELECT max(RIGHT(account_saving_no,2)) AS jumlah from mfi_account_saving where product_code = ? and cif_no = ?";
-		$query = $this->db->query($sql,array($product_code,$cif_no));
+		$query = $this->db->query($sql, array($product_code, $cif_no));
 
 		return $query->row_array();
 	}
 
 	/**
-	* GET SEQUENCE NUMBER OF ACCOUNT FINANCING NO
-	* @author sayyid nurkilah
-	* @param product_code
-	* @param cif_no
-	*/
-	public function get_seq_account_financing_no($product_code,$cif_no)
+	 * GET SEQUENCE NUMBER OF ACCOUNT FINANCING NO
+	 * @author sayyid nurkilah
+	 * @param product_code
+	 * @param cif_no
+	 */
+	public function get_seq_account_financing_no($product_code, $cif_no)
 	{
 		$sql = "SELECT max(RIGHT(account_financing_no,2)) AS jumlah from mfi_account_financing where product_code = ? and cif_no = ?";
-		$query = $this->db->query($sql,array($product_code,$cif_no));
+		$query = $this->db->query($sql, array($product_code, $cif_no));
 
 		return $query->row_array();
+	}
+
+	function check_exist_rekening($account_financing_no)
+	{
+		$sql = "SELECT COUNT(*) AS jumlah FROM mfi_account_financing WHERE account_financing_no = ?";
+		$param = array($account_financing_no);
+		$query = $this->db->query($sql, $param);
+		$row = $query->row_array();
+		return $row['jumlah'];
 	}
 
 	public function get_grace_periode($cif_type)
@@ -5192,24 +5263,25 @@ Class Model_transaction extends CI_Model
 		$sql = "select grace_period_kelompok,grace_period_individu from mfi_institution limit 1";
 		$query = $this->db->query($sql);
 		$row = $query->row_array();
-		if($cif_type==0){
+		if ($cif_type == 0) {
 			return $row['grace_period_kelompok'];
-		}else{
+		} else {
 			return $row['grace_period_individu'];
 		}
 	}
 
-	public function get_trx_rembug_is_exist($trx_date,$cm_code)
+	public function get_trx_rembug_is_exist($trx_date, $cm_code)
 	{
 		$sql = "select count(*) as num from mfi_trx_cm where trx_date=? and cm_code=?";
-		$query = $this->db->query($sql,array($trx_date,$cm_code));
+		$query = $this->db->query($sql, array($trx_date, $cm_code));
 		$data = $query->row_array();
 		$num = $data['num'];
 
 		return $num;
 	}
 
-	function get_data_pendebetan_tab_individu($cif_no){
+	function get_data_pendebetan_tab_individu($cif_no)
+	{
 		$sql = "SELECT
 		cif_no,
 		account_saving_no,
@@ -5218,7 +5290,7 @@ Class Model_transaction extends CI_Model
 
 		$param = array($cif_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
@@ -5232,7 +5304,7 @@ Class Model_transaction extends CI_Model
 				and a.status_rekening=4 and a.product_code NOT IN('0009')
 				and b.cif_no=?
 				group by 1";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->row_array();
 	}
@@ -5246,60 +5318,64 @@ Class Model_transaction extends CI_Model
 				where a.cif_no=b.cif_no
 				and a.status_rekening=4 and a.product_code NOT IN('0009')
 				and b.cif_no=?";
-		$query = $this->db->query($sql,array($cif_no));
+		$query = $this->db->query($sql, array($cif_no));
 
 		return $query->result_array();
 	}
 
 	function get_branch_id_by_code($branch_code)
 	{
-		$sql="select branch_id from mfi_branch where branch_code=?";
-		$query=$this->db->query($sql,array($branch_code));
-		$row=$query->row_array();
+		$sql = "select branch_id from mfi_branch where branch_code=?";
+		$query = $this->db->query($sql, array($branch_code));
+		$row = $query->row_array();
 
 		return $row;
 	}
 
 	function insert_batch_trx_sukarela($data)
 	{
-		$this->db->insert_batch('mfi_trx_tab_sukarela',$data);
+		$this->db->insert_batch('mfi_trx_tab_sukarela', $data);
 	}
 
-	function get_counter_angsuran($account_financing_no) {
+	function get_counter_angsuran($account_financing_no)
+	{
 		$sql = "select counter_angsuran from mfi_account_financing where account_financing_no=?";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 		$row = $query->row_array();
-		if (count($row)>0) {
+		if (count($row) > 0) {
 			return $row['counter_angsuran'];
 		} else {
 			return 0;
 		}
 	}
 
-	function get_counter_angsuran_idvidu($account_financing_no, $tanggal_akad) {
+	function get_counter_angsuran_idvidu($account_financing_no, $tanggal_akad)
+	{
 		$sql = "select sum(freq) counter_angsuran from mfi_trx_account_financing where trx_status=1 and account_financing_no=? and trx_date>? ";
-		$query = $this->db->query($sql,array($account_financing_no,$tanggal_akad));
+		$query = $this->db->query($sql, array($account_financing_no, $tanggal_akad));
 		$row = $query->row_array();
-		if (count($row)>0) {
+		if (count($row) > 0) {
 			return $row['counter_angsuran'];
 		} else {
 			return 0;
 		}
 	}
 
-	function get_data_bayar_angs_idvidu($account_financing_no, $tanggal_akad) {
+	function get_data_bayar_angs_idvidu($account_financing_no, $tanggal_akad)
+	{
 		$sql = "select sum(freq) freq, sum(pokok) pokok, sum(margin) margin  from mfi_trx_account_financing where trx_financing_type>0 and trx_status=1 and account_financing_no=? and trx_date>=? ";
-		$query = $this->db->query($sql,array($account_financing_no,$tanggal_akad));
+		$query = $this->db->query($sql, array($account_financing_no, $tanggal_akad));
 		return $query->row_array();
 	}
 
 
-	function cekHariLibur($jtempo_angsuran_next){
+	function cekHariLibur($jtempo_angsuran_next)
+	{
 		$sql = "SELECT COUNT(*) AS jml FROM mfi_hari_libur WHERE tanggal = ?";
 
 		$param = array($jtempo_angsuran_next);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		$row = $query->row_array();
 
@@ -5310,7 +5386,8 @@ Class Model_transaction extends CI_Model
 		}
 	}
 
-	function datatable_r_verif_pinbuk($sWhere='',$sOrder='',$sLimit='',$branch){
+	function datatable_r_verif_pinbuk($sWhere = '', $sOrder = '', $sLimit = '', $branch)
+	{
 		$sql = "SELECT trx_date,SUM(wajib) AS wajib,SUM(kelompok) AS kelompok,
 			SUM(total) AS total, created_date FROM (
 			SELECT mts.trx_date, SUM(mts.tabungan_wajib) AS wajib,
@@ -5338,30 +5415,31 @@ Class Model_transaction extends CI_Model
 		$param[] = $branch;
 		$param[] = $branch;
 
-		if($sWhere != ""){
+		if ($sWhere != "") {
 			$sql .= $sWhere;
 		}
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function datatable_r_detil_pinbuk($sWhere='',$sOrder='',$sLimit='',$branch){
+	function datatable_r_detil_pinbuk($sWhere = '', $sOrder = '', $sLimit = '', $branch)
+	{
 		$sql = "SELECT a.cif_id id,a.cif_no,a.nama,
 			COALESCE(b.tabungan_wajib,0) tabungan_wajib,
 			COALESCE(b.tabungan_kelompok,0) tabungan_kelompok,
 			COALESCE(b.simpanan_pokok,0) simpanan_pokok,
 			COALESCE(b.smk,0) smk
-			FROM mfi_cif a, mfi_account_default_balance b ";		
+			FROM mfi_cif a, mfi_account_default_balance b ";
 
-		if($sWhere != ""){
+		if ($sWhere != "") {
 			$sql .= $sWhere;
 			$sql .= " AND a.cif_no = b.cif_no AND a.status = 1
 			AND a.branch_code = ? ";
@@ -5372,40 +5450,43 @@ Class Model_transaction extends CI_Model
 
 		$param = array($branch);
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function update_setoran_pokok($by,$date,$branch,$created){
+	function update_setoran_pokok($by, $date, $branch, $created)
+	{
 		//$this->db->where('created_date',$id);
 		//$this->db->update('mfi_trx_setoran_pokok',$data);
 
 		$sql = "UPDATE mfi_trx_setoran_pokok SET trx_status = '1', verify_by = ?, verify_date = ? WHERE created_date = ? AND cif_no IN (SELECT cif_no FROM mfi_cif WHERE branch_code = ?)";
 
-		$param = array($by,$date,$created,$branch);
+		$param = array($by, $date, $created, $branch);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 	}
 
-	function update_setoran_smk($by,$date,$branch,$created){
+	function update_setoran_smk($by, $date, $branch, $created)
+	{
 		//$this->db->where('created_date',$id);
 		//$this->db->update('mfi_trx_smk',$data);
 
 		$sql = "UPDATE mfi_trx_smk SET trx_status = '1', verify_by = ?, verify_date = ? WHERE created_date = ? AND cif_no IN (SELECT cif_no FROM mfi_cif WHERE branch_code = ?)";
 
-		$param = array($by,$date,$created,$branch);
+		$param = array($by, $date, $created, $branch);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 	}
 
-	function ajax_get_product_financing_by_jenis_pembiayaan($jenis_pembiayaan){
+	function ajax_get_product_financing_by_jenis_pembiayaan($jenis_pembiayaan)
+	{
 		$sql = "SELECT
 				mfi_product_financing.product_code,
 				mfi_product_financing.product_name,
@@ -5415,19 +5496,20 @@ Class Model_transaction extends CI_Model
 				FROM
 				mfi_product_financing
 				WHERE jenis_pembiayaan = ? ";
-		$query = $this->db->query($sql,array($jenis_pembiayaan));
+		$query = $this->db->query($sql, array($jenis_pembiayaan));
 		return $query->result_array();
 	}
 
 	function get_data_trx_account_saving_by_id($trx_account_saving_id)
 	{
 		$sql = "select * from mfi_trx_account_saving where trx_account_saving_id=?";
-		$query = $this->db->query($sql,array($trx_account_saving_id));
+		$query = $this->db->query($sql, array($trx_account_saving_id));
 		return $query->row_array();
 	}
 
 
-	function get_data_account_saving_by_account_no($account_saving_no){
+	function get_data_account_saving_by_account_no($account_saving_no)
+	{
 		$sql = "SELECT 	mas.*, mc.nama,
 		(CASE WHEN mc.cif_type = '0' THEN
 			mcm.cm_name
@@ -5439,41 +5521,45 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
 		where mas.account_saving_no = ?";
 		$param = array($account_saving_no);
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->row_array();
 	}
 
 	public function fn_jurnal_trx_saving($trx_account_saving_id)
 	{
 		$sql = "select fn_jurnal_trx_saving(?,?)";
-		$query = $this->db->query($sql,array($trx_account_saving_id,$this->session->userdata('user_id')));
+		$query = $this->db->query($sql, array($trx_account_saving_id, $this->session->userdata('user_id')));
 	}
 
-	function get_data_trx_account_financing_by_id($id){
+	function get_data_trx_account_financing_by_id($id)
+	{
 		$sql = "SELECT * FROM mfi_trx_account_financing WHERE trx_account_financing_id = ?";
-		$query = $this->db->query($sql,array($id));
+		$query = $this->db->query($sql, array($id));
 		return $query->row_array();
 	}
 
-	function get_data_trx_detail_by_id($id){
+	function get_data_trx_detail_by_id($id)
+	{
 		$sql = "SELECT * FROM mfi_trx_detail WHERE trx_detail_id = ?";
-		$query = $this->db->query($sql,array($id));
-		return $query->row_array();
-	}
-	
-	function get_account_cash_code($gl_code){
-		$sql = "SELECT account_cash_code FROM mfi_gl_account_cash WHERE gl_account_code = ?";
-		
-		$param = array($gl_code);
-		
-		$query = $this->db->query($sql,$param);
-		
+		$query = $this->db->query($sql, array($id));
 		return $query->row_array();
 	}
 
-	function get_data_account_financing_by_account_no($account_financing_no){
+	function get_account_cash_code($gl_code)
+	{
+		$sql = "SELECT account_cash_code FROM mfi_gl_account_cash WHERE gl_account_code = ?";
+
+		$param = array($gl_code);
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->row_array();
+	}
+
+	function get_data_account_financing_by_account_no($account_financing_no)
+	{
 		$sql = "SELECT * FROM mfi_account_financing WHERE account_financing_no = ?";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 		return $query->row_array();
 	}
 
@@ -5483,14 +5569,14 @@ Class Model_transaction extends CI_Model
 	function get_data_account_financing_schedulle_by_account_no($account_financing_no)
 	{
 		$sql = "select * from mfi_account_financing_schedulle where account_no_financing=? and status_angsuran=0 order by tangga_jtempo asc limit 1";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 		return $query->row_array();
 	}
 
 	function get_last_counter_angsuran_by_account_financing_no($account_financing_no)
 	{
 		$sql = "select count(*) counter_angsuran from mfi_account_financing_schedulle where account_no_financing=? and status_angsuran=1";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 		$row = $query->row_array();
 		return $row['counter_angsuran'];
 	}
@@ -5498,9 +5584,9 @@ Class Model_transaction extends CI_Model
 	function get_jtempo_angsuran_next_schedulle($account_financing_no)
 	{
 		$sql = "select tangga_jtempo from mfi_account_financing_schedulle where account_no_financing=? and status_angsuran=0 order by tangga_jtempo asc limit 1 offset 1";
-		$query = $this->db->query($sql,array($account_financing_no));
+		$query = $this->db->query($sql, array($account_financing_no));
 		$row = $query->row_array();
-		if (count($row)>0){
+		if (count($row) > 0) {
 			return $row['tangga_jtempo'];
 		} else {
 			return false;
@@ -5509,29 +5595,30 @@ Class Model_transaction extends CI_Model
 
 
 
-	function get_jtempo_angsuran_last($account_financing_no,$freq_bayar)
+	function get_jtempo_angsuran_last($account_financing_no, $freq_bayar)
 	{
 		$sql = "select fn_get_jtempo_angsuran_last(?,?) as jtempo_angsuran_last";
 
-		$query = $this->db->query($sql,array($account_financing_no,$freq_bayar));
+		$query = $this->db->query($sql, array($account_financing_no, $freq_bayar));
 		$row = $query->row_array();
 
 		return ($row['jtempo_angsuran_last']);
 	}
 
 
-	function get_jtempo_angsuran_next($account_financing_no,$freq_bayar)
+	function get_jtempo_angsuran_next($account_financing_no, $freq_bayar)
 	{
 		$sql = "select fn_get_jtempo_angsuran_next(?,?) as jtempo_angsuran_next";
 
-		$query = $this->db->query($sql,array($account_financing_no,$freq_bayar));
+		$query = $this->db->query($sql, array($account_financing_no, $freq_bayar));
 		$row = $query->row_array();
 
 		return ($row['jtempo_angsuran_next']);
 	}
 
 
-	function get_petugas(){
+	function get_petugas()
+	{
 		$param = array();
 		$branch_code = $this->session->userdata('branch_code');
 		$flag_all_branch = $this->session->userdata('flag_all_branch');
@@ -5543,29 +5630,31 @@ Class Model_transaction extends CI_Model
 						mfi_fa
 				";
 
-			if($flag_all_branch!='1'){ // tidak punya akses seluruh cabang
-				$sql .= " WHERE branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-				$param[] = $branch_code;
-			}
-		$query = $this->db->query($sql,$param);
+		if ($flag_all_branch != '1') { // tidak punya akses seluruh cabang
+			$sql .= " WHERE branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
+			$param[] = $branch_code;
+		}
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function search_fa($keyword,$branch){
+	function search_fa($keyword, $branch)
+	{
 		$sql = "SELECT fa_code, fa_name
 		FROM mfi_fa
 		WHERE fa_name LIKE ? AND branch_code = ? ORDER BY 2";
 
 		$param = array();
-		$param[] = '%'.strtoupper($keyword).'%';
+		$param[] = '%' . strtoupper($keyword) . '%';
 		$param[] = $branch;
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function jqgrid_count_pembatalan_angsuran($trx_date,$cm_code){
+	function jqgrid_count_pembatalan_angsuran($trx_date, $cm_code)
+	{
 		$sql = "SELECT
 		COUNT(*) AS jumlah
 
@@ -5577,13 +5666,13 @@ Class Model_transaction extends CI_Model
 
 		WHERE mtc.trx_date = ? AND maf.status_rekening = '1' AND mtc.cm_code = ?";
 
-		$param = array($trx_date,$cm_code);
+		$param = array($trx_date, $cm_code);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		$row = $query->row_array();
 
-		if(isset($row['jumlah'])){
+		if (isset($row['jumlah'])) {
 			$result = $row['jumlah'];
 		} else {
 			$result = 0;
@@ -5591,12 +5680,13 @@ Class Model_transaction extends CI_Model
 		return $result;
 	}
 
-	function jqgrid_list_pembatalan_angsuran($sidx='',$sord='',$limit_rows='',$start='',$trx_date,$cm_code){
+	function jqgrid_list_pembatalan_angsuran($sidx = '', $sord = '', $limit_rows = '', $start = '', $trx_date, $cm_code)
+	{
 		$order = '5,4';
 		$limit = '';
 
-		if ($sidx!='' && $sord!='') $order = "ORDER BY $sidx $sord ";
-		if ($limit_rows!='' && $start!='') $limit = "LIMIT $limit_rows OFFSET $start ";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY $sidx $sord ";
+		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start ";
 
 		$sql = "SELECT
 		mtcd.trx_cm_detail_id,
@@ -5619,14 +5709,15 @@ Class Model_transaction extends CI_Model
 
 		WHERE mtc.trx_date = ? AND maf.status_rekening = '1' AND mtc.cm_code = ?";
 
-		$param = array($trx_date,$cm_code);
+		$param = array($trx_date, $cm_code);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function get_data_for_pembatalan_angsuran($rekening){
+	function get_data_for_pembatalan_angsuran($rekening)
+	{
 		$sql = "SELECT
 		mtaf.trx_account_financing_id,
 		maf.account_financing_no,
@@ -5651,50 +5742,53 @@ Class Model_transaction extends CI_Model
 
 		$param = array($rekening);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		$return = $query->row_array();
 
 		echo $return;
 	}
 
-	function check_gl($branch_code,$tanggal,$account_code,$flag,$amount){
+	function check_gl($branch_code, $tanggal, $account_code, $flag, $amount)
+	{
 		$sql = "SELECT
 		COUNT(*) AS total
 		FROM mfi_trx_gl_detail
 		WHERE account_code = ? AND flag_debit_credit = ? AND amount = ?
 		AND trx_gl_id IN(SELECT trx_gl_id FROM mfi_trx_gl WHERE branch_code = ? AND voucher_date = ?)";
 
-		$param = array($account_code,$flag,$amount,$branch_code,$tanggal);
+		$param = array($account_code, $flag, $amount, $branch_code, $tanggal);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
 	// PERPANJANGAN TABBER
 	// perpanjang
-	function verif_perpanjang_tabber($data,$param)
+	function verif_perpanjang_tabber($data, $param)
 	{
-		$this->db->update('mfi_account_saving',$data,$param);
+		$this->db->update('mfi_account_saving', $data, $param);
 	}
 
-	function check_saving_schedulle($account_saving_no){
+	function check_saving_schedulle($account_saving_no)
+	{
 		$sql = "SELECT COUNT(*) AS jum FROM mfi_account_saving_schedulle WHERE account_saving_no = ? AND status_verifikasi = '0'";
 		$param = array($account_saving_no);
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
 	// FOR INSERT TO mfi_account_saving_schedule
-	function insert_perpanjang_tabber($datas){
-		$this->db->insert('mfi_account_saving_schedulle',$datas);
+	function insert_perpanjang_tabber($datas)
+	{
+		$this->db->insert('mfi_account_saving_schedulle', $datas);
 	}
 
-	function update_perpanjang_tabber($datas,$param)
+	function update_perpanjang_tabber($datas, $param)
 	{
-		$this->db->update('mfi_account_saving_schedulle',$datas,$param);
+		$this->db->update('mfi_account_saving_schedulle', $datas, $param);
 	}
 	// END PERPANJANGAN TABBER
 
@@ -5703,7 +5797,8 @@ Class Model_transaction extends CI_Model
 	// T
 	// 
 
-	function get_data_account_financing_by_account_no_new($account_financing_no){
+	function get_data_account_financing_by_account_no_new($account_financing_no)
+	{
 		$param = array();
 
 		$sql = "SELECT
@@ -5716,24 +5811,26 @@ Class Model_transaction extends CI_Model
 		";
 
 		$param[] = $account_financing_no;
-		
-		$query = $this->db->query($sql,$param);
+
+		$query = $this->db->query($sql, $param);
 		return $query->row_array();
 	}
 
-	function sql_cek($cif_no,$financing_type){
+	function sql_cek($cif_no, $financing_type)
+	{
 		$param = array();
 
 		$sql = "SELECT COUNT(*) as jum FROM mfi_account_financing WHERE cif_no = ? AND financing_type = ? AND status_rekening = 1
 		";
-		$param[]=$cif_no;
-		$param[]=$financing_type;
+		$param[] = $cif_no;
+		$param[] = $financing_type;
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 		return $query->row_array();
 	}
 
-	function datatable_transaksi_wakalah($sWhere,$sOrder,$sLimit,$branch_code){
+	function datatable_transaksi_wakalah($sWhere, $sOrder, $sLimit, $branch_code)
+	{
 		$param = array();
 		$sql = "SELECT
 		ma.akad_code,
@@ -5753,8 +5850,8 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
 		LEFT JOIN mfi_account_financing_droping AS mafd ON mafd.account_financing_no = maf.account_financing_no ";
 
-		if($sWhere != ''){
-			$sql .= $sWhere.' ';
+		if ($sWhere != '') {
+			$sql .= $sWhere . ' ';
 			$sql .= "AND maf.status_rekening = '1' AND mafd.status_droping = '0' AND maf.akad_code = '310' ";
 		} else {
 			$sql .= "WHERE maf.status_rekening = '1' AND mafd.status_droping = '0' AND maf.akad_code = '310' ";
@@ -5767,31 +5864,32 @@ Class Model_transaction extends CI_Model
 			$param[] = $branch_code;
 		}
 
-		if ( $sOrder != "" )
+		if ($sOrder != "")
 			$sql .= "$sOrder ";
 
-		if ( $sLimit != "" )
+		if ($sLimit != "")
 			$sql .= "$sLimit ";
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function proses_transaksi_wakalah($data,$param)
+	function proses_transaksi_wakalah($data, $param)
 	{
-		$this->db->update('mfi_account_financing',$data,$param);
+		$this->db->update('mfi_account_financing', $data, $param);
 	}
 
-	function update_status_transaksi_wakalah($data2,$param2)
+	function update_status_transaksi_wakalah($data2, $param2)
 	{
-		$this->db->update('mfi_account_financing_reg',$data2,$param2);
+		$this->db->update('mfi_account_financing_reg', $data2, $param2);
 	}
 
 	//END VERIFIKASI PEMBIAYAAN
 
 	// BEGIN VERIFIKASI PERPANJANGAN
-	function datatable_perpanjangan($sWhere,$sOrder,$sLimit,$cabang){
+	function datatable_perpanjangan($sWhere, $sOrder, $sLimit, $cabang)
+	{
 		$sql = "SELECT
 		mass.account_saving_schedulle_id,
 		mass.account_saving_no,
@@ -5807,15 +5905,15 @@ Class Model_transaction extends CI_Model
 		LEFT JOIN mfi_cif AS mc ON mc.cif_no = mas.cif_no
 		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code ";
 
-		if($sWhere != ''){
+		if ($sWhere != '') {
 			$sql .= $sWhere;
 		}
 
-		if($sOrder != ''){
+		if ($sOrder != '') {
 			$sql .= $sOrder;
 		}
 
-		if($sLimit != ''){
+		if ($sLimit != '') {
 			$sql .= $sLimit;
 		}
 
@@ -5824,65 +5922,73 @@ Class Model_transaction extends CI_Model
 		return $query->result_array();
 	}
 
-	function call_deposito_by_deposit_no($account_deposit_no){
+	function call_deposito_by_deposit_no($account_deposit_no)
+	{
 		$sql = "SELECT * FROM mfi_trx_account_deposit WHERE trx_status = '0' AND account_deposit_no = ?";
 
 		$param = array($account_deposit_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function cek_hari_libur($tanggal_mulai_angsur){
+	function cek_hari_libur($tanggal_mulai_angsur)
+	{
 		$sql = "select count(*) as num from mfi_hari_libur where tanggal = ?";
 		$query = $this->db->query($sql, array($tanggal_mulai_angsur));
 
 		return $query->row_array();
 	}
 
-	function cek_tunggakan_mingguan($cif_no){
+	function cek_tunggakan_mingguan($cif_no)
+	{
 		$sql = "SELECT COALESCE(SUM(amount),0) AS total FROM mfi_tunggakan_mingguan WHERE cif_no = ?";
 
 		$param = array($cif_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function cek_tunggakan_mingguan_by_tanggal($cif_no,$tanggal){
+	function cek_tunggakan_mingguan_by_tanggal($cif_no, $tanggal)
+	{
 		$sql = "SELECT COUNT(*) AS jumlah FROM mfi_tunggakan_mingguan WHERE cif_no = ? AND trx_date = ?";
 
-		$param = array($cif_no,$tanggal);
+		$param = array($cif_no, $tanggal);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}
 
-	function cek_tunggakan($cif_no){
+	function cek_tunggakan($cif_no)
+	{
 		$sql = "SELECT trx_date, amount FROM mfi_tunggakan_mingguan WHERE cif_no = ? ORDER BY trx_date ASC";
 
 		$param = array($cif_no);
 
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->result_array();
 	}
 
-	function delete_tunggakan($param){
-		$this->db->delete('mfi_tunggakan_mingguan',$param);
+	function delete_tunggakan($param)
+	{
+		$this->db->delete('mfi_tunggakan_mingguan', $param);
 	}
 
-	function insert_tunggakan($data){
-		$this->db->insert('mfi_tunggakan_mingguan',$data);
+	function insert_tunggakan($data)
+	{
+		$this->db->insert('mfi_tunggakan_mingguan', $data);
 	}
 
-	function cek_saving_dtk($cif_no){
+	function cek_saving_dtk($cif_no)
+	{
 		$sql = "SELECT * FROM mfi_account_saving WHERE status_rekening = '1' AND product_code = '0099' AND cif_no = ?";
 		$param = array($cif_no);
-		$query = $this->db->query($sql,$param);
+		$query = $this->db->query($sql, $param);
 
 		return $query->row_array();
 	}

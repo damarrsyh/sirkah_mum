@@ -13,7 +13,7 @@ $CI = get_instance();
   text-align: left;
 }
 #hor-minimalist-b .title {
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: bold;
 	color: #000;
 	padding: 5px;
@@ -22,7 +22,7 @@ $CI = get_instance();
 }
 
 #hor-minimalist-b .konten {
-	font-size: 10px;
+	font-size: 8px;
 	color: #000;
 	padding: 5px;
 	border: 1px solid #262626;
@@ -146,7 +146,7 @@ $CI = get_instance();
     $total_margin += $margin;
     $total_bayar += $jml_bayar;
     $total_plafon += $angsuran_pokok;
-    $total_margin += $angsuran_margin;
+    $total_angsuran_margin += $angsuran_margin;
     $total_catab += $angsuran_catab;
 
 
@@ -174,7 +174,7 @@ $CI = get_instance();
       <td class="total_saldo"><?php echo number_format($total_margin,0,',','.');?></td>
       <td class="konten">&nbsp;</td>
       <td class="total_saldo"><?php echo number_format($total_plafon,0,',','.');?></td>
-      <td class="total_saldo"><?php echo number_format($total_margin,0,',','.');?></td>
+      <td class="total_saldo"><?php echo number_format($total_angsuran_margin,0,',','.');?></td>
       <td class="total_saldo"><?php echo number_format($total_catab,0,',','.');?></td>
       <td class="total_saldo"><?php echo number_format($total_bayar,0,',','.');?></td>
       <td class="konten">&nbsp;</td>

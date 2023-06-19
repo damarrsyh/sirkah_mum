@@ -64,7 +64,7 @@ $autoload['libraries'] = array('database','session','upload','csvimport');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url','file','form','mfi','webservices_helper');
+$autoload['helper'] = array('url','file','form','mfi','webservices_helper','api_helper');
 
 
 /*

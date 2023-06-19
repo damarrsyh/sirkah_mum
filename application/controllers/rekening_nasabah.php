@@ -3065,8 +3065,25 @@ class Rekening_nasabah extends GMN_Controller
 		} else {
 			$newseq = '01';
 		}
-		$return = array('newseq' => $newseq);
+
+		$check = $this->check_exist_rekening($cif_no, $product_code, $newseq);
+
+		$return = array('newseq' => $check);
 		echo json_encode($return);
+	}
+
+	function check_exist_rekening($cif_no, $product_code, $newseq)
+	{
+		$account_financing_no = $cif_no . $product_code . $newseq;
+		$check = $this->model_transaction->check_exist_rekening($account_financing_no);
+		$last = (int)substr($account_financing_no, -2);
+
+		if ($check > 0) {
+			$last += 1;
+			$this->check_exist_rekening($cif_no, $product_code, $last);
+		}
+
+		return $last;
 	}
 
 	/*
@@ -3463,6 +3480,16 @@ class Rekening_nasabah extends GMN_Controller
 		$data['jenis_program'] 	= $this->model_transaction->get_jenis_program_financing();
 		$data['jaminan'] 		= $this->model_transaction->get_jenis_jaminan();
 		$data['petugas'] 		= $this->model_transaction->get_petugas();
+		$data['rembugs'] 		= $this->model_cif->get_cm_data();
+		$this->load->view('core', $data);
+	}
+
+	function update_sumber_dana()
+	{
+		$data['title'] = "Update Sumber Dana Pembiayaan ";
+		$data['container'] = 'nasabah/update_sumber_dana';
+		$data['produk'] 		= $this->model_transaction->get_product_financing();
+		$data['kreditur'] 		= $this->model_transaction->get_kreditur();
 		$data['rembugs'] 		= $this->model_cif->get_cm_data();
 		$this->load->view('core', $data);
 	}
@@ -3865,6 +3892,66 @@ class Rekening_nasabah extends GMN_Controller
 
 		echo json_encode($return);
 	}
+
+	function proses_update_sumber_dana()
+	{
+		$account_financing_no = $this->input->post('account_financing_no');
+
+		///$product_code 	= $this->input->post('product_code');
+		//$sumber_dana 	= $this->input->post('sumber_dana');
+		///$kreditur_code 	= $this->input->post('kreditur_code');
+
+		$product_code_n 	= $this->input->post('product_code_n');
+		///$sumber_dana_n 		= $this->input->post('sumber_dana_n');
+		$kreditur_code_n 	= $this->input->post('kreditur_code_n');
+		if ($kreditur_code_n == '00') {
+			$sumber_dana_n = '0';
+		} else {
+			$sumber_dana_n = '1';
+		}
+
+		$bValid = true;
+		$debug = false;
+
+		/*
+	    | updating mfi_account_financing (data non nominal) //----------------new 14-02-2015
+	    */
+		if ($bValid == true) {
+			$raw_account_financing = array(
+				'product_code' 		=> $product_code_n,
+				'sumber_dana' 		=> $sumber_dana_n,
+				'kreditur_code' 	=> $kreditur_code_n
+			);
+
+			$param_account_financing = array('account_financing_no' => $account_financing_no);
+
+			if ($debug == true) {
+				echo "<pre>";
+				print_r($raw_account_financing);
+				print_r($param_account_financing);
+			} else {
+				$this->db->trans_begin();
+				$this->db->update('mfi_account_financing', $raw_account_financing, $param_account_financing);
+				if ($this->db->trans_status() === true) {
+					$this->db->trans_commit();
+				} else {
+					$this->db->trans_rollback();
+					$bValid = false;
+					$error_state = 2;
+				}
+			}
+		}
+
+
+		if ($bValid == true) {
+			$return = array('success' => true);
+		} else {
+			$return = array('success' => false, 'error_state' => $error_state);
+		}
+
+		echo json_encode($return);
+	}
+
 
 
 	/* PERUBAHAN PENCAIRAN */
@@ -4735,13 +4822,12 @@ class Rekening_nasabah extends GMN_Controller
 			$nested['kekompakan']                 = $this->input->post('kekompakan');
 		}
 
-		if ($cif_type=='0') {
+		if ($cif_type == '0') {
 			$html = $this->load->view('cetak_map/template2', $nested, TRUE);
-		}
-		else {
+		} else {
 			$html = $this->load->view('cetak_map/template3', $nested, TRUE);
 		}
-		
+
 		$html2pdf = new HTML2PDF('P', 'A4', 'en', true, 'UTF-8', ['10', '10', '10', '1']); // L T R B
 		$html2pdf->pdf->SetDisplayMode('fullpage');
 		$html2pdf->pdf->SetProtection(array('print', 'copy'));
@@ -4749,5 +4835,4 @@ class Rekening_nasabah extends GMN_Controller
 		$html2pdf->writeHTML($html);
 		$html2pdf->Output('Aplikasi Pengajuan Pembiayaan.pdf');
 	}
-	
 }

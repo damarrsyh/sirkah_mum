@@ -1272,11 +1272,11 @@ class Model_laporan_to_pdf extends CI_Model
 		maf.angsuran_pokok,
 		maf.financing_type
 		FROM mfi_account_financing AS maf
-		JOIN mfi_cif AS mc ON maf.cif_no = mc.cif_no
-		JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
-		JOIN mfi_cm AS mcm ON mcm.branch_id = mb.branch_id
+		LEFT JOIN mfi_cif AS mc ON maf.cif_no = mc.cif_no
+		LEFT JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
+		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code 
 		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
-		JOIN mfi_kecamatan_desa AS mkd ON mcm.desa_code = mkd.desa_code
+		LEFT JOIN mfi_kecamatan_desa AS mkd ON mcm.desa_code = mkd.desa_code
 		WHERE maf.tanggal_jtempo BETWEEN ? AND ? ";
 
 		$param = array();
@@ -1495,7 +1495,7 @@ class Model_laporan_to_pdf extends CI_Model
 			$param[] = $kreditur;
 		}
 
-		$sql .= "ORDER BY mafd.droping_date, mcm.cm_name,mc.cif_no ASC";
+		$sql .= "ORDER BY mafd.droping_date, mc.cif_no ASC";
 
 		$query = $this->db->query($sql, $param);
 
@@ -2096,7 +2096,7 @@ class Model_laporan_to_pdf extends CI_Model
 				mc.desa,
 				mafd.droping_date,
 				mafd.droping_by,
-				maf.account_financing_no,
+				mcfd.account_financing_no,
 				maf.angsuran_pokok,
 				maf.angsuran_margin,
 				mcfd.saldo_pokok,
@@ -2125,17 +2125,17 @@ class Model_laporan_to_pdf extends CI_Model
 				maf.kreditur_code,
 				maf.tanggal_jtempo
 				FROM mfi_closing_financing_data AS mcfd
-				JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
-				JOIN mfi_cif AS mc ON mc.cif_no = maf.cif_no
-				JOIN mfi_account_financing_droping AS mafd ON maf.account_financing_no = mafd.account_financing_no
-				JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
-				JOIN mfi_branch AS mb ON mb.branch_id = mcm.branch_id
+				LEFT JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
+				LEFT JOIN mfi_cif AS mc ON mc.cif_no = maf.cif_no
+				LEFT JOIN mfi_account_financing_droping AS mafd ON maf.account_financing_no = mafd.account_financing_no
+				LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
+				LEFT JOIN mfi_branch AS mb ON mb.branch_id = mcm.branch_id
 				LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
 				LEFT JOIN mfi_list_code_detail AS krt ON (maf.kreditur_code = krt.code_value) AND krt.code_group = 'kreditur'
-				JOIN mfi_list_code_detail AS mlcd ON mlcd.code_value = CAST(maf.peruntukan AS VARCHAR) AND mlcd.code_group = 'peruntukan'
-				JOIN mfi_list_code_detail AS fice ON fice.code_value = CAST(maf.sektor_ekonomi AS VARCHAR) AND fice.code_group = 'sektor_ekonomi'
-				JOIN mfi_product_financing AS mpf ON mpf.product_code = maf.product_code
-		 		";
+				LEFT JOIN mfi_list_code_detail AS mlcd ON mlcd.code_value = CAST(maf.peruntukan AS VARCHAR) AND mlcd.code_group = 'peruntukan'
+				LEFT JOIN mfi_list_code_detail AS fice ON fice.code_value = CAST(maf.sektor_ekonomi AS VARCHAR) AND fice.code_group = 'sektor_ekonomi'
+				LEFT JOIN mfi_product_financing AS mpf ON mpf.product_code = maf.product_code
+		 		where mcfd.account_financing_no <>'0' ";
 
 		$param = array();
 		$param[] = $tanggal;
@@ -2147,23 +2147,23 @@ class Model_laporan_to_pdf extends CI_Model
 		}
 
 		if ($cabang != '00000') {
-			$sql .= "AND mb.branch_code IN(SELECT branch_code
+			$sql .= "AND mcfd.branch_code IN(SELECT branch_code
 			FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $cabang;
 		}
 
 		if ($petugas != '00000') {
-			$sql .= "AND mf.fa_code = ? ";
+			$sql .= "AND maf.fa_code = ? ";
 			$param[] = $petugas;
 		}
 
 		if ($majelis != '00000') {
-			$sql .= "AND mcm.cm_code = ? ";
+			$sql .= "AND mc.cm_code = ? ";
 			$param[] = $majelis;
 		}
 
 		if ($produk != '00000') {
-			$sql .= "AND mpf.product_code = ? ";
+			$sql .= "AND maf.product_code = ? ";
 			$param[] = $produk;
 		}
 
@@ -2185,7 +2185,7 @@ class Model_laporan_to_pdf extends CI_Model
 		$sql .= "AND mcfd.closing_thru_date = ? ";
 		$param[] = $tanggal;
 
-		$sql .= "ORDER BY mb.branch_code,mcm.cm_name,mc.kelompok::INTEGER ASC";
+		$sql .= "ORDER BY mcfd.branch_code, mcm.cm_name, mc.kelompok::INTEGER ASC";
 
 		$query = $this->db->query($sql, $param);
 
@@ -3055,6 +3055,53 @@ class Model_laporan_to_pdf extends CI_Model
 	// END REKAP PENCAIRAN PEMBIAYAAN
 	/****************************************************************************************/
 
+
+	function export_rekap_target_realisasi($branch_code,$jenistarget,$tahuntarget){
+		$sql ="SELECT  
+					a.target_item kode , c.display_text||' Target' Keterangan , 
+       		   		sum(a.t1) b1, sum(a.t2) b2, sum(a.t3) b3, sum(a.t4) b4, sum(a.t5) b5, sum(a.t6) b6, sum(a.t7) b7, sum(a.t8) b8, sum(a.t9) b9, sum(a.t10) b10, sum(a.t11) b11, sum(a.t12) b12 
+				FROM mfi_target_cabang a  
+				LEFT JOIN mfi_branch b ON a.branch_code = b.branch_code 	
+				LEFT JOIN mfi_list_code_detail c ON (a.target_item = c.code_value) AND c.code_group = 'targetcabang'         			
+				WHERE a.tahun=?  and a.target_item =?  ";
+
+				$param[] = $tahuntarget;
+				$param[] = $jenistarget;
+
+				if($branch_code != '00000'){
+					$sql .= "AND a.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk=?) ";
+					$param[] = $branch_code;
+				};
+
+				$sql .=" group by 1,2 " ;
+
+				$sql .=" union all  ";
+
+				$sql .="SELECT 
+				        a.target_item kode, c.display_text||' Realisasi' Keterangan , 
+				       sum(a.c1) b1, sum(a.c2) b2, sum(a.c3) b3, sum(a.c4) b4, sum(a.c5) b5, sum(a.c6) b6, sum(a.c7) b7, sum(a.c8) b8, sum(a.c9) b9, sum(a.c10) b10, sum(a.c11) b11, sum(a.c12) b12  
+				FROM mfi_target_cabang a  
+				LEFT JOIN mfi_branch b ON a.branch_code = b.branch_code 	
+				LEFT JOIN mfi_list_code_detail c ON (a.target_item = c.code_value) AND c.code_group = 'targetcabang'         			
+				WHERE a.tahun=?  and a.target_item =?  ";
+
+				$param[] = $tahuntarget;
+				$param[] = $jenistarget;
+
+				if($branch_code != '00000'){
+					$sql .= "AND a.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk=?) ";
+					$param[] = $branch_code;
+				};
+				$sql .=" group by 1, 2  " ;
+
+				$sql .= " order by 1, 2 desc "; 
+			
+		$query = $this->db->query($sql,$param);		
+		return $query->result_array();
+	}
+
+
+
 	/****************************************************************************************/
 	// START REKAP PELUNASAN
 	// Author : Aiman
@@ -3494,7 +3541,107 @@ class Model_laporan_to_pdf extends CI_Model
 	// END REKAP ANGGOTA KELUAR 
 	/****************************************************************************************/
 
+	
+	//rekap anggota masuk by semua cabang
+	public function export_rekap_anggota_masuk_semua_cabang($tanggal, $tanggal2)
+	{
+		$sql = "SELECT
+							mfi_branch.branch_code,
+							mfi_branch.branch_name,
+							Count(mfi_cif.cif_no) AS num
+					FROM
+							mfi_cif 
+							JOIN mfi_branch ON mfi_branch.branch_code = mfi_cif.branch_code
+					WHERE
+							mfi_cif.tgl_gabung BETWEEN ? AND ? ";
 
+
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+
+		$sql .= " GROUP BY 1,2 ";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+	//ekap anggota masik by cabang
+	public function export_rekap_anggota_masuk_by_cabang($branch_code, $tanggal, $tanggal2)
+	{
+		$param = array();
+		$sql = " select 
+					d.branch_code, d.branch_name, 
+					count(a.cif_no) num 
+					from mfi_cif a  
+					left outer join mfi_branch d on a.branch_code=d.branch_code 
+					where  a.tgl_gabung between ? and ? ";
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+
+		if ($branch_code != "0000") {
+			$sql .= " AND a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
+			$param[] = $branch_code;
+		}
+		$sql .= " group by 1,2 ";
+
+		$query = $this->db->query($sql, $param);
+
+		return $query->result_array();
+	}
+
+
+
+
+	//rekap anggota masuk by kecamatan
+	public function export_rekap_anggota_masuk_kecamatan($branch_code, $tanggal, $tanggal2)
+	{
+		$param = array();
+		$sql = "SELECT 
+					e.kecamatan_code, e.kecamatan, 
+					count(a.cif_no) num 
+					from mfi_cif a 
+					left outer join mfi_cm c on a.cm_code=c.cm_code 
+					left outer join mfi_kecamatan_desa d on c.desa_code=d.desa_code 
+					left outer join mfi_city_kecamatan e on d.kecamatan_code=e.kecamatan_code 
+					where a.tgl_gabung between ? and ? 
+					";
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+
+		if ($branch_code != "00000") {
+			$sql .= " AND a.branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
+			$param[] = $branch_code;
+		}
+		$sql .= " group by 1,2 ";
+
+		$query = $this->db->query($sql, $param);
+		return $query->result_array();
+	}
+
+	//rekap anggota masuk by petugas
+	public function export_rekap_anggota_masuk_petugas($branch_code, $tanggal, $tanggal2)
+	{
+		$param = array();
+		$sql = " Select  
+			       d.fa_code, d.fa_name,
+				   count(a.cif_no) num 
+				   from mfi_cif  a
+				   left outer join mfi_cm c on a.cm_code=c.cm_code 
+				   left outer join mfi_fa d on c.fa_code=d.fa_code 
+				   where a.tgl_gabung between ? and ? ";
+		$param[] = $tanggal;
+		$param[] = $tanggal2;
+
+		if ($branch_code != "00000") {
+			$sql .= " AND a.branch_code in (select branch_code from mfi_branch_member where branch_induk=?) ";
+			$param[] = $branch_code;
+		}
+		$sql .= " group by 1,2 ";
+
+		$query = $this->db->query($sql, $param);
+		return $query->result_array();
+	}
 
 	/****************************************************************************************/
 	// BEGIN REKAP SALDO ANGGOTA 
@@ -3540,10 +3687,10 @@ class Model_laporan_to_pdf extends CI_Model
 		$sql = "SELECT 
 		mb.branch_code,
 		mb.branch_name,
-		COUNT(mc.cif_no) AS jumlah_anggota,
-		(SELECT SUM(saldo_pokok) FROM mfi_account_financing AS maf, mfi_cif AS mcf WHERE maf.cif_no = mcf.cif_no AND maf.status_rekening = '1' AND mcf.status = '1' AND mcf.branch_code = mb.branch_code) AS saldo_pokok,
-		(SELECT SUM(saldo_margin) FROM mfi_account_financing AS maf, mfi_cif AS mcf WHERE maf.cif_no = mcf.cif_no AND maf.status_rekening = '1' AND mcf.status = '1' AND mcf.branch_code = mb.branch_code) AS saldo_margin,
-		(SELECT SUM(saldo_catab) FROM mfi_account_financing AS maf, mfi_cif AS mcf WHERE maf.cif_no = mcf.cif_no AND maf.status_rekening = '1' AND mcf.status = '1' AND mcf.branch_code = mb.branch_code) AS saldo_catab,
+		COUNT(mcbd.cif_no) AS jumlah_anggota,
+		(SELECT SUM(mcfd.saldo_pokok) FROM mfi_closing_financing_data as mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.branch_code = mb.branch_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_pokok,
+		(SELECT SUM(saldo_margin) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.branch_code = mb.branch_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_margin,
+		(SELECT SUM(saldo_catab) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.branch_code = mb.branch_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_catab,
 		SUM(madb.setoran_lwk) AS setoran_lwk,
 		SUM(madb.simpanan_pokok) AS simpanan_pokok,
 		SUM(mcbd.tabungan_wajib) AS tabungan_minggon,
@@ -3553,7 +3700,7 @@ class Model_laporan_to_pdf extends CI_Model
 		LEFT JOIN mfi_cif AS mc on mcbd.cif_no = mc.cif_no 
 		LEFT JOIN mfi_branch AS mb on mb.branch_code = mc.branch_code 
 		LEFT JOIN mfi_account_default_balance AS madb ON madb.cif_no = mc.cif_no
-		WHERE mc.status = '1' AND mcbd.closing_thru_date = ? ";
+		WHERE mcbd.closing_thru_date = ? ";
 		$param[] = $tanggal;
 
 		if ($branch_code == "0000" || $branch_code == "") {
@@ -4550,22 +4697,14 @@ class Model_laporan_to_pdf extends CI_Model
 		maf.fl_reschedulle
 		FROM mfi_account_financing AS maf
 		JOIN mfi_cif AS mc ON mc.cif_no = maf.cif_no
-		JOIN mfi_account_financing_droping AS mafd
-		ON maf.account_financing_no = mafd.account_financing_no
+		JOIN mfi_account_financing_droping AS mafd ON maf.account_financing_no = mafd.account_financing_no
 		JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
 		JOIN mfi_branch AS mb ON mb.branch_id = mcm.branch_id
 		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
-		JOIN mfi_list_code_detail AS mlcd
-		ON mlcd.code_value = CAST(maf.peruntukan AS VARCHAR)
-		AND mlcd.code_group = 'peruntukan'
-		JOIN mfi_list_code_detail AS fice
-		ON fice.code_value = CAST(maf.sektor_ekonomi AS VARCHAR)
-		AND fice.code_group = 'sektor_ekonomi'
-		JOIN mfi_product_financing AS mpf
-		ON mpf.product_code = maf.product_code
-		LEFT JOIN mfi_list_code_detail AS krt
-		ON (maf.kreditur_code = krt.code_value)
-		AND krt.code_group = 'kreditur'
+		JOIN mfi_list_code_detail AS mlcd ON mlcd.code_value = CAST(maf.peruntukan AS VARCHAR) AND mlcd.code_group = 'peruntukan'
+		JOIN mfi_list_code_detail AS fice ON fice.code_value = CAST(maf.sektor_ekonomi AS VARCHAR) AND fice.code_group = 'sektor_ekonomi'
+		JOIN mfi_product_financing AS mpf ON mpf.product_code = maf.product_code
+		LEFT JOIN mfi_list_code_detail AS krt ON (maf.kreditur_code = krt.code_value) AND krt.code_group = 'kreditur'
 		WHERE maf.status_rekening = '1' AND  mc.cif_type='0' ";
 
 		$param = array();
@@ -4576,8 +4715,7 @@ class Model_laporan_to_pdf extends CI_Model
 		}
 
 		if ($cabang != '00000') {
-			$sql .= "AND mb.branch_code IN(SELECT branch_code
-			FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $cabang;
 		}
 
@@ -4707,54 +4845,45 @@ class Model_laporan_to_pdf extends CI_Model
 		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 		$sql = "SELECT
-		mc.nama,
-		mc.no_ktp,
-		mc.desa,
-		mafd.droping_date,
-		mafd.droping_by,
-		maf.account_financing_no,
-		maf.angsuran_pokok,
-		maf.angsuran_margin,
-		maf.jangka_waktu,
-		mcfd.saldo_pokok,
-		mcfd.saldo_margin,
-		mcfd.saldo_catab,
-		maf.status_kolektibilitas,
-		maf.margin,
-		maf.pokok,
-		maf.dana_kebajikan,
-		mlcd.display_text AS peruntukan,
-		fice.display_text AS sektor,
-		mcm.cm_name,
-		mf.fa_name,
-		mpf.nick_name,
-		maf.fl_reschedulle,
-		CAST((mcfd.saldo_pokok / maf.angsuran_pokok) AS INTEGER)
-		AS freq_bayar_saldo,
-		(maf.jangka_waktu - (mcfd.saldo_pokok / maf.angsuran_pokok)::INTEGER) AS freq_bayar_pokok,
-		krt.display_text AS krd,
-		maf.kreditur_code,
-		maf.tanggal_jtempo
-		FROM mfi_closing_financing_data AS mcfd
-		JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
-		JOIN mfi_cif AS mc ON mc.cif_no = maf.cif_no
-		JOIN mfi_account_financing_droping AS mafd
-		ON maf.account_financing_no = mafd.account_financing_no
-		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code
-		JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
-		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
-		JOIN mfi_list_code_detail AS mlcd
-		ON mlcd.code_value = CAST(maf.peruntukan AS VARCHAR)
-		AND mlcd.code_group = 'peruntukan'
-		LEFT JOIN mfi_list_code_detail AS krt
-		ON (maf.kreditur_code = krt.code_value)
-		AND krt.code_group = 'kreditur'
-		JOIN mfi_list_code_detail AS fice
-		ON fice.code_value = CAST(maf.sektor_ekonomi AS VARCHAR)
-		AND fice.code_group = 'sektor_ekonomi'
-		JOIN mfi_product_financing AS mpf
-		ON mpf.product_code = maf.product_code
-		 ";
+					mc.nama,
+					mc.no_ktp,
+					mc.desa,
+					mafd.droping_date,
+					mafd.droping_by,
+					mcfd.account_financing_no,
+					maf.angsuran_pokok,
+					maf.angsuran_margin,
+					maf.jangka_waktu,
+					mcfd.saldo_pokok,
+					mcfd.saldo_margin,
+					mcfd.saldo_catab,
+					maf.status_kolektibilitas,
+					maf.margin,
+					maf.pokok,
+					maf.dana_kebajikan,
+					mlcd.display_text AS peruntukan,
+					fice.display_text AS sektor,
+					mcm.cm_name,
+					mf.fa_name,
+					mpf.nick_name,
+					maf.fl_reschedulle,
+					CAST((mcfd.saldo_pokok / maf.angsuran_pokok) AS INTEGER) AS freq_bayar_saldo,
+					(maf.jangka_waktu - (mcfd.saldo_pokok / maf.angsuran_pokok)::INTEGER) AS freq_bayar_pokok,
+					krt.display_text AS krd,
+					maf.kreditur_code,
+					maf.tanggal_jtempo
+				FROM mfi_closing_financing_data AS mcfd
+				LEFT JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
+				LEFT JOIN mfi_cif AS mc ON mc.cif_no = maf.cif_no
+				LEFT JOIN mfi_account_financing_droping AS mafd ON maf.account_financing_no = mafd.account_financing_no
+				LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code 
+				LEFT JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
+				LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
+				LEFT JOIN mfi_list_code_detail AS mlcd ON mlcd.code_value = CAST(maf.peruntukan AS VARCHAR) AND mlcd.code_group = 'peruntukan'
+				LEFT JOIN mfi_list_code_detail AS krt ON (maf.kreditur_code = krt.code_value) AND krt.code_group = 'kreditur'
+				LEFT JOIN mfi_list_code_detail AS fice ON fice.code_value = CAST(maf.sektor_ekonomi AS VARCHAR) AND fice.code_group = 'sektor_ekonomi'
+				LEFT JOIN mfi_product_financing AS mpf ON mpf.product_code = maf.product_code
+				Where mcfd.account_financing_no<>'0' ";
 
 		$param = array();
 
@@ -4765,7 +4894,7 @@ class Model_laporan_to_pdf extends CI_Model
 
 		if ($cabang != '00000') {
 			$sql .= "AND mb.branch_code IN(SELECT branch_code
-			FROM mfi_branch_member WHERE branch_induk = ?) ";
+				FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $cabang;
 		}
 
@@ -5351,13 +5480,10 @@ class Model_laporan_to_pdf extends CI_Model
 		mafr.rencana_droping,
 		mafr.status,
 		mafr.tanggal_pengajuan,
-		mafr.cif_no,
 		mc.nama,
 		mcm.cm_name,
 		mafr.amount,
-		mafr.financing_type,
-		mafr.pembiayaan_ke,
-		mafr.peruntukan,
+		mafr.financing_type
 		FROM mfi_account_financing_reg AS mafr
 		JOIN mfi_cif AS mc ON mafr.cif_no = mc.cif_no
 		JOIN mfi_cm AS mcm ON mc.cm_code = mcm.cm_code
@@ -6306,11 +6432,18 @@ class Model_laporan_to_pdf extends CI_Model
 		b.tanggal_mulai_angsur,
 		b.saldo_pokok,
 		b.saldo_margin,
+		b.counter_angsuran,
 		c.droping_date,
 		b.angsuran_pokok,
 		b.angsuran_margin,
+		
 		CAST((b.pokok - a.saldo_pokok) / b.angsuran_pokok AS INTEGER) AS terbayar,
-		(((? - b.tanggal_mulai_angsur) / 7) + 1) AS seharusnya,
+		(((? - b.tanggal_mulai_angsur) / 7) + 1-
+			( SELECT COUNT(tanggal) FROM mfi_hari_libur 
+			  WHERE tanggal BETWEEN b.tanggal_mulai_angsur AND a.tanggal_hitung 
+			  AND EXTRACT(dow FROM tanggal) = EXTRACT(dow FROM b.tanggal_mulai_angsur) )::INTEGER 
+ 		) AS seharusnya,
+
 		a.saldo_pokok,
 		a.saldo_margin,
 		a.hari_nunggak,
@@ -11340,13 +11473,10 @@ class Model_laporan_to_pdf extends CI_Model
 		mafr.rencana_droping,
 		mafr.status,
 		mafr.tanggal_pengajuan,
-		mafr.cif_no,
 		mc.nama,
 		mcm.cm_name,
 		mafr.amount,
-		mafr.financing_type,
-		mafr.pembiayaan_ke,
-		mafr.peruntukan 
+		mafr.financing_type
 		FROM mfi_account_financing_reg AS mafr
 		JOIN mfi_cif AS mc ON mafr.cif_no = mc.cif_no
 		JOIN mfi_cm AS mcm ON mc.cm_code = mcm.cm_code
@@ -11690,239 +11820,114 @@ class Model_laporan_to_pdf extends CI_Model
 	{
 
 		$sql = "SELECT 
-		mb.branch_code,
-		mb.branch_name,
-		mb.branch_class,
-		(SELECT
-		 COUNT(*)
-		 FROM mfi_closing_financing_data AS mcfd
-		 JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
-		 WHERE maf.status_rekening = '1'
-		 AND maf.branch_code = mb.branch_code
-		 AND mcfd.closing_thru_date = ?) AS num,
-		(SELECT
-		 COALESCE(SUM(mcfd.saldo_pokok),0)
-		 FROM mfi_closing_financing_data AS mcfd
-		 JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
-		 WHERE maf.status_rekening = '1'
-		 AND maf.branch_code = mb.branch_code
-		 AND mcfd.closing_thru_date = ?) AS pokok,
-		(SELECT
-		 COALESCE(SUM(mcfd.saldo_margin),0)
-		 FROM mfi_closing_financing_data AS mcfd
-		 JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
-		 WHERE maf.status_rekening = '1'
-		 AND branch_code = mb.branch_code
-		 AND mcfd.closing_thru_date = ?) AS margin,
-		(SELECT
-		 COALESCE(SUM(mcfd.saldo_catab),0)
-		 FROM mfi_closing_financing_data AS mcfd
-		 JOIN mfi_account_financing AS maf ON maf.account_financing_no = mcfd.account_financing_no
-		 WHERE maf.status_rekening = '1'
-		 AND maf.branch_code = mb.branch_code
-		 AND mcfd.closing_thru_date = ?) AS catab
-
-		FROM mfi_branch AS mb ";
-
-		$param = array();
-
-		$param[] = $tanggal;
-		$param[] = $tanggal;
-		$param[] = $tanggal;
+					mc.branch_code,
+					mb.branch_name, 
+					mcbd.closing_thru_date, 
+					COUNT(mcbd.cif_no) AS jumlah_anggota,
+					(SELECT SUM(mcfd.saldo_pokok) FROM mfi_closing_financing_data as mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.branch_code = mc.branch_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_pokok,
+					(SELECT SUM(saldo_margin) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.branch_code = mc.branch_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_margin,
+					(SELECT SUM(saldo_catab) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.branch_code = mc.branch_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_catab,
+					SUM(madb.setoran_lwk) AS setoran_lwk,
+					SUM(madb.simpanan_pokok) AS simpanan_pokok,
+					SUM(mcbd.saldo_tab_wajib) AS tabungan_minggon,
+					SUM(mcbd.saldo_tab_sukarela) AS tabungan_sukarela,
+					SUM(mcbd.saldo_tab_kelompok) AS tabungan_kelompok
+				FROM mfi_closing_balance_data AS mcbd 
+				LEFT JOIN mfi_cif AS mc on mcbd.cif_no = mc.cif_no 
+				LEFT JOIN mfi_branch AS mb on mb.branch_code = mc.branch_code 
+				LEFT JOIN mfi_account_default_balance AS madb ON madb.cif_no = mc.cif_no 
+				WHERE mcbd.closing_thru_date = ? ";
 		$param[] = $tanggal;
 
-		if ($branch_code != '00000') {
-			$sql .= "WHERE mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?)";
+		if ($branch_code == "0000" || $branch_code == "") {
+			$sql .= "";
+			$param[] = $branch_code;
+		} else if ($branch_code != "0000") {
+			$sql .= "AND mb.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
 			$param[] = $branch_code;
 		}
 
-		$sql .= " ORDER BY 3,2";
-
+		$sql .= "GROUP BY 1,2,3 ORDER BY 1,2";
 		$query = $this->db->query($sql, $param);
+
 		return $query->result_array();
 	}
 
-	//rembug
-	public function export_rekap_saldo_anggota_rembug1($branch_code)
+	public function export_rekap_saldo_anggota_rembug_lalu($branch_code, $tanggal)
 	{
-		$tanggal = date('Y-m-d');
-		$param = array();
 		$sql = "SELECT 
-					mfi_cm.cm_code
-					,mfi_cm.cm_name
-					,(select count(*) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as num
-					,(select coalesce(sum(a.saldo_pokok),0) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as pokok
-					,(select coalesce(sum(a.saldo_margin),0) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as margin
-					,(select coalesce(sum(a.saldo_catab),0) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as catab
-					from mfi_cm
-					where (select count(*) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) > 0 ";
+					mc.cm_code,
+					mcm.cm_name, 
+					mcbd.closing_thru_date, 
+					COUNT(mcbd.cif_no) AS jumlah_anggota,
+					(SELECT SUM(mcfd.saldo_pokok) FROM mfi_closing_financing_data as mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.cm_code = mc.cm_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_pokok,
+					(SELECT SUM(saldo_margin) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.cm_code = mc.cm_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_margin,
+					(SELECT SUM(saldo_catab) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf WHERE mcfd.cif_no = mcf.cif_no AND mcf.cm_code = mc.cm_code and mcfd.closing_thru_date=mcbd.closing_thru_date) AS saldo_catab,
+					SUM(madb.setoran_lwk) AS setoran_lwk,
+					SUM(madb.simpanan_pokok) AS simpanan_pokok,
+					SUM(mcbd.saldo_tab_wajib) AS tabungan_minggon,
+					SUM(mcbd.saldo_tab_sukarela) AS tabungan_sukarela,
+					SUM(mcbd.saldo_tab_kelompok) AS tabungan_kelompok
+				FROM mfi_closing_balance_data AS mcbd 
+				LEFT JOIN mfi_cif AS mc on mcbd.cif_no = mc.cif_no 
+				LEFT JOIN mfi_cm AS mcm on mc.cm_code = mcm.cm_code  
+				LEFT JOIN mfi_branch AS mb on mb.branch_code = mc.branch_code 
+				LEFT JOIN mfi_account_default_balance AS madb ON madb.cif_no = mc.cif_no 
+				WHERE mcbd.closing_thru_date = ? ";
+		$param[] = $tanggal;
 
-		$sql .= " GROUP BY 1,2 ORDER BY mfi_cm.cm_name asc";
+		if ($branch_code == "0000" || $branch_code == "") {
+			$sql .= "";
+			$param[] = $branch_code;
+		} else if ($branch_code != "0000") {
+			$sql .= "AND mc.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
 
+		$sql .= "GROUP BY 1,2,3 ORDER BY 1,2";
 		$query = $this->db->query($sql, $param);
+
 		return $query->result_array();
 	}
 
-	public function export_rekap_saldo_anggota_rembug_lalu($branch_code)
+	public function export_rekap_saldo_anggota_petugas_lalu($branch_code,$tanggal)
 	{
-		$tanggal = date('Y-m-d');
-		$param = array();
 		$sql = "SELECT 
-					mfi_cm.cm_code
-					,mfi_cm.cm_name
-					,(select count(c.*) from mfi_account_financing a, mfi_cif b, mfi_closing_financing_data c where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code and c.account_financing_no=a.account_financing_no";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as num
-					,(select coalesce(sum(a.saldo_pokok),0) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as pokok
-					,(select coalesce(sum(a.saldo_margin),0) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as margin
-					,(select coalesce(sum(a.saldo_catab),0) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as catab
-					from mfi_cm
-					where (select count(*) from mfi_account_financing a, mfi_cif b where a.cif_no=b.cif_no and a.status_rekening=1 and b.cm_code=mfi_cm.cm_code";
-		if ($branch_code != "00000") {
-			$sql .= " and b.branch_code in (select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) > 0 ";
+					mcm.fa_code,
+					mfa.fa_name, 
+					mcbd.closing_thru_date, 
+					COUNT(mcbd.cif_no) AS jumlah_anggota,
+					(SELECT SUM(mcfd.saldo_pokok) FROM mfi_closing_financing_data as mcfd, mfi_cif as mcf, mfi_cm as mfcm WHERE mcfd.cif_no = mcf.cif_no AND mcf.cm_code = mfcm.cm_code and mfcm.fa_code = mcm.fa_code  and mcfd.closing_thru_date=mcbd.closing_thru_date ) AS saldo_pokok,
+					(SELECT SUM(saldo_margin) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf, mfi_cm as mfcm  WHERE mcfd.cif_no = mcf.cif_no AND mcf.cm_code = mfcm.cm_code and mfcm.fa_code = mcm.fa_code  and mcfd.closing_thru_date=mcbd.closing_thru_date ) AS saldo_margin,
+					(SELECT SUM(saldo_catab) FROM mfi_closing_financing_data AS mcfd, mfi_cif AS mcf, mfi_cm as mfcm  WHERE mcfd.cif_no = mcf.cif_no AND mcf.cm_code = mfcm.cm_code and mfcm.fa_code = mcm.fa_code  and mcfd.closing_thru_date=mcbd.closing_thru_date ) AS saldo_catab,
+					SUM(madb.setoran_lwk) AS setoran_lwk,
+					SUM(madb.simpanan_pokok) AS simpanan_pokok,
+					SUM(mcbd.saldo_tab_wajib) AS tabungan_minggon,
+					SUM(mcbd.saldo_tab_sukarela) AS tabungan_sukarela,
+					SUM(mcbd.saldo_tab_kelompok) AS tabungan_kelompok 
+				FROM mfi_closing_balance_data AS mcbd 
+				LEFT JOIN mfi_cif AS mc on mcbd.cif_no = mc.cif_no 
+				LEFT JOIN mfi_cm AS mcm on mc.cm_code = mcm.cm_code 
+				LEFT JOIN mfi_fa AS mfa on mcm.fa_code = mfa.fa_code  
+				LEFT JOIN mfi_branch AS mb on mb.branch_code = mc.branch_code 
+				LEFT JOIN mfi_account_default_balance AS madb ON madb.cif_no = mc.cif_no 
+				WHERE mcbd.closing_thru_date = ? ";
+		$param[] = $tanggal;
 
-		$sql .= " GROUP BY 1,2 ORDER BY mfi_cm.cm_name asc";
+		if ($branch_code == "0000" || $branch_code == "") {
+			$sql .= "";
+			$param[] = $branch_code;
+		} else if ($branch_code != "0000") {
+			$sql .= "AND mc.branch_code IN(SELECT branch_code FROM mfi_branch_member WHERE branch_induk = ?) ";
+			$param[] = $branch_code;
+		}
 
+		$sql .= "GROUP BY 1,2,3 ORDER BY 1,2";
 		$query = $this->db->query($sql, $param);
+
 		return $query->result_array();
-	}
-
-	//petugas
-	public function export_rekap_saldo_anggota_petugas1($branch_code)
-	{
-		$tanggal = date('Y-m-d');
-		$param = array();
-		$sql = "SELECT 
-					mfi_fa.fa_code
-					,mfi_fa.fa_name
-					,(select count(*) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as num
-					,(select coalesce(sum(a.saldo_pokok),0) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") as pokok
-					,(select coalesce(sum(a.saldo_margin),0) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") as margin
-					,(select coalesce(sum(a.saldo_catab),0) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") as catab
-					from mfi_fa
-					where (select count(*) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code
-					";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") > 0";
-		$sql .= " GROUP BY 1,2 ORDER BY mfi_fa.fa_name asc";
-
-		$query = $this->db->query($sql, $param);
-		return $query->result_array();
-	}
-
-	public function export_rekap_saldo_anggota_petugas_lalu($branch_code)
-	{
-		$tanggal = date('Y-m-d');
-		$param = array();
-		$sql = "SELECT 
-					mfi_fa.fa_code
-					,mfi_fa.fa_name
-					,(select count(*) from mfi_account_financing a, mfi_cif b, mfi_cm c, mfi_closing_financing_data d where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code and d.account_financing_no=a.account_financing_no";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= " ) as num
-					,(select coalesce(sum(a.saldo_pokok),0) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") as pokok
-					,(select coalesce(sum(a.saldo_margin),0) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") as margin
-					,(select coalesce(sum(a.saldo_catab),0) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") as catab
-					from mfi_fa
-					where (select count(*) from mfi_account_financing a, mfi_cif b, mfi_cm c where a.cif_no=b.cif_no and b.cm_code=c.cm_code and a.status_rekening=1 and c.fa_code=mfi_fa.fa_code
-					";
-		if ($branch_code != "00000") {
-			$sql .= " and a.branch_code in(select branch_code from mfi_branch_member where branch_induk=?)";
-			$param[] = $branch_code;
-		}
-		$sql .= ") > 0";
-		$sql .= " GROUP BY 1,2 ORDER BY mfi_fa.fa_name asc";
-
-		$query = $this->db->query($sql, $param);
-		return $query->result_array();
-	}
+	} 
+	
 
 	function export_rekap_saldo_anggota_produk1($branch_code)
 	{
@@ -12238,10 +12243,13 @@ class Model_laporan_to_pdf extends CI_Model
 			$param[] = $kreditur;
 		}
 
+
+
 		//$sql .= " ";
 
 		//$param[] = $cabang;
 		//$param[] = $tanggal;
+
 
 		$query = $this->db->query($sql, $param);
 
@@ -12255,7 +12263,7 @@ class Model_laporan_to_pdf extends CI_Model
 		$order = '';
 		$limit = '';
 
-		if ($sidx != '' && $sord != '') $order = "ORDER BY mafd.droping_date, mcm.cm_name,mc.cif_no ASC";
+		if ($sidx != '' && $sord != '') $order = "ORDER BY mafd.droping_date, mc.cif_no ASC";
 		if ($limit_rows != '' && $start != '') $limit = "LIMIT $limit_rows OFFSET $start";
 
 
@@ -12873,11 +12881,11 @@ class Model_laporan_to_pdf extends CI_Model
 		maf.angsuran_pokok,
 		maf.financing_type
 		FROM mfi_account_financing AS maf
-		JOIN mfi_cif AS mc ON maf.cif_no = mc.cif_no
-		JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
-		JOIN mfi_cm AS mcm ON mcm.branch_id = mb.branch_id
+		LEFT JOIN mfi_cif AS mc ON maf.cif_no = mc.cif_no
+		LEFT JOIN mfi_branch AS mb ON mb.branch_code = mc.branch_code
+		LEFT JOIN mfi_cm AS mcm ON mcm.cm_code = mc.cm_code 
 		LEFT JOIN mfi_fa AS mf ON mf.fa_code = mcm.fa_code
-		JOIN mfi_kecamatan_desa AS mkd ON mcm.desa_code = mkd.desa_code
+		LEFT JOIN mfi_kecamatan_desa AS mkd ON mcm.desa_code = mkd.desa_code
 		WHERE maf.tanggal_jtempo BETWEEN ? AND ? ";
 
 

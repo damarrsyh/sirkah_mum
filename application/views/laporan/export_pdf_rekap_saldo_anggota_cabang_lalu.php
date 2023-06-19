@@ -136,13 +136,11 @@
         <?php echo $cabang;?>
         </div>
         <div style="text-align:center;padding-top:10px;font-family:Arial;font-size:18px;">
-        Rekap Outstanding Piutang Bulan Lalu Berdasarkan Cabang
-        </div>
-        <!--  
+        Rekap Saldo Anggota Bulan Lalu Berdasarkan Cabang 
+        </div>  
         <div style="text-align:center;padding-top:10px;font-family:Arial;font-size:14px;">
-        Tanggal : <?php echo $tanggal1_;?> s/d <?php echo $tanggal2_;?>
+        Tanggal : <?php echo $tanggal;?> 
         </div> 
-        -->
         <hr>
       </div>
 <table id="hor-minimalist-b" align="center">
@@ -151,45 +149,38 @@
             <td class="no" style="width:50px;">Kode</td>
             <td class="anggota" style="width:80px;">Keterangan</td>
             <td class="jumlah" style="width:50px;">Jumlah</td>
+            <td class="pokok" style="width:50px;">Simpok</td>
+            <td class="pokok" style="width:50px;">Simwa</td>
+            <td class="pokok" style="width:50px;">Sukarela</td>
             <td class="pokok" style="width:50px;">Pokok</td>
             <td class="pokok" style="width:50px;">Margin</td>
-            <td class="pokok" style="width:50px;">Catab</td>
-            <td class="pokok" style="width:50px;">% Jumlah</td>
-            <td class="pokok" style="width:50px;">% Pokok</td>
       </tr>
-      <?php
-        $sum_anggota = 0;
-        $sum_pokok = 0;
-        foreach ($result as $data):     
-        $sum_anggota+=$data['num'];     
-        $sum_pokok+=$data['pokok'];     
-      ?>
-      <?php 
-          endforeach;
-      ?> 
       <?php
       $no = 1; 
       $total_anggota  = 0;
-      $total_pokok    = 0;
-      $total_margin   = 0;
-      $total_catab   = 0;
+      $total_simpok   = 0;
+      $total_simwa   = 0;
+      $total_sukarela   = 0;
+      $total_pokok =0;
+      $total_margin =0; 
         foreach ($result as $data):     
-        $total_anggota    +=  $data['num'];     
-        $total_pokok      +=  $data['pokok'];     
-        $total_margin     +=  $data['margin'];     
-        $total_catab     +=  $data['catab'];     
-         $persen_jumlah = $data['num']/$sum_anggota*100;
-        $persen_nominal = $data['pokok']/$sum_pokok*100; 
+        $total_anggota    +=  $data['jumlah_anggota'];   
+         $total_simpok    +=$data['setoran_lwk']; 
+         $total_simwa     +=$data['tabungan_minggon']; 
+         $total_sukarela  +=$data['tabungan_sukarela']; 
+         $total_pokok     +=$data['saldo_pokok'];
+         $total_margin    +=$data['saldo_margin'];
       ?>
       <tr class="value">
             <td class="val_anggota"><?php echo $no++;?></td>
             <td class="val_anggota"><?php echo $data['branch_name'];?></td>
-            <td class="val_jumlah"><?php echo number_format($data['num'],0,',','.');?></td>
-            <td class="val_pokok"><?php echo number_format($data['pokok'],0,',','.');?></td>
-            <td class="val_pokok"><?php echo number_format($data['margin'],0,',','.');?></td>
-            <td class="val_pokok"><?php echo number_format($data['catab'],0,',','.');?></td>
-            <td class="val_jumlah"><?php echo number_format($persen_jumlah,2,',','.');?></td>
-            <td class="val_jumlah"><?php echo number_format($persen_nominal,2,',','.');?></td>
+            <td class="val_jumlah"><?php echo number_format($data['jumlah_anggota'],0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($data['setoran_lwk'],0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($data['tabungan_minggon'],0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($data['tabungan_sukarela'],0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($data['saldo_pokok'],0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($data['saldo_margin'],0,',','.');?></td>
+
       </tr>
     <?php 
         endforeach;
@@ -198,9 +189,11 @@
             <td class="val_kosong">&nbsp;</td>
             <td class="val_kosong2">&nbsp;</td>
             <td class="val_jumlah"><?php echo number_format($total_anggota,0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($total_simpok,0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($total_simwa,0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($total_sukarela,0,',','.');?></td>
             <td class="val_pokok"><?php echo number_format($total_pokok,0,',','.');?></td>
-            <td class="val_pokok"><?php echo number_format($total_margin,0,',','.');?></td>
-            <td class="val_pokok"><?php echo number_format($total_catab,0,',','.');?></td>
+            <td class="val_pokok"><?php echo number_format($toal_margin,0,',','.');?></td>
       </tr>
     </tbody>
 </table>

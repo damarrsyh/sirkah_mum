@@ -1045,11 +1045,14 @@ Class Model_nasabah extends CI_Model
 				a.flag_wakalah,
 				a.financing_type,
 				a.flag_jadwal_angsuran,
-				d.cm_name
+				d.cm_name, 
+				a.kreditur_code, 
+				e.display_text as kreditur 
 				FROM mfi_account_financing a
 				LEFT JOIN mfi_cif b ON b.cif_no = a.cif_no
 				LEFT JOIN mfi_product_financing c ON c.product_code = a.product_code
-				LEFT JOIN mfi_cm d ON d.cm_code=b.cm_code
+				LEFT JOIN mfi_cm d ON d.cm_code=b.cm_code 
+				LEFT JOIN mfi_list_code_detail e ON a.kreditur_code=e.code_value and e.code_group='kreditur' 
 				WHERE (UPPER(a.account_financing_no) like ? OR UPPER(b.nama) like ?)
 		";
 		$param[] = '%'.strtoupper(strtolower($keyword)).'%';

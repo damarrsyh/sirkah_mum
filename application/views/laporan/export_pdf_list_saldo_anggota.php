@@ -265,6 +265,7 @@ $CI = get_instance();
 <table id="hor-minimalist-b" align="center">
     <tbody>
         <tr>
+          <td rowspan="2" align="center" valign="middle" class="anggota-luhur" style="width:7px;" >No</td>
           <td colspan="2" align="center" valign="middle" class="anggota-luhur">Anggota</td>
           <td rowspan="2" align="center" valign="middle" class="anggota2" style="width:50px;">Rembug Pusat</td>
           <td rowspan="2" align="center" valign="middle" class="anggota2" style="width:50px;">Desa</td>
@@ -286,7 +287,7 @@ $CI = get_instance();
           <td align="center" valign="middle" class="no_bold" style="width:26px;">Saldo Margin</td>
         </tr>
      <?php 
-        $no=1;
+        $no=0;
         $total_pokok = 0;
         $total_margin = 0;
         $total_setoran_lwk = 0;
@@ -298,7 +299,7 @@ $CI = get_instance();
         $total_saldo_pokok = 0;
         $total_saldo_margin = 0;
         foreach ($saldo_tabungan as $data):
-          
+          $no += 1;
           $total_pokok += $data['pokok'];
           $total_margin += $data['margin'];
           $total_setoran_lwk += $data['setoran_lwk'];
@@ -316,7 +317,8 @@ $CI = get_instance();
       ?>
 
       <tr class="value">
-        <td align="center" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999; border-left:solid 1px #999;"><?php echo $data['cif_no'];?></td>
+        <td align="center" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999; border-left:solid 1px #999;"><?php echo $no;?></td> 
+        <td align="center" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999; border-left:solid 1px #999;"><?php echo $data['cif_no'];?></td> 
         <td align="left" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999;"><?php echo $data['nama'];?></td>
         <td align="center" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999;"><?php echo $data['cm_name'];?></td>
         <td align="center" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999;"><?php echo $data['desa'];?></td>
@@ -338,6 +340,7 @@ $CI = get_instance();
       ?>
 
       <tr class="value">
+        <td align="right" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-left:solid 1px #999; font-weight: bold;">&nbsp;</td> 
         <td align="right" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999; border-left:solid 1px #999;" colspan="4">Total :</td>
         <td align="right" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999; font-weight: bold;"><?php echo number_format($total_setoran_lwk,0,',','.');?></td>
         <td align="right" valign="middle" style=" padding: 3px 2px; border-bottom:solid 1px #999; border-right:solid 1px #999; font-weight: bold;"><?php echo number_format($total_tabungan_minggon,0,',','.');?></td>
